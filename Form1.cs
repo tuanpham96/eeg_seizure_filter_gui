@@ -112,51 +112,33 @@ namespace WindowsFormsApp4
         public double ylwRangeRmsUp = 1.2;
         public double ylwRangeRmsLow = 0.8;
 
-        //**
-        // Tuan added _ start 
         public LineSeries rms_lineseries;
         public PlotView myRMSPlot;
         public PlotModel myRMSModel;
 
-        private Thread plot_thread;
-        // Tuan added _ end 
-        //**/ 
+        public double Fs = 512.0; 
+        public double x_val, y_val;
 
         private Thread logic_thread;
-        // private Thread form_thread;
+        private Thread plot_thread;
+
+        public delegate void InvokeDelegate();
+
         public Form1()
         {
             InitializeComponent();
-            this.Load += Form1_Load;
-            //** Tuan added _ start
-            init_RMSplot(); 
-            // Tuan added _ end 
-            //**/
-
-
+            init_RMSplot();
+            this.Load += Form1_Load;            
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             logic_thread = new Thread(drawAndReport);
+            plot_thread = new Thread(plotData);
+            plot_thread.Start();
             logic_thread.Start();
-        }
-        
-        
-        /** Tuan cmnt out 
-        private void Form1_newForm(object sender, EventArgs e)
-        {
-            form_thread = new Thread(form2);
-            form_thread.Start();
-        }
-     
-        public void form2()
-        {
+        }       
 
-        }
-        **/ 
-
-        // Tuan added _ begin : implementation mirroring 'drae RMS'
         private void init_RMSplot()
         {
             myRMSPlot = new PlotView
@@ -176,15 +158,19 @@ namespace WindowsFormsApp4
 
             var linearAxisX = new LinearAxis
             {
-                Title = "Count #",
-                Position = AxisPosition.Bottom
+                Title = "Time (s)",
+                Position = AxisPosition.Bottom,
+                Minimum = 0,
+                Maximum = 5
             };
             myRMSModel.Axes.Add(linearAxisX);
 
             var linearAxisY = new LinearAxis
             {
                 Title = "RMS values",
-                Position = AxisPosition.Left
+                Position = AxisPosition.Left,
+                AbsoluteMinimum = -5,
+                AbsoluteMaximum = 5
             };
             myRMSModel.Axes.Add(linearAxisY);
 
@@ -199,9 +185,18 @@ namespace WindowsFormsApp4
             myRMSModel.Series.Add(this.rms_lineseries);
 
             myRMSPlot.Model = myRMSModel;
-            Controls.Add(myRMSPlot);
+            myRMSPlot.InvalidatePlot(true);
+            this.Controls.Add(myRMSPlot);
         }
-
+        
+        public void plotData() 
+        {
+            Console.WriteLine("x val = " + x_val + "; y_val = " + y_val);
+            this.rms_lineseries.Points.Add(new DataPoint(x_val, y_val));
+            myRMSPlot.InvalidatePlot(true);
+           
+        }
+        
         public void drawAndReport()
         {
             /**
@@ -213,7 +208,7 @@ namespace WindowsFormsApp4
                 TcpClient client = new TcpClient();
                 client.Connect("127.0.0.1", 1234);
                 int ntotal_samp = 64;
-                int nsamp_per_block = 7;
+                int nsamp_per_block = 4;
                 int num_channel = -1;  // meaning has not been defined 
                 int chan_idx2plt = 0; 
                 log.Invoke(new Action(() =>
@@ -254,8 +249,16 @@ namespace WindowsFormsApp4
                             // maybe the time it took to get thru each loop interfered with the timing 
                             // dont know yet how to solve this
                             // maybe it's best to read from the file output of signal display instead? 
-                            double.TryParse(niceData[chan_idx2plt * ix + num_channel], out niceData_ix);
-                            /*
+                            // This is mostly due to plotting 
+                            double.TryParse(niceData[ix + chan_idx2plt * num_channel], out niceData_ix);
+                            x_val = ((double)count) / Fs;
+                            y_val = niceData_ix;                           
+                            
+                            
+                            //this.rms_lineseries.Points.Add(new DataPoint(x_val, y_val));
+                            //myRMSPlot.InvalidatePlot(true);
+                            
+                            
                             data_queue.Enqueue(niceData_ix);
 
                             if (count < ntotal_samp) {
@@ -272,15 +275,11 @@ namespace WindowsFormsApp4
                                 current_rms = Math.Sqrt(current_rms - oldest_val + newest_val);
                             }
 
-                            this.rms_lineseries.Points.Add(new DataPoint((double)count, niceData_ix));
-                            myRMSPlot.InvalidatePlot(true);
-                            myRMSModel.DefaultXAxis.Reset();
-                            myRMSModel.DefaultYAxis.AbsoluteMinimum = -5;
-                            myRMSModel.DefaultYAxis.AbsoluteMaximum = 5;
-                            
                             rms_val.Invoke(new Action(() => {
                                 rms_val.Text = String.Format("{0}", current_rms);
                             }));
+                            
+                            myRMSPlot.BeginInvoke(new InvokeDelegate(plotData));
 
                             if (current_rms < redRangeRmsLow | current_rms > redRangeRmsUp) {
                                 panel1.BackColor = Color.FromArgb(255, 0, 0);
@@ -291,7 +290,8 @@ namespace WindowsFormsApp4
                             else {
                                 panel1.BackColor = Color.FromArgb(0, 255, 0);
                             }
-                            */
+                            
+
 
                             string nextLine = string.Format("{0}\n", niceData_ix);
                             File.AppendAllText(csvFilePath, nextLine);
@@ -311,208 +311,15 @@ namespace WindowsFormsApp4
                 drawAndReport();
             }
         }
-        // Tuan added _ end 
-        
-        public void drawRMS()
+
+        private void safety_lab_Click(object sender, EventArgs e)
         {
-           
-            
-            try
-            {
-                TcpClient client = new TcpClient();
 
+        }
 
-                // ip addess should be local host, TCP port is as specified in
-                // Open Vibe program.
-                client.Connect("127.0.0.1", 1234);
-                // this log.invoke is the method used to edit the text
-                // boxes in the windows form
-                log.Invoke(new Action(() =>
-                {
-                    log.Text = "Connected!";
-                }));
-       
-                // Buffer for reading data
-                // Data comes in as ASCII string of comma separated values
-                Byte[] bytes = new Byte[16384];
+        private void Form1_Load_1(object sender, EventArgs e)
+        {
 
-                // this array stores the values in a 500 ms interval to perform root 
-                // mean square analysis
-                // 64 values represents 500 ms. Because we have a 512 Hz signal from
-                // the V-Amp, and we receive a chunk every 4 samples --> 512 / 4 = 128. 
-                // 128 samples per second --> 64 samples per 1/2 second, or 500 ms.
-                uint maxSamplesStored = 64;
-
-                // we use 4 arrays so we can calculate every 16 values, or in a 125 ms interval
-                // In other words, every 125 ms we need to be able to pull up
-                // the last 500 ms worth of values. So every 16 values we need to pull up 
-                // the last 64 values. So each of these arrays is separated from the next by 
-                // 16 values.
-                Double[] storedValues1 = new Double[maxSamplesStored];
-                Double[] storedValues2 = new Double[maxSamplesStored];
-                Double[] storedValues3 = new Double[maxSamplesStored];
-                Double[] storedValues4 = new Double[maxSamplesStored];
-
-                // this array will
-                // be used in the calculation step (changes every 16 values)
-                Double[] calcValues = new Double[maxSamplesStored];
-
-                // initiating the double for the channel sample values
-                // can initialize more channels and samples
-                double channel1Sample1 = 0;
-                // double channel1Sample2 = 0; // EX: more channels/samples
-
-                // Enter the listening loop.
-                while (true)
-                {
-                    int i;
-                    int count = 0;
-                    // this is how many samples are read before the program is auto shut down.
-                    // 3840 is roughly 30 seconds
-                    Stream stream = client.GetStream();
-
-                    // build csv file
-                    // need to customize where to save the text. possibly with user input
-                    string csvFilePath = @"C:\Users\Towle\Desktop\testfile.csv";
-                    File.WriteAllText(csvFilePath, "");
-
-                    // stream so long as there is something to stream, or until the limit 
-                    // number of samples have been collected.
-                    while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                        {   
-                            string data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                            log.Invoke(new Action(() =>
-                            {
-                                //log.Text = String.Format("Channel 1, Sample 1: {0} 
-                                // Channel 2, Sample 1: {0}", channel1Sample1); // , channel2Sample1);
-                                log.Text = data; // , channel2Sample1);
-
-                            }));
-                            // the format of this string array is all the channels for sample 1, 
-                            // all the channels for sample 2, ... all
-                            // the channels for sample N, for a stream with N channels. 
-                            // we are taking the one, long data string and separating it into 
-                            // its components
-                            string[] niceData = data.Split(',');
-                            double.TryParse(niceData[0], out channel1Sample1);
-
-                            // EX: More channels / samples
-                            // double channel2Sample1 = double.Parse(niceData[1]);
-
-
-                            // EX: displaying channel 1 sample 1 to the box everytime 
-                            // log.Invoke(new Action(() =>
-                            // {
-                            //     log.Text = String.Format("Channel 1, Sample 1: {0}", 
-                                        // channel1Sample1); // , channel2Sample1);
-                            //
-                            // }));
-                            // 
-
-                            // calculate current array slot for the four different arrays
-                            // each array is 16 slots ahead of the next in terms
-                            // of the data stream. this is why 16 is subtracted from the first
-                            // to make the second, and another 16 from the second for the third, etc.
-                            int currentSlotArray1 = count % 64;
-                            int currentSlotArray2 = (count - 16) % 64;
-                            int currentSlotArray3 = (count - 32) % 64;
-                            int currentSlotArray4 = (count - 48) % 64;
-
-                            // we don't want to start calculating until we have at least 64 values,
-                            // so we don't negatively index any arrays.
-                            if (count > 63)
-                            {
-                                storedValues1[currentSlotArray1] = channel1Sample1;
-                                storedValues2[currentSlotArray2] = channel1Sample1;
-                                storedValues3[currentSlotArray3] = channel1Sample1;
-                                storedValues4[currentSlotArray4] = channel1Sample1;
-                            }
-                            // proceed to calculation step
-                            // perform a calculation every 16th iteration 
-                            if (count > 63 && ((currentSlotArray1 + 1) % 16 == 0)) 
-                            
-                            {
-                                switch (currentSlotArray1 + 1)
-                                {
-                                    case 16:
-                                        calcValues = storedValues1;
-                                        break;
-                                    case 32:
-                                        calcValues = storedValues2;
-                                        break;
-                                    case 48:
-                                        calcValues = storedValues3;
-                                        break;
-                                    case 64:
-                                        calcValues = storedValues4;
-                                        break;
-                                }
-                                                                 
-                                // run a calculation
-                                double rms1 = 0;
-                                // taking the sum of normalized squares
-                                foreach (double v in calcValues)
-                                {
-                                    rms1 += (v * v);
-                                }
-                                // taking the square root of that sum
-                                rms1 = Math.Sqrt(rms1 / calcValues.Length);
-                                // display result
-                                rms_val.Invoke(new Action(() =>
-                                {
-                                    rms_val.Text = String.Format("{0}", rms1);
-
-                                }));
-                                // color step
-                                if (rms1 < redRangeRmsLow | rms1 > redRangeRmsUp) // red - danger
-                                {
-                                    panel1.BackColor = Color.FromArgb(255, 0, 0);
-                                }
-                                else if (rms1 < ylwRangeRmsLow | rms1 > ylwRangeRmsUp) // yellow - caution
-                                {
-                                    panel1.BackColor = Color.FromArgb(255, 255, 0);
-                                }
-                                else // green - safe
-                                {
-                                    panel1.BackColor = Color.FromArgb(0, 255, 0);
-                                }
-
-                            //**
-                            // Tuan added _ start 
-                            
-                                this.rms_lineseries.Points.Add(new DataPoint( (double)count, rms1));
-                                myRMSPlot.InvalidatePlot(true);
-                                myRMSModel.DefaultXAxis.Reset(); 
-                                myRMSModel.DefaultYAxis.AbsoluteMinimum = 0.85;
-                                myRMSModel.DefaultYAxis.AbsoluteMaximum = 1.15;
-                            // Tuan added _ end 
-                            //**/
-                        }
-                              
-                            
-                                // format the lines for the csv file
-                                string nextLine = string.Format("{0}\n", channel1Sample1);
-
-                                // append lines to csv file
-                                File.AppendAllText(csvFilePath, nextLine);
-                                count++;
-                        }
-                    // this code should technically never be reached    
-                    client.Close();
-                }
-            }
-
-            // this is reached if we have trouble connecting with the client. 
-            // it calls on the function again in case the connection error
-            // is just a small hitch to prevent having to restart the program.
-            catch (Exception e)
-            {
-                log.Invoke(new Action(() =>
-                {
-                    log.Text += "Error..... " + e.StackTrace;
-                }));
-                drawRMS();
-            }
         }
     }
 }
