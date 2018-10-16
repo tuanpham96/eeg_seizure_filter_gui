@@ -5,14 +5,17 @@ using System.Windows.Forms;
 using System.IO;
 using System.Net.Sockets;
 
-using OxyPlot;
-using OxyPlot.WindowsForms;
-using OxyPlot.Axes;
-using OxyPlot.Series;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Diagnostics;
+
+using LiveCharts;
+using LiveCharts.Wpf; 
+using LiveCharts.WinForms;
+using System.ComponentModel;
+using LiveCharts.Configurations;
+using static WindowsFormsApp4.Form1;
 
 /** SEIZURE FILTER EEG PROGRAM
  * Started by Dominic DiCarlo September 2018
@@ -105,9 +108,6 @@ namespace WindowsFormsApp4
 {
     public partial class Form1 : Form
     {
-        // these are the publically defined range values
-        // for the RMS. The Red range is for absolute danger
-        // while the Yellow (ylw) range is for caution.
         public double danger_upperbound = 1.4;
         public double danger_lowerbound = 0.6;
         public double warning_upperbound = 1.2;
@@ -117,73 +117,61 @@ namespace WindowsFormsApp4
         public static Color warning_color = Color.FromArgb(255, 255, 0);
         public static Color normal_color = Color.FromArgb(0, 255, 0);
 
-        public LineSeries rms_lineseries;
-        public PlotView myRMSPlot;
-        public PlotModel myRMSModel;
+        private string hotsname = "127.0.0.1"; // local 
+        private int port = 1234; // default 
 
-        public double Fs = 512.0; 
+        private double Fs = 512.0;
+        private int nmax_queue_total = 64;
+        private int nsamp_per_block = 4;
+        private int num_channel = -1;  // meaning has not been defined 
+        private int chan_idx2plt = 0;
 
+        private string file_name = @"C:\Users\Towle\Desktop\testfile_TP.csv";
         private Thread logic_thread;
 
-        public delegate void InvokeDelegate();
+        public ChartValues<Model> ChartValues { get; set; }
+        public class Model
+        {
+            public double XVal { get; set; }
+            public double YVal { get; set; }
+        }
+        public LiveCharts.WinForms.CartesianChart cart_chart;
+
         public Form1()
         {
             InitializeComponent();
-            init_RMSplot();
+
+            var mapper = Mappers.Xy<Model>()
+                .X(model => model.XVal)   
+                .Y(model => model.YVal);
+            Charting.For<Model>(mapper);
+            ChartValues = new ChartValues<Model>();
+            cartesianChart1.Series = new SeriesCollection {  new LineSeries
+            {
+                Values = ChartValues,
+                StrokeThickness = 2
+            }};
+            
+            
+            cartesianChart1.AxisX.Add(new Axis
+            {
+                ///DisableAnimations = true,
+                Separator = new Separator { Step = 0.1 }
+            }); 
+            
             this.Load += Form1_Load;
         }
 
+        private void SetAxisLimits(double current_time)
+        {
+            cartesianChart1.AxisX[0].MaxValue = current_time + 2;
+            cartesianChart1.AxisX[0].MinValue = current_time - 10; 
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
             logic_thread = new Thread(drawAndReport);
             logic_thread.Start();
         }       
-
-        private void init_RMSplot()
-        {
-            myRMSPlot = new PlotView
-            {
-                Dock = System.Windows.Forms.DockStyle.Bottom,
-                Location = new System.Drawing.Point(500, 500),
-                Size = new System.Drawing.Size(500, 500),
-                TabIndex = 1
-            };
-
-            myRMSModel = new PlotModel
-            {
-                Title = "RMS plot",
-                PlotType = PlotType.Cartesian,
-                Background = OxyColors.White
-            };
-
-            var linearAxisX = new LinearAxis
-            {
-                Title = "Time (s)",
-                Position = AxisPosition.Bottom,
-            };
-            myRMSModel.Axes.Add(linearAxisX);
-
-            var linearAxisY = new LinearAxis
-            {
-                Title = "RMS values",
-                Position = AxisPosition.Left,
-                AbsoluteMinimum = -3,
-                AbsoluteMaximum = 3
-            };
-            myRMSModel.Axes.Add(linearAxisY);
-
-            this.rms_lineseries = new LineSeries
-            {
-                Color = OxyColors.Black,
-                LineStyle = LineStyle.Solid
-            };
-            myRMSModel.Series.Add(this.rms_lineseries);
-
-            myRMSPlot.Model = myRMSModel;
-            myRMSPlot.InvalidatePlot(true);
-            this.Controls.Add(myRMSPlot);
-        }
-        
         
         public Color return_indicated_color(double value)
         {
@@ -198,15 +186,11 @@ namespace WindowsFormsApp4
 
         public void drawAndReport()
         {
-            
             try 
             { 
                 TcpClient client = new TcpClient();
-                client.Connect("127.0.0.1", 1234);
-                int ntotal_samp = 64;
-                int nsamp_per_block = 4;
-                int num_channel = -1;  // meaning has not been defined 
-                int chan_idx2plt = 0; 
+                client.Connect(this.hotsname, this.port);
+
                 log.Invoke(new Action(() =>
                 {
                     log.Text = "Connected!";
@@ -214,112 +198,77 @@ namespace WindowsFormsApp4
 
                 Byte[] bytes = new Byte[16384];
                 Queue<double> data_queue = new Queue<double>();
-                double oldest_val = 0, newest_val = 0; 
+                double oldest_val = 0, newest_val = 0;
+                double current_rms_sq = 0;
+                double current_rms = 0;
 
-                while (true) {
+                while (true)
+                {
                     int stream_read;
                     int count = 0;
-                    double current_rms_sq = 0;
-                    double current_rms = 0;
                     Stream stream = client.GetStream();
 
-                    string csvFilePath = @"C:\Users\Towle\Desktop\testfile_TP.csv";
+                    string csvFilePath = this.file_name;
                     File.WriteAllText(csvFilePath, "");
-
-                    Stopwatch stopwatch = new Stopwatch();
-                    stopwatch.Start();
-                    stopwatch.Stop(); 
-                    string reportTime = @"C:\Users\Towle\Desktop\reportTime.csv";
-                    File.WriteAllText(reportTime, String.Format("InitRead AddPoint RescalePlot GetRMS UpdateRMSViz\n"));                   
-                    TimeSpan t_init_read, t_add_point, t_rescale_plt, t_get_rms, t_update_rms_viz; 
-                    while ((stream_read = stream.Read(bytes, 0, bytes.Length)) != 0) {
-                        string data = System.Text.Encoding.ASCII.GetString(bytes, 0, stream_read);                        
+                    while ((stream_read = stream.Read(bytes, 0, bytes.Length)) != 0)
+                    {
+                        string data = System.Text.Encoding.ASCII.GetString(bytes, 0, stream_read);
                         string[] current_data_chunk = data.Split(',');
-                        
-                        log.Invoke(new Action(() => {
-                            log.Text = data;
-                        }));
 
-                        if (num_channel < 0) {
+                        if (num_channel < 0)
+                        {
                             num_channel = (int)current_data_chunk.Length / nsamp_per_block;
                             Console.WriteLine("Number of channels = " + num_channel);
-                            
+
                         }
                         double current_data_point = 0;
-                        double t; 
-                        for (int ix = 0; ix < nsamp_per_block; ix++) {
-
-                            
-                            stopwatch.Start();
+                        double t;
+                        for (int ix = 0; ix < nsamp_per_block; ix++)
+                        {
                             double.TryParse(current_data_chunk[ix + chan_idx2plt * num_channel], out current_data_point);
-                            stopwatch.Stop();
-                            t_init_read = stopwatch.Elapsed; 
-
                             t = ((double)count) / Fs;
 
-                            stopwatch.Reset(); 
-                            stopwatch.Start();                            
-                            this.rms_lineseries.Points.Add(new DataPoint(t, current_data_point));                            
-                            stopwatch.Stop();
-                            t_add_point = stopwatch.Elapsed;
-                            
-                            stopwatch.Reset();
-                            stopwatch.Start();
-                            /*myRMSPlot.InvalidatePlot(true);
-                            myRMSModel.DefaultXAxis.AbsoluteMinimum = t - 5;
-                            myRMSModel.DefaultXAxis.AbsoluteMaximum = t + 5;
-                            myRMSModel.DefaultXAxis.Reset();
-                            */
-                            stopwatch.Stop();
-                            t_rescale_plt = stopwatch.Elapsed;
+                            ChartValues.Add(new Model
+                            {
+                                XVal = t,
+                                YVal = current_data_point
+                            });
 
-                            stopwatch.Reset();
-                            stopwatch.Start();
+                            //cartesianChart1.AxisX.ma = t + 0.5;
+                            //cartesianChart1.AxisX[0].MaxValue = t - 1; 
+
+                            if (ChartValues.Count > 2000) { ChartValues.RemoveAt(0); Console.WriteLine("Chart cnt = " + ChartValues.Count); }
+                            /*  queue data and calc rms 
                             data_queue.Enqueue(current_data_point);
-                            
-                            if (count < ntotal_samp) {
+
+                            if (count < nmax_queue_total)
+                            {
                                 current_rms_sq += current_data_point * current_data_point;
                             }
-                            else if (count == ntotal_samp) {
-                                current_rms = Math.Sqrt(current_rms_sq / ntotal_samp);
+                            else if (count == nmax_queue_total)
+                            {
+                                current_rms = Math.Sqrt(current_rms_sq / nmax_queue_total);
                             }
-                            else {
+                            else
+                            {
                                 oldest_val = data_queue.Dequeue();
-                                oldest_val = oldest_val * oldest_val / ntotal_samp;
+                                oldest_val = oldest_val * oldest_val / nmax_queue_total;
 
-                                newest_val = current_data_point * current_data_point / ntotal_samp;
+                                newest_val = current_data_point * current_data_point / nmax_queue_total;
                                 current_rms = Math.Sqrt(current_rms - oldest_val + newest_val);
                             }
 
-                            stopwatch.Stop();
-                            t_get_rms = stopwatch.Elapsed;
-                            
-                            stopwatch.Reset();
-                            stopwatch.Start();
-                            rms_val.Invoke(new Action(() => {
-                                rms_val.Text = String.Format("{0}", current_rms);
-                            }));
-                            
                             panel1.BackColor = return_indicated_color(current_rms);
-                            stopwatch.Stop();
-                            t_update_rms_viz = stopwatch.Elapsed;
-                            stopwatch.Reset();
-
+                            *
+                            */
                             string nextLine = string.Format("{0}\n", current_data_point);
                             File.AppendAllText(csvFilePath, nextLine);
 
-                            string nextReportTime = String.Format("{0} {1} {2} {3} {4}\n", 
-                                t_init_read.Ticks, 
-                                t_add_point.Ticks,
-                                t_rescale_plt.Ticks,
-                                t_get_rms.Ticks ,
-                                t_update_rms_viz.Ticks);
-                            File.AppendAllText(reportTime, nextReportTime);
-                            
                             count++;
                         }
                     }
                     client.Close();
+
                 }
             }
             catch (Exception e)
@@ -341,5 +290,6 @@ namespace WindowsFormsApp4
         {
 
         }
+
     }
 }

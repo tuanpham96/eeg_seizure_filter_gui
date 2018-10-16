@@ -44,7 +44,6 @@ C:\Users\Towle\Desktop\eeg_seizure_filter_gui\bin\Debug\OxyPlot.pdb
 C:\Users\Towle\Desktop\eeg_seizure_filter_gui\bin\Debug\OxyPlot.xml
 C:\Users\Towle\Desktop\eeg_seizure_filter_gui\bin\Debug\OxyPlot.WindowsForms.pdb
 C:\Users\Towle\Desktop\eeg_seizure_filter_gui\bin\Debug\OxyPlot.WindowsForms.xml
-C:\Users\Towle\Desktop\eeg_seizure_filter_gui\obj\Debug\seizure_filter.csprojAssemblyReference.cache
 C:\Users\Towle\Desktop\eeg_seizure_filter_gui\obj\Debug\WindowsFormsApp4.Form1.resources
 C:\Users\Towle\Desktop\eeg_seizure_filter_gui\obj\Debug\seizure_filter.Properties.Resources.resources
 C:\Users\Towle\Desktop\eeg_seizure_filter_gui\obj\Debug\seizure_filter.csproj.GenerateResource.cache
@@ -52,3 +51,13 @@ C:\Users\Towle\Desktop\eeg_seizure_filter_gui\obj\Debug\seizure_filter.csproj.Co
 C:\Users\Towle\Desktop\eeg_seizure_filter_gui\obj\Debug\seizure_filter.csproj.CopyComplete
 C:\Users\Towle\Desktop\eeg_seizure_filter_gui\obj\Debug\seizure_filter.exe
 C:\Users\Towle\Desktop\eeg_seizure_filter_gui\obj\Debug\seizure_filter.pdb
+C:\Users\Towle\Desktop\eeg_seizure_filter_gui\bin\Debug\LiveCharts.dll
+C:\Users\Towle\Desktop\eeg_seizure_filter_gui\bin\Debug\LiveCharts.Wpf.dll
+C:\Users\Towle\Desktop\eeg_seizure_filter_gui\bin\Debug\LiveCharts.pdb
+C:\Users\Towle\Desktop\eeg_seizure_filter_gui\bin\Debug\LiveCharts.xml
+C:\Users\Towle\Desktop\eeg_seizure_filter_gui\bin\Debug\LiveCharts.Wpf.pdb
+C:\Users\Towle\Desktop\eeg_seizure_filter_gui\bin\Debug\LiveCharts.Wpf.xml
+C:\Users\Towle\Desktop\eeg_seizure_filter_gui\bin\Debug\LiveCharts.WinForms.dll
+C:\Users\Towle\Desktop\eeg_seizure_filter_gui\bin\Debug\LiveCharts.WinForms.pdb
+C:\Users\Towle\Desktop\eeg_seizure_filter_gui\bin\Debug\LiveCharts.WinForms.xml
+C:\Users\Towle\Desktop\eeg_seizure_filter_gui\obj\Debug\seizure_filter.csprojAssemblyReference.cache
