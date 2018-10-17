@@ -122,9 +122,8 @@ namespace WindowsFormsApp4
 
         private double Fs = 512.0;
         private int nmax_queue_total = 64;
-        private int nsamp_per_block = 4;
-        private int chan_idx2plt = 3;
-        private int num_channel;
+        private int nsamp_per_block = 32;
+        private int chan_idx2plt = 0;
 
         private string file_name = @"C:\Users\Towle\Desktop\Tuan\data\testfile_TP.csv";
         private Thread logic_thread;
@@ -183,7 +182,6 @@ namespace WindowsFormsApp4
             {
                 TcpClient client = new TcpClient();
                 client.Connect(this.hostname, this.port);
-                num_channel = -1; 
                 log.Invoke(new Action(() =>
                 {
                     log.Text = "Connected!";
@@ -207,19 +205,13 @@ namespace WindowsFormsApp4
                         string data = System.Text.Encoding.ASCII.GetString(bytes, 0, stream_read);
                         string[] current_data_chunk = data.Split(',');
 
-                        if (num_channel < 0)
-                        {
-                            num_channel = (int)(current_data_chunk.Length / nsamp_per_block);
-                            Console.WriteLine("\t Number of channels = " + num_channel + 
-                                "\n\t Length of data chunk = " + current_data_chunk.Length + 
-                                "\n\t Number of samples pern block = " + nsamp_per_block);
-
-                        }
                         double current_data_point;
                         double t;
+                        int idx_chan_samp; 
                         for (int ix = 0; ix < nsamp_per_block; ix++)
                         {
-                            double.TryParse(current_data_chunk[ix + chan_idx2plt * num_channel], out current_data_point);
+                            idx_chan_samp = ix + chan_idx2plt * nsamp_per_block;
+                            double.TryParse(current_data_chunk[idx_chan_samp], out current_data_point);
                             t = ((double)count) / Fs;
 
                             
@@ -231,6 +223,7 @@ namespace WindowsFormsApp4
                             if (ChartValues.Count > 512) {
                                 ChartValues.RemoveAt(0);
                             }
+
                             
                             // queue data and calc rms 
                             data_queue.Enqueue(current_data_point);
