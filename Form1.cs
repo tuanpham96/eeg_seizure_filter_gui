@@ -122,8 +122,10 @@ namespace WindowsFormsApp4
 
         private double Fs = 512.0;
         private int nmax_queue_total = 64;
-        private int nsamp_per_block = 32;
+        private int nsamp_per_block = 4;
         private int chan_idx2plt = 0;
+
+        private int max_pnt_plt = 512; 
 
         private string file_name = @"C:\Users\Towle\Desktop\Tuan\data\testfile_TP.csv";
         private Thread logic_thread;
@@ -191,15 +193,17 @@ namespace WindowsFormsApp4
                 Queue<double> data_queue = new Queue<double>();
                 double oldest_val = 0, newest_val = 0;
                 double current_rms_sq = 0;
-                double current_rms = 0;
+                double current_rms = -1; // not initiated 
                 
                 while (true)
                 {
                     int stream_read;
                     int count = 0;
                     Stream stream = client.GetStream();
+
                     string csvFilePath = this.file_name;
-                    File.WriteAllText(csvFilePath, "");
+                    File.WriteAllText(csvFilePath, "Data;RMS\n");
+
                     while ((stream_read = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
                         string data = System.Text.Encoding.ASCII.GetString(bytes, 0, stream_read);
@@ -213,40 +217,39 @@ namespace WindowsFormsApp4
                             idx_chan_samp = ix + chan_idx2plt * nsamp_per_block;
                             double.TryParse(current_data_chunk[idx_chan_samp], out current_data_point);
                             t = ((double)count) / Fs;
-
                             
                             ChartValues.Add(new Model
                             {
                                 XVal = t,
                                 YVal = current_data_point
                             });
-                            if (ChartValues.Count > 512) {
+                            if (ChartValues.Count > max_pnt_plt) {
                                 ChartValues.RemoveAt(0);
                             }
 
                             
                             // queue data and calc rms 
                             data_queue.Enqueue(current_data_point);
-                            if (count < nmax_queue_total)
+                            if (count < nmax_queue_total - 1)
                             {
                                 current_rms_sq += current_data_point * current_data_point;
                             }
-                            else if (count == nmax_queue_total)
+                            else if (count == nmax_queue_total - 1)
                             {
                                 current_rms = Math.Sqrt(current_rms_sq / nmax_queue_total);
                             }
                             else
                             {
-                                oldest_val = data_queue.Dequeue();
+                                oldest_val = data_queue.Dequeue();                                
                                 oldest_val = oldest_val * oldest_val / nmax_queue_total;
-
                                 newest_val = current_data_point * current_data_point / nmax_queue_total;
-                                current_rms = Math.Sqrt(current_rms - oldest_val + newest_val);
+                                current_rms_sq = current_rms * current_rms; 
+                                current_rms = Math.Sqrt(current_rms_sq - oldest_val + newest_val);
                             }
 
                             panel1.BackColor = return_indicated_color(current_rms);                            
                             
-                            string nextLine = string.Format("{0}\n", current_data_point);
+                            string nextLine = string.Format("{0};{1}\n", current_data_point, current_rms);
                             File.AppendAllText(csvFilePath, nextLine);
 
                             count++;
