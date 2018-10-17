@@ -117,56 +117,48 @@ namespace WindowsFormsApp4
         public static Color warning_color = Color.FromArgb(255, 255, 0);
         public static Color normal_color = Color.FromArgb(0, 255, 0);
 
-        private string hotsname = "127.0.0.1"; // local 
+        private string hostname = "127.0.0.1"; // local 
         private int port = 1234; // default 
 
         private double Fs = 512.0;
         private int nmax_queue_total = 64;
         private int nsamp_per_block = 4;
-        private int num_channel = -1;  // meaning has not been defined 
-        private int chan_idx2plt = 0;
+        private int chan_idx2plt = 3;
+        private int num_channel;
 
-        private string file_name = @"C:\Users\Towle\Desktop\testfile_TP.csv";
+        private string file_name = @"C:\Users\Towle\Desktop\Tuan\data\testfile_TP.csv";
         private Thread logic_thread;
-
         public ChartValues<Model> ChartValues { get; set; }
         public class Model
         {
             public double XVal { get; set; }
             public double YVal { get; set; }
         }
-        public LiveCharts.WinForms.CartesianChart cart_chart;
 
         public Form1()
         {
             InitializeComponent();
 
+            
             var mapper = Mappers.Xy<Model>()
                 .X(model => model.XVal)   
                 .Y(model => model.YVal);
             Charting.For<Model>(mapper);
             ChartValues = new ChartValues<Model>();
+
             cartesianChart1.Series = new SeriesCollection {  new LineSeries
             {
                 Values = ChartValues,
-                StrokeThickness = 2
-            }};
+                StrokeThickness = 1,
+                PointGeometry = null,
+                LineSmoothness = 0 
+            }};         
             
-            
-            cartesianChart1.AxisX.Add(new Axis
-            {
-                ///DisableAnimations = true,
-                Separator = new Separator { Step = 0.1 }
-            }); 
+            cartesianChart1.DisableAnimations = true; // for performance 
             
             this.Load += Form1_Load;
         }
 
-        private void SetAxisLimits(double current_time)
-        {
-            cartesianChart1.AxisX[0].MaxValue = current_time + 2;
-            cartesianChart1.AxisX[0].MinValue = current_time - 10; 
-        }
         private void Form1_Load(object sender, EventArgs e)
         {
             logic_thread = new Thread(drawAndReport);
@@ -184,13 +176,14 @@ namespace WindowsFormsApp4
             }
         }
 
+        
         public void drawAndReport()
         {
             try 
-            { 
+            {
                 TcpClient client = new TcpClient();
-                client.Connect(this.hotsname, this.port);
-
+                client.Connect(this.hostname, this.port);
+                num_channel = -1; 
                 log.Invoke(new Action(() =>
                 {
                     log.Text = "Connected!";
@@ -201,13 +194,12 @@ namespace WindowsFormsApp4
                 double oldest_val = 0, newest_val = 0;
                 double current_rms_sq = 0;
                 double current_rms = 0;
-
+                
                 while (true)
                 {
                     int stream_read;
                     int count = 0;
                     Stream stream = client.GetStream();
-
                     string csvFilePath = this.file_name;
                     File.WriteAllText(csvFilePath, "");
                     while ((stream_read = stream.Read(bytes, 0, bytes.Length)) != 0)
@@ -217,30 +209,31 @@ namespace WindowsFormsApp4
 
                         if (num_channel < 0)
                         {
-                            num_channel = (int)current_data_chunk.Length / nsamp_per_block;
-                            Console.WriteLine("Number of channels = " + num_channel);
+                            num_channel = (int)(current_data_chunk.Length / nsamp_per_block);
+                            Console.WriteLine("\t Number of channels = " + num_channel + 
+                                "\n\t Length of data chunk = " + current_data_chunk.Length + 
+                                "\n\t Number of samples pern block = " + nsamp_per_block);
 
                         }
-                        double current_data_point = 0;
+                        double current_data_point;
                         double t;
                         for (int ix = 0; ix < nsamp_per_block; ix++)
                         {
                             double.TryParse(current_data_chunk[ix + chan_idx2plt * num_channel], out current_data_point);
                             t = ((double)count) / Fs;
 
+                            
                             ChartValues.Add(new Model
                             {
                                 XVal = t,
                                 YVal = current_data_point
                             });
-
-                            //cartesianChart1.AxisX.ma = t + 0.5;
-                            //cartesianChart1.AxisX[0].MaxValue = t - 1; 
-
-                            if (ChartValues.Count > 2000) { ChartValues.RemoveAt(0); Console.WriteLine("Chart cnt = " + ChartValues.Count); }
-                            /*  queue data and calc rms 
+                            if (ChartValues.Count > 512) {
+                                ChartValues.RemoveAt(0);
+                            }
+                            
+                            // queue data and calc rms 
                             data_queue.Enqueue(current_data_point);
-
                             if (count < nmax_queue_total)
                             {
                                 current_rms_sq += current_data_point * current_data_point;
@@ -258,9 +251,8 @@ namespace WindowsFormsApp4
                                 current_rms = Math.Sqrt(current_rms - oldest_val + newest_val);
                             }
 
-                            panel1.BackColor = return_indicated_color(current_rms);
-                            *
-                            */
+                            panel1.BackColor = return_indicated_color(current_rms);                            
+                            
                             string nextLine = string.Format("{0}\n", current_data_point);
                             File.AppendAllText(csvFilePath, nextLine);
 
@@ -277,6 +269,7 @@ namespace WindowsFormsApp4
                 {
                     log.Text += "Error..... " + e.StackTrace;
                 }));
+                Console.WriteLine("!!!!\t" + e.StackTrace);
                 drawAndReport();
             }
         }

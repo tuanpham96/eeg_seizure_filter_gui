@@ -89,10 +89,10 @@
             // 
             // cartesianChart1
             // 
-            this.cartesianChart1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cartesianChart1.Location = new System.Drawing.Point(0, 0);
+            this.cartesianChart1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.cartesianChart1.Location = new System.Drawing.Point(589, 0);
             this.cartesianChart1.Name = "cartesianChart1";
-            this.cartesianChart1.Size = new System.Drawing.Size(661, 463);
+            this.cartesianChart1.Size = new System.Drawing.Size(911, 500);
             this.cartesianChart1.TabIndex = 1;
             this.cartesianChart1.Text = "cartesianChart1";
             // 
@@ -101,7 +101,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(661, 463);
+            this.ClientSize = new System.Drawing.Size(1500, 500);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.safety_lab);
             this.Controls.Add(this.log);
@@ -110,7 +110,7 @@
             this.Controls.Add(this.cartesianChart1);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
-            this.Text = "ConstantChanges";
+            this.Text = "Visualizing RMS of EEG";
             this.Load += new System.EventHandler(this.Form1_Load_1);
             this.ResumeLayout(false);
             this.PerformLayout();
