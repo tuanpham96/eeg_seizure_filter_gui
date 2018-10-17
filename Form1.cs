@@ -205,7 +205,6 @@ namespace WindowsFormsApp4
                 client.Connect("127.0.0.1", 1234);
                 int ntotal_samp = 64;
                 int nsamp_per_block = 4;
-                int num_channel = -1;  // meaning has not been defined 
                 int chan_idx2plt = 0; 
                 log.Invoke(new Action(() =>
                 {
@@ -225,56 +224,33 @@ namespace WindowsFormsApp4
 
                     string csvFilePath = @"C:\Users\Towle\Desktop\testfile_TP.csv";
                     File.WriteAllText(csvFilePath, "");
-
-                    Stopwatch stopwatch = new Stopwatch();
-                    stopwatch.Start();
-                    stopwatch.Stop(); 
-                    string reportTime = @"C:\Users\Towle\Desktop\reportTime.csv";
-                    File.WriteAllText(reportTime, String.Format("InitRead AddPoint RescalePlot GetRMS UpdateRMSViz\n"));                   
-                    TimeSpan t_init_read, t_add_point, t_rescale_plt, t_get_rms, t_update_rms_viz; 
+    
                     while ((stream_read = stream.Read(bytes, 0, bytes.Length)) != 0) {
                         string data = System.Text.Encoding.ASCII.GetString(bytes, 0, stream_read);                        
                         string[] current_data_chunk = data.Split(',');
-                        
+                        Console.WriteLine("\t\tChunk len = " + current_data_chunk.Length); 
                         log.Invoke(new Action(() => {
                             log.Text = data;
                         }));
 
-                        if (num_channel < 0) {
-                            num_channel = (int)current_data_chunk.Length / nsamp_per_block;
-                            Console.WriteLine("Number of channels = " + num_channel);
-                            
-                        }
+                        
                         double current_data_point = 0;
                         double t; 
                         for (int ix = 0; ix < nsamp_per_block; ix++) {
 
+                            double.TryParse(current_data_chunk[ix + chan_idx2plt * nsamp_per_block], out current_data_point);
                             
-                            stopwatch.Start();
-                            double.TryParse(current_data_chunk[ix + chan_idx2plt * num_channel], out current_data_point);
-                            stopwatch.Stop();
-                            t_init_read = stopwatch.Elapsed; 
-
                             t = ((double)count) / Fs;
-
-                            stopwatch.Reset(); 
-                            stopwatch.Start();                            
+                     
                             this.rms_lineseries.Points.Add(new DataPoint(t, current_data_point));                            
-                            stopwatch.Stop();
-                            t_add_point = stopwatch.Elapsed;
-                            
-                            stopwatch.Reset();
-                            stopwatch.Start();
-                            /*myRMSPlot.InvalidatePlot(true);
-                            myRMSModel.DefaultXAxis.AbsoluteMinimum = t - 5;
-                            myRMSModel.DefaultXAxis.AbsoluteMaximum = t + 5;
-                            myRMSModel.DefaultXAxis.Reset();
-                            */
-                            stopwatch.Stop();
-                            t_rescale_plt = stopwatch.Elapsed;
 
-                            stopwatch.Reset();
-                            stopwatch.Start();
+
+                            myRMSPlot.InvalidatePlot(true);
+                           //myRMSModel.DefaultXAxis.AbsoluteMinimum = t - 5;
+                           // myRMSModel.DefaultXAxis.AbsoluteMaximum = t + 5;
+                            myRMSModel.DefaultXAxis.Reset();
+
+
                             data_queue.Enqueue(current_data_point);
                             
                             if (count < ntotal_samp) {
@@ -291,31 +267,16 @@ namespace WindowsFormsApp4
                                 current_rms = Math.Sqrt(current_rms - oldest_val + newest_val);
                             }
 
-                            stopwatch.Stop();
-                            t_get_rms = stopwatch.Elapsed;
-                            
-                            stopwatch.Reset();
-                            stopwatch.Start();
                             rms_val.Invoke(new Action(() => {
                                 rms_val.Text = String.Format("{0}", current_rms);
                             }));
                             
                             panel1.BackColor = return_indicated_color(current_rms);
-                            stopwatch.Stop();
-                            t_update_rms_viz = stopwatch.Elapsed;
-                            stopwatch.Reset();
+
 
                             string nextLine = string.Format("{0}\n", current_data_point);
                             File.AppendAllText(csvFilePath, nextLine);
 
-                            string nextReportTime = String.Format("{0} {1} {2} {3} {4}\n", 
-                                t_init_read.Ticks, 
-                                t_add_point.Ticks,
-                                t_rescale_plt.Ticks,
-                                t_get_rms.Ticks ,
-                                t_update_rms_viz.Ticks);
-                            File.AppendAllText(reportTime, nextReportTime);
-                            
                             count++;
                         }
                     }
