@@ -123,7 +123,7 @@ namespace WindowsFormsApp4
         private double Fs = 512.0;
         private int nmax_queue_total = 64;
         private int nsamp_per_block = 4;
-        private int chan_idx2plt = 0;
+        private int chan_idx2plt = 3;
 
         private int max_pnt_plt = 512; 
 
@@ -139,8 +139,12 @@ namespace WindowsFormsApp4
         public Form1()
         {
             InitializeComponent();
-
-            
+            string result;
+            using (Prompt prompt = new Prompt("text", "caption"))
+            {
+                result = prompt.Result;
+            }
+            Console.WriteLine("\t >>>>>>>> Dialog = " + result); 
             var mapper = Mappers.Xy<Model>()
                 .X(model => model.XVal)   
                 .Y(model => model.YVal);
@@ -177,6 +181,18 @@ namespace WindowsFormsApp4
             }
         }
 
+        private string welcomeMessage()
+        {
+            string message = String.Format("Connected to HOST@{0} - PORT@{1}\r\n",
+                        this.hostname, this.port);
+            message += "\t+ Sampling frequency: " + Fs + "\r\n";
+            message += "\t+ Number of samples/epoch:" + nsamp_per_block + "\r\n";
+            message += "\t+ Channel to plot: #" + chan_idx2plt + "\r\n";
+            message += String.Format("\t+ RMS window is: {0} points ({1:0} ms)\r\n",
+                       nmax_queue_total, nmax_queue_total * 1000 / Fs); 
+
+            return message; 
+        }
         
         public void drawAndReport()
         {
@@ -186,7 +202,7 @@ namespace WindowsFormsApp4
                 client.Connect(this.hostname, this.port);
                 log.Invoke(new Action(() =>
                 {
-                    log.Text = "Connected!";
+                    log.Text = welcomeMessage();
                 }));
 
                 Byte[] bytes = new Byte[16384];
@@ -280,5 +296,47 @@ namespace WindowsFormsApp4
 
         }
 
+
+        /** Dialog promp implementation from Gideon Mulder in stakcoverflow
+         * https://stackoverflow.com/questions/5427020/prompt-dialog-in-windows-forms
+         */
+
+        public class Prompt : IDisposable
+        {
+            private Form prompt { get; set; }
+            public string Result { get; }
+
+            public Prompt(string text, string caption)
+            {
+                Result = ShowDialog(text, caption);
+            }
+            private string ShowDialog(string text, string caption)
+            {
+                prompt = new Form()
+                {
+                    Width = 500,
+                    Height = 150,
+                    FormBorderStyle = FormBorderStyle.FixedDialog,
+                    Text = caption,
+                    StartPosition = FormStartPosition.CenterScreen,
+                    TopMost = true
+                };
+                Label textLabel = new Label() { Left = 50, Top = 20, Text = text, Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
+                TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 400 };
+                Button confirmation = new Button() { Text = "Ok", Left = 350, Width = 100, Top = 70, DialogResult = DialogResult.OK };
+                confirmation.Click += (sender, e) => { prompt.Close(); };
+                prompt.Controls.Add(textBox);
+                prompt.Controls.Add(confirmation);
+                prompt.Controls.Add(textLabel);
+                prompt.AcceptButton = confirmation;
+
+                return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : "";
+            }
+
+            public void Dispose()
+            {
+                prompt.Dispose();
+            }
+        }
     }
 }
