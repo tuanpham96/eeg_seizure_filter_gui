@@ -118,8 +118,9 @@ namespace WindowsFormsApp4
         private int nsamp_per_block = 4;
         private int chan_idx2plt = 3;
 
-
         private string output_file_name = @"C:\Users\Towle\Desktop\Tuan\data\testfile_TP.csv";
+
+        private AppInputParameters app_inp_prm; 
 
         private int max_pnt_plt = 512; 
 
@@ -134,12 +135,11 @@ namespace WindowsFormsApp4
         public Form1()
         {
             InitializeComponent();
-            string result;
-            using (Prompt prompt = new Prompt("text", "caption"))
+            using (Prompt prompt = new Prompt("ENTER THE INPUT PARAMETERS", "Input parameters"))
             {
-                result = prompt.Result;
+                app_inp_prm = prompt.Result;
             }
-            Console.WriteLine("\t >>>>>>>> Dialog = " + result); 
+
             var mapper = Mappers.Xy<Model>()
                 .X(model => model.XVal)   
                 .Y(model => model.YVal);

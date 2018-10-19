@@ -16,7 +16,7 @@ namespace WindowsFormsApp4
     public class Prompt : IDisposable
     {
         private Form prompt { get; set; }
-        public string Result { get; }
+        public AppInputParameters Result { get; }
         public AppInputParameters input_params;
 
         public Prompt(string text, string caption)
@@ -24,71 +24,85 @@ namespace WindowsFormsApp4
             input_params = new AppInputParameters();
             Result = ShowDialog(text, caption);
         }
-        private string ShowDialog(string text, string caption)
+        private AppInputParameters ShowDialog(string title, string caption)
         {
             prompt = new Form()
             {
-                Width = 500,
-                Height = 500,
+                Width = 600,
+                Height = 700,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 Text = caption,
                 StartPosition = FormStartPosition.CenterScreen,
                 TopMost = true
             };
-            Label promptTitle = new Label() { Left = 50, Top = 20, Text = text, Dock = DockStyle.Top, TextAlign = ContentAlignment.MiddleCenter };
 
-            /*
-            hostname = "127.0.0.1";
-            port = 1234;
-
-            Fs = 512.0;
-            nmax_queue_total = 64;
-            nsamp_per_block = 4;
-            chan_idx2plt = 3; */
-
+            Label promptTitle = new Label() {
+                Left = 50,
+                Top = 10,
+                Text = title,
+                Dock = DockStyle.Top,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            prompt.Controls.Add(promptTitle);
+            
             int number_inputs = input_params.nameAndProp.Count;
             TextBox[] textBoxes = new TextBox[number_inputs];
             Label[] inputLabels = new Label[number_inputs];
-            string name_i, prop_i;
-            int top_label = 20, left_label = 50;
-            int top_box = 20, left_box = 100, width_box = 100; 
+            string prop_alias, prop_name, prop_val;
+
+            int top_label = 30, left_label = 10, width_label = 200;
+            int top_box = 30, left_box = 220, width_box = 300;
+            int spacing = 30; 
 
             for (int i_inp = 0; i_inp < number_inputs; i_inp++)
             {
-                name_i = input_params.nameAndProp.Keys.ElementAt(i_inp);
-                Console.WriteLine("Name = " + name_i + "\t Prop = " + input_params.nameAndProp[name_i]); 
-                prop_i = (string)input_params.GetPropValue(input_params.nameAndProp[name_i].ToString());
+                prop_alias = input_params.nameAndProp.Keys.ElementAt(i_inp);
+                prop_name = input_params.nameAndProp[prop_alias].ToString();
+                prop_val = input_params.GetPropValue(prop_name).ToString();
 
                 inputLabels[i_inp] = new Label()
                 {
                     Left = left_label,
                     Top = top_label,
-                    Text = name_i,
-                    TextAlign = ContentAlignment.MiddleLeft
+                    Text = prop_alias,
+                    Width = width_label, 
+                    TextAlign = ContentAlignment.TopRight
                 };
-                top_label += 20;
+                top_label += spacing;
                 textBoxes[i_inp] = new TextBox()
                 {
                     Left = left_box,
                     Top = top_box,
                     Width = width_box, 
-                    Text = prop_i
+                    Text = prop_val
                 };
-                top_box += 20;
+                top_box += spacing;
                 prompt.Controls.Add(inputLabels[i_inp]);
                 prompt.Controls.Add(textBoxes[i_inp]);
             }
-            //TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 50, Text = (string)input_params.GetPropValue("hostname")};
              
-            Button confirmation = new Button() { Text = "Ok", Left = 100, Width = 100, Top = 70, DialogResult = DialogResult.OK };            
-            confirmation.Click += (sender, e) => { prompt.Close(); };
 
-            //prompt.Controls.Add(textBox);
+            Button confirmation = new Button() {
+                Text = "Ok",
+                Left = 100, Width = 
+                100, Top = 500,
+                DialogResult = DialogResult.OK
+            };            
+            confirmation.Click += (sender, e) => { prompt.Close(); };            
             prompt.Controls.Add(confirmation);
-            prompt.Controls.Add(promptTitle);
             prompt.AcceptButton = confirmation;
 
-            return prompt.ShowDialog() == DialogResult.OK ? textBoxes[0].Text : "";
+            if (prompt.ShowDialog() == DialogResult.OK)
+            {
+                for (int i_inp = 0; i_inp < number_inputs; i_inp++)
+                {
+                    prop_alias = input_params.nameAndProp.Keys.ElementAt(i_inp);
+                    prop_name = input_params.nameAndProp[prop_alias].ToString();                    
+                    input_params.SetPropValue(prop_name, textBoxes[i_inp].Text); 
+                }
+            }
+                return input_params; 
+            // return prompt.ShowDialog() == DialogResult.OK ? input_params : input_params;
         }
 
         public void Dispose()

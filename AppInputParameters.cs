@@ -35,6 +35,18 @@ namespace WindowsFormsApp4
             return this.GetType().GetRuntimeProperty(propName)?.GetValue(this);
         }
 
+        public void SetPropValue(string propName, object newValue)
+        {
+            PropertyInfo propInfo = this.GetType().GetProperty(propName);
+            try
+            {
+                propInfo.SetValue(this, Convert.ChangeType(newValue, propInfo.PropertyType));
+            } catch (Exception e)
+            {
+                Console.WriteLine("Error in setting value: -> " + e.StackTrace); 
+            }
+        }
+
         public AppInputParameters()
         {
             nameAndProp = new Dictionary<string, string>
@@ -43,14 +55,13 @@ namespace WindowsFormsApp4
                 {"Port", "port" },
                 {"Sample frequency (Hz)", "Fs" },
                 {"RMS window (#points)", "nmax_queue_total" },
-                {"Number of samples/channel per epoch", "nsamp_per_block" },
+                {"Number of samples/channel/epoch", "nsamp_per_block" },
                 {"Channel ID# to display", "chan_idx2plt" },
                 {"Output file name",  "output_file_name"},
                 {"DANGER upper bound",  "danger_upperbound"},
                 {"DANGER lower bound",  "danger_lowerbound"},
                 {"WARNING upper bound", "warning_upperbound" },
                 {"WARNING lower bound", "warning_lowerbound" }
-
             };
 
 
