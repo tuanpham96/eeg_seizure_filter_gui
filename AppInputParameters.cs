@@ -24,9 +24,9 @@ namespace WindowsFormsApp4
         public double warning_upperbound { get; set; }
         public double warning_lowerbound { get; set; }
 
-        public static Color danger_color { get; set; }
-        public static Color warning_color { get; set; }
-        public static Color normal_color { get; set; }
+        public Color danger_color { get; set; }
+        public Color warning_color { get; set; }
+        public Color normal_color { get; set; }
 
         public Dictionary<string, string> nameAndProp; 
 

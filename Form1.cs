@@ -101,23 +101,6 @@ namespace WindowsFormsApp4
 {
     public partial class Form1 : Form
     {
-        public double danger_upperbound = 1.4;
-        public double danger_lowerbound = 0.6;
-        public double warning_upperbound = 1.2;
-        public double warning_lowerbound = 0.8;
-
-        public static Color danger_color = Color.FromArgb(255, 0, 0);
-        public static Color warning_color = Color.FromArgb(255, 255, 0);
-        public static Color normal_color = Color.FromArgb(0, 255, 0);
-
-        private string hostname = "127.0.0.1"; // local 
-        private int port = 1234; // default 
-
-        private double Fs = 512.0;
-        private int nmax_queue_total = 64;
-        private int nsamp_per_block = 4;
-        private int chan_idx2plt = 3;
-
         private string output_file_name = @"C:\Users\Towle\Desktop\Tuan\data\testfile_TP.csv";
 
         private AppInputParameters app_inp_prm; 
@@ -167,24 +150,24 @@ namespace WindowsFormsApp4
         
         public Color return_indicated_color(double value)
         {
-            if (value < danger_lowerbound | value > danger_upperbound) {
-                return danger_color;
-            } else if (value < warning_lowerbound | value > warning_upperbound) {
-                return warning_color;
+            if (value < app_inp_prm.danger_lowerbound | value > app_inp_prm.danger_upperbound) {
+                return app_inp_prm.danger_color;
+            } else if (value < app_inp_prm.warning_lowerbound | value > app_inp_prm.warning_upperbound) {
+                return app_inp_prm.warning_color;
             } else {
-                return normal_color;
+                return app_inp_prm.normal_color;
             }
         }
 
         private string welcomeMessage()
         {
             string message = String.Format("Connected to HOST@{0} - PORT@{1}\r\n",
-                        this.hostname, this.port);
-            message += "\t+ Sampling frequency: " + Fs + "\r\n";
-            message += "\t+ Number of samples/epoch:" + nsamp_per_block + "\r\n";
-            message += "\t+ Channel to plot: #" + chan_idx2plt + "\r\n";
+                        this.app_inp_prm.hostname, this.app_inp_prm.port);
+            message += "\t+ Sampling frequency: " + this.app_inp_prm.Fs + "\r\n";
+            message += "\t+ Number of samples/epoch:" + this.app_inp_prm.nsamp_per_block + "\r\n";
+            message += "\t+ Channel to plot: #" + this.app_inp_prm.chan_idx2plt + "\r\n";
             message += String.Format("\t+ RMS window is: {0} points ({1:0} ms)\r\n",
-                       nmax_queue_total, nmax_queue_total * 1000 / Fs); 
+                       this.app_inp_prm.nmax_queue_total, this.app_inp_prm.nmax_queue_total * 1000 / this.app_inp_prm.Fs); 
 
             return message; 
         }
@@ -194,7 +177,7 @@ namespace WindowsFormsApp4
             try 
             {
                 TcpClient client = new TcpClient();
-                client.Connect(this.hostname, this.port);
+                client.Connect(this.app_inp_prm.hostname, app_inp_prm.port);
                 log.Invoke(new Action(() =>
                 {
                     log.Text = welcomeMessage();
@@ -223,11 +206,11 @@ namespace WindowsFormsApp4
                         double current_data_point;
                         double t;
                         int idx_chan_samp; 
-                        for (int ix = 0; ix < nsamp_per_block; ix++)
+                        for (int ix = 0; ix < app_inp_prm.nsamp_per_block; ix++)
                         {
-                            idx_chan_samp = ix + chan_idx2plt * nsamp_per_block;
+                            idx_chan_samp = ix + app_inp_prm.chan_idx2plt * app_inp_prm.nsamp_per_block;
                             double.TryParse(current_data_chunk[idx_chan_samp], out current_data_point);
-                            t = ((double)count) / Fs;
+                            t = ((double)count) / this.app_inp_prm.Fs;
                             
                             ChartValues.Add(new Model
                             {
@@ -241,19 +224,19 @@ namespace WindowsFormsApp4
                             
                             // queue data and calc rms 
                             data_queue.Enqueue(current_data_point);
-                            if (count < nmax_queue_total - 1)
+                            if (count < app_inp_prm.nmax_queue_total - 1)
                             {
                                 current_rms_sq += current_data_point * current_data_point;
                             }
-                            else if (count == nmax_queue_total - 1)
+                            else if (count == app_inp_prm.nmax_queue_total - 1)
                             {
-                                current_rms = Math.Sqrt(current_rms_sq / nmax_queue_total);
+                                current_rms = Math.Sqrt(current_rms_sq / app_inp_prm.nmax_queue_total);
                             }
                             else
                             {
                                 oldest_val = data_queue.Dequeue();                                
-                                oldest_val = oldest_val * oldest_val / nmax_queue_total;
-                                newest_val = current_data_point * current_data_point / nmax_queue_total;
+                                oldest_val = oldest_val * oldest_val / app_inp_prm.nmax_queue_total;
+                                newest_val = current_data_point * current_data_point / app_inp_prm.nmax_queue_total;
                                 current_rms_sq = current_rms * current_rms; 
                                 current_rms = Math.Sqrt(current_rms_sq - oldest_val + newest_val);
                             }
