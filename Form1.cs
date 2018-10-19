@@ -118,9 +118,11 @@ namespace WindowsFormsApp4
         private int nsamp_per_block = 4;
         private int chan_idx2plt = 3;
 
+
+        private string output_file_name = @"C:\Users\Towle\Desktop\Tuan\data\testfile_TP.csv";
+
         private int max_pnt_plt = 512; 
 
-        private string file_name = @"C:\Users\Towle\Desktop\Tuan\data\testfile_TP.csv";
         private Thread logic_thread;
         public ChartValues<Model> ChartValues { get; set; }
         public class Model
@@ -210,7 +212,7 @@ namespace WindowsFormsApp4
                     int count = 0;
                     Stream stream = client.GetStream();
 
-                    string csvFilePath = this.file_name;
+                    string csvFilePath = this.output_file_name;
                     File.WriteAllText(csvFilePath, "Data;RMS\n");
 
                     while ((stream_read = stream.Read(bytes, 0, bytes.Length)) != 0)
