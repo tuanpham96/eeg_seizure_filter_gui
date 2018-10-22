@@ -33,7 +33,8 @@
             this.log = new System.Windows.Forms.TextBox();
             this.safety_lab = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.cartesianChart1 = new LiveCharts.WinForms.CartesianChart();
+            //this.cartesianChart1 = new LiveCharts.WinForms.CartesianChart();
+            this.cartesianCharts = new LiveCharts.WinForms.CartesianChart[3]; 
             this.SuspendLayout();
             // 
             // rms_lab
@@ -88,12 +89,25 @@
             // 
             // cartesianChart1
             // 
+            /*
             this.cartesianChart1.Dock = System.Windows.Forms.DockStyle.Right;
             this.cartesianChart1.Location = new System.Drawing.Point(589, 0);
             this.cartesianChart1.Name = "cartesianChart1";
             this.cartesianChart1.Size = new System.Drawing.Size(911, 500);
             this.cartesianChart1.TabIndex = 1;
             this.cartesianChart1.Text = "cartesianChart1";
+            */
+            for (int idx = 0; idx < cartesianCharts.Length; idx++)
+            {
+                this.cartesianCharts[idx] = new LiveCharts.WinForms.CartesianChart();
+                //this.cartesianCharts[idx].Dock = System.Windows.Forms.DockStyle.Right;
+                this.cartesianCharts[idx].Location = new System.Drawing.Point(570, 100*idx);
+                this.cartesianCharts[idx].Name = string.Format("cartesianChart%d", idx);
+                this.cartesianCharts[idx].Size = new System.Drawing.Size(900, 150);
+                this.cartesianCharts[idx].TabIndex = 1;
+                this.cartesianCharts[idx].Text = string.Format("cartesianChart%d", idx);
+                this.Controls.Add(this.cartesianCharts[idx]);
+            }
             // 
             // Form1
             // 
@@ -106,7 +120,7 @@
             this.Controls.Add(this.log);
             this.Controls.Add(this.rms_val);
             this.Controls.Add(this.rms_lab);
-            this.Controls.Add(this.cartesianChart1);
+            //this.Controls.Add(this.cartesianChart1);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Visualizing RMS of EEG";
@@ -122,7 +136,8 @@
         private System.Windows.Forms.TextBox log;
         private System.Windows.Forms.Label safety_lab;
         private System.Windows.Forms.Panel panel1;
-        private LiveCharts.WinForms.CartesianChart cartesianChart1;
+        //private LiveCharts.WinForms.CartesianChart cartesianChart1;
+        private LiveCharts.WinForms.CartesianChart[] cartesianCharts;
     }
 }
 

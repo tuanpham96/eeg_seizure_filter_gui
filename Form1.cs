@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using LiveCharts;
 using LiveCharts.Wpf; 
 using LiveCharts.Configurations;
+using LiveCharts.Defaults;
 
 /** SEIZURE FILTER EEG PROGRAM
  * Started by Dominic DiCarlo September 2018
@@ -103,10 +104,9 @@ namespace WindowsFormsApp4
     {
         private AppInputParameters app_inp_prm; 
 
-        private int max_pnt_plt = 512; 
-
         private Thread logic_thread;
         public ChartValues<Model> ChartValues { get; set; }
+        public ChartValues<ObservablePoint>[] Obs { get; set; }
         public class Model
         {
             public double XVal { get; set; }
@@ -116,29 +116,84 @@ namespace WindowsFormsApp4
         public Form1()
         {
             InitializeComponent();
+
             using (Prompt prompt = new Prompt("ENTER THE INPUT PARAMETERS", "Input parameters"))
             {
                 app_inp_prm = prompt.Result;
             }
 
-            var mapper = Mappers.Xy<Model>()
-                .X(model => model.XVal)   
-                .Y(model => model.YVal);
-            Charting.For<Model>(mapper);
-            ChartValues = new ChartValues<Model>();
-
-            cartesianChart1.Series = new SeriesCollection {  new LineSeries
-            {
-                Values = ChartValues,
-                StrokeThickness = 1,
-                PointGeometry = null,
-                LineSmoothness = 0,
-            }};
-            cartesianChart1.DisableAnimations = true; // for performance 
-            
+            initializePlot();             
             this.Load += Form1_Load;
         }
 
+        private void initializePlot()
+        {
+            /*
+            var mapper = Mappers.Xy<Model>()
+                            .X(model => model.XVal)
+                            .Y(model => model.YVal);
+            Charting.For<Model>(mapper);
+
+            ChartValues = new ChartValues<Model>();
+            */
+            var mapper = Mappers.Xy<ObservablePoint>()
+                            .X(value => value.X)
+                            .Y(value => value.Y);
+            Charting.For<ObservablePoint>(mapper);
+
+            Obs = new ChartValues<ObservablePoint>[3]; 
+            for (int idx_obs = 0; idx_obs < 3; idx_obs++)
+            {
+                Obs[idx_obs] = new ChartValues<ObservablePoint>();
+                cartesianCharts[idx_obs].Series = new SeriesCollection
+                {
+                    new LineSeries
+                    {
+                        Values = Obs[idx_obs],
+                        StrokeThickness = 1,
+                        PointGeometry = DefaultGeometries.None,
+                        LineSmoothness = 0,
+                        Fill = System.Windows.Media.Brushes.Transparent,
+                    }
+                };
+                cartesianCharts[idx_obs].DisableAnimations = true; 
+            }
+            /* 
+            cartesianChart1.Series = new SeriesCollection {
+                new LineSeries {
+                    Values = ChartValues,
+                    StrokeThickness = 1,
+                    PointGeometry = null,
+                    LineSmoothness = 0,
+                },
+                new LineSeries
+                {
+                    Values = Obs[0],
+                    StrokeThickness = 1,
+                    PointGeometry = DefaultGeometries.None,
+                    LineSmoothness = 0,
+                    Fill = System.Windows.Media.Brushes.Transparent,
+                },
+                new LineSeries
+                {
+                    Values = Obs[1],
+                    StrokeThickness = 1,
+                    PointGeometry = DefaultGeometries.None,
+                    LineSmoothness = 0,
+                    Fill =  System.Windows.Media.Brushes.Transparent
+                },
+                new LineSeries
+                {
+                    Values = Obs[2],
+                    StrokeThickness = 1,
+                    PointGeometry = DefaultGeometries.None,
+                    LineSmoothness = 0,
+                    Fill =  System.Windows.Media.Brushes.Transparent
+                }
+            };
+            cartesianChart1.DisableAnimations = true; // for performance 
+            */
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
             logic_thread = new Thread(drawAndReport);
@@ -197,31 +252,86 @@ namespace WindowsFormsApp4
                     Stream stream = client.GetStream();
 
                     string csvFilePath = this.app_inp_prm.output_file_name;
-                    File.WriteAllText(csvFilePath, "Data;RMS;Level\n");
+                    File.WriteAllText(csvFilePath, "Data;RMS;Level;Data2\n");
 
                     while ((stream_read = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
                         string data = System.Text.Encoding.ASCII.GetString(bytes, 0, stream_read);
-                        string[] current_data_chunk = data.Split(',');
+                        string[] current_data_chunk = data.Split(',');                  
 
-                        double current_data_point;
-                        double t;
-                        int idx_chan_samp; 
+                       
+
                         for (int ix = 0; ix < app_inp_prm.nsamp_per_block; ix++)
                         {
+                            double current_data_point;
+                            double t;
+                            int idx_chan_samp;
+
+                            double current_point2;
+                            int idx_chan2; 
+
                             idx_chan_samp = ix + app_inp_prm.chan_idx2plt * app_inp_prm.nsamp_per_block;
                             double.TryParse(current_data_chunk[idx_chan_samp], out current_data_point);
                             t = ((double)count) / this.app_inp_prm.Fs;
 
+                            idx_chan2 = ix + 1 * app_inp_prm.nsamp_per_block;
+                            double.TryParse(current_data_chunk[idx_chan2], out current_point2);
+                            /*
                             ChartValues.Add(new Model
                             {
                                 XVal = t,
                                 YVal = current_data_point // current_rms
                             });
-                            if (ChartValues.Count > max_pnt_plt)
+                            if (ChartValues.Count > this.app_inp_prm.max_pnt_plt)
                             {
                                 ChartValues.RemoveAt(0);
                             }
+                            */
+                            /*
+                            cartesianChart1.BeginInvoke(new Action(() => {
+                                
+                                    Obs[0].Add(new ObservablePoint(t, current_data_point));
+                                    if (Obs[0].Count > this.app_inp_prm.max_pnt_plt)
+                                    {
+                                        Obs[0].RemoveAt(0);
+                                    }
+
+                                    Obs[1].Add(new ObservablePoint(t, current_point2 - 5));
+                                    if (Obs[1].Count > this.app_inp_prm.max_pnt_plt)
+                                    {
+                                        Obs[1].RemoveAt(0);
+                                    }
+
+                                    Obs[2].Add(new ObservablePoint(t, current_data_point - current_point2 - 10));
+                                    if (Obs[2].Count > this.app_inp_prm.max_pnt_plt)
+                                    {
+                                        Obs[2].RemoveAt(0);
+                                    }
+                                    cartesianChart1.AxisX[0].MinValue = Math.Round(t) - 5;
+                                    cartesianChart1.AxisX[0].MaxValue = Math.Round(t) + 0.1;
+                                
+                            })); 
+                            */
+
+                            cartesianCharts[0].BeginInvoke(new Action(() =>
+                            {
+                                Obs[0].Add(new ObservablePoint(t, current_data_point));
+                                if (Obs[0].Count > this.app_inp_prm.max_pnt_plt)
+                                {
+                                    Obs[0].RemoveAt(0);
+                                }
+                                Obs[1].Add(new ObservablePoint(t, current_point2));
+                                if (Obs[0].Count > this.app_inp_prm.max_pnt_plt)
+                                {
+                                    Obs[1].RemoveAt(0);
+                                }
+                                Obs[2].Add(new ObservablePoint(t, current_data_point - current_point2));
+                                if (Obs[2].Count > this.app_inp_prm.max_pnt_plt)
+                                {
+                                    Obs[2].RemoveAt(0);
+                                }
+                            }));
+
 
 
                             // queue data and calc rms 
@@ -246,15 +356,16 @@ namespace WindowsFormsApp4
                             Color color_level;
                             int level_idx;
                             return_indicated_color(current_rms, out color_level, out level_idx);
-                            panel1.BackColor = color_level; 
+                            panel1.BackColor = color_level;
 
                             // rms_val : will be a certain delay 
                             // consider to rid of 
+                            
                             rms_val.BeginInvoke(new Action(() => {
                                 rms_val.Text = String.Format("{0}", current_rms);
                             }));
-
-                            string nextLine = string.Format("{0};{1};{2}\n", current_data_point, current_rms, level_idx);
+                            
+                            string nextLine = string.Format("{0};{1};{2};{3}\n", current_data_point, current_rms, level_idx, current_point2);
                             File.AppendAllText(csvFilePath, nextLine);
 
                             count++;

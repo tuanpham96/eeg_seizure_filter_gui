@@ -28,7 +28,9 @@ namespace WindowsFormsApp4
         public Color warning_color { get; set; }
         public Color normal_color { get; set; }
 
-        public Dictionary<string, string> nameAndProp; 
+        public Dictionary<string, string> nameAndProp;
+
+        public int max_pnt_plt = 2*512;
 
         public object GetPropValue(string propName)
         {
@@ -71,7 +73,7 @@ namespace WindowsFormsApp4
             Fs = 512.0;
             nmax_queue_total = 64;
             nsamp_per_block = 4;
-            chan_idx2plt = 3;
+            chan_idx2plt = 0;
 
             output_file_name = @"C:\Users\Towle\Desktop\Tuan\data\testfile_TP.csv";
 
