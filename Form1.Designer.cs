@@ -76,7 +76,6 @@
             this.safety_lab.Size = new System.Drawing.Size(187, 26);
             this.safety_lab.TabIndex = 5;
             this.safety_lab.Text = "Seizure Threshold";
-            this.safety_lab.Click += new System.EventHandler(this.safety_lab_Click);
             // 
             // panel1
             // 
@@ -111,7 +110,6 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Visualizing RMS of EEG";
-            this.Load += new System.EventHandler(this.Form1_Load_1);
             this.ResumeLayout(false);
             this.PerformLayout();
 

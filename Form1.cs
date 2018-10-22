@@ -101,8 +101,6 @@ namespace WindowsFormsApp4
 {
     public partial class Form1 : Form
     {
-        private string output_file_name = @"C:\Users\Towle\Desktop\Tuan\data\testfile_TP.csv";
-
         private AppInputParameters app_inp_prm; 
 
         private int max_pnt_plt = 512; 
@@ -134,9 +132,8 @@ namespace WindowsFormsApp4
                 Values = ChartValues,
                 StrokeThickness = 1,
                 PointGeometry = null,
-                LineSmoothness = 0 
-            }};         
-            
+                LineSmoothness = 0,
+            }};
             cartesianChart1.DisableAnimations = true; // for performance 
             
             this.Load += Form1_Load;
@@ -148,14 +145,17 @@ namespace WindowsFormsApp4
             logic_thread.Start();
         }       
         
-        public Color return_indicated_color(double value)
+        public void return_indicated_color(double value, out Color color_res, out int level_res)
         {
             if (value < app_inp_prm.danger_lowerbound | value > app_inp_prm.danger_upperbound) {
-                return app_inp_prm.danger_color;
+                color_res = app_inp_prm.danger_color;
+                level_res = 2;
             } else if (value < app_inp_prm.warning_lowerbound | value > app_inp_prm.warning_upperbound) {
-                return app_inp_prm.warning_color;
+                color_res = app_inp_prm.warning_color;
+                level_res = 1;
             } else {
-                return app_inp_prm.normal_color;
+                color_res = app_inp_prm.normal_color;
+                level_res = 0;
             }
         }
 
@@ -185,6 +185,7 @@ namespace WindowsFormsApp4
 
                 Byte[] bytes = new Byte[16384];
                 Queue<double> data_queue = new Queue<double>();
+
                 double oldest_val = 0, newest_val = 0;
                 double current_rms_sq = 0;
                 double current_rms = -1; // not initiated 
@@ -195,8 +196,8 @@ namespace WindowsFormsApp4
                     int count = 0;
                     Stream stream = client.GetStream();
 
-                    string csvFilePath = this.output_file_name;
-                    File.WriteAllText(csvFilePath, "Data;RMS\n");
+                    string csvFilePath = this.app_inp_prm.output_file_name;
+                    File.WriteAllText(csvFilePath, "Data;RMS;Level\n");
 
                     while ((stream_read = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
@@ -211,17 +212,18 @@ namespace WindowsFormsApp4
                             idx_chan_samp = ix + app_inp_prm.chan_idx2plt * app_inp_prm.nsamp_per_block;
                             double.TryParse(current_data_chunk[idx_chan_samp], out current_data_point);
                             t = ((double)count) / this.app_inp_prm.Fs;
-                            
+
                             ChartValues.Add(new Model
                             {
                                 XVal = t,
-                                YVal = current_data_point
+                                YVal = current_data_point // current_rms
                             });
-                            if (ChartValues.Count > max_pnt_plt) {
+                            if (ChartValues.Count > max_pnt_plt)
+                            {
                                 ChartValues.RemoveAt(0);
                             }
 
-                            
+
                             // queue data and calc rms 
                             data_queue.Enqueue(current_data_point);
                             if (count < app_inp_prm.nmax_queue_total - 1)
@@ -241,9 +243,18 @@ namespace WindowsFormsApp4
                                 current_rms = Math.Sqrt(current_rms_sq - oldest_val + newest_val);
                             }
 
-                            panel1.BackColor = return_indicated_color(current_rms);                            
-                            
-                            string nextLine = string.Format("{0};{1}\n", current_data_point, current_rms);
+                            Color color_level;
+                            int level_idx;
+                            return_indicated_color(current_rms, out color_level, out level_idx);
+                            panel1.BackColor = color_level; 
+
+                            // rms_val : will be a certain delay 
+                            // consider to rid of 
+                            rms_val.BeginInvoke(new Action(() => {
+                                rms_val.Text = String.Format("{0}", current_rms);
+                            }));
+
+                            string nextLine = string.Format("{0};{1};{2}\n", current_data_point, current_rms, level_idx);
                             File.AppendAllText(csvFilePath, nextLine);
 
                             count++;
@@ -262,16 +273,6 @@ namespace WindowsFormsApp4
                 Console.WriteLine("!!!!\t" + e.StackTrace);
                 drawAndReport();
             }
-        }
-
-        private void safety_lab_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Form1_Load_1(object sender, EventArgs e)
-        {
-
         }
 
 
