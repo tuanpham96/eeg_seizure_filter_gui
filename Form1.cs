@@ -107,6 +107,7 @@ namespace WindowsFormsApp4
         private Thread logic_thread;
         public ChartValues<Model> ChartValues { get; set; }
         public ChartValues<ObservablePoint>[] Obs { get; set; }
+        public int max_op_len = 128; 
         public class Model
         {
             public double XVal { get; set; }
@@ -144,28 +145,16 @@ namespace WindowsFormsApp4
             Obs = new ChartValues<ObservablePoint>[3]; 
             for (int idx_obs = 0; idx_obs < 3; idx_obs++)
             {
-                Obs[idx_obs] = new ChartValues<ObservablePoint>();
-                cartesianCharts[idx_obs].Series = new SeriesCollection
-                {
-                    new LineSeries
-                    {
-                        Values = Obs[idx_obs],
-                        StrokeThickness = 1,
-                        PointGeometry = DefaultGeometries.None,
-                        LineSmoothness = 0,
-                        Fill = System.Windows.Media.Brushes.Transparent,
-                    }
-                };
-                cartesianCharts[idx_obs].DisableAnimations = true; 
+                Obs[idx_obs] = new ChartValues<ObservablePoint>();                
             }
-            /* 
+     
             cartesianChart1.Series = new SeriesCollection {
-                new LineSeries {
+                /*new LineSeries {
                     Values = ChartValues,
                     StrokeThickness = 1,
                     PointGeometry = null,
                     LineSmoothness = 0,
-                },
+                },*/
                 new LineSeries
                 {
                     Values = Obs[0],
@@ -173,7 +162,8 @@ namespace WindowsFormsApp4
                     PointGeometry = DefaultGeometries.None,
                     LineSmoothness = 0,
                     Fill = System.Windows.Media.Brushes.Transparent,
-                },
+                }
+                ,
                 new LineSeries
                 {
                     Values = Obs[1],
@@ -192,7 +182,7 @@ namespace WindowsFormsApp4
                 }
             };
             cartesianChart1.DisableAnimations = true; // for performance 
-            */
+            
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -287,52 +277,31 @@ namespace WindowsFormsApp4
                                 ChartValues.RemoveAt(0);
                             }
                             */
-                            /*
+                            
                             cartesianChart1.BeginInvoke(new Action(() => {
-                                
-                                    Obs[0].Add(new ObservablePoint(t, current_data_point));
-                                    if (Obs[0].Count > this.app_inp_prm.max_pnt_plt)
-                                    {
-                                        Obs[0].RemoveAt(0);
-                                    }
 
-                                    Obs[1].Add(new ObservablePoint(t, current_point2 - 5));
-                                    if (Obs[1].Count > this.app_inp_prm.max_pnt_plt)
-                                    {
-                                        Obs[1].RemoveAt(0);
-                                    }
-
-                                    Obs[2].Add(new ObservablePoint(t, current_data_point - current_point2 - 10));
-                                    if (Obs[2].Count > this.app_inp_prm.max_pnt_plt)
-                                    {
-                                        Obs[2].RemoveAt(0);
-                                    }
-                                    cartesianChart1.AxisX[0].MinValue = Math.Round(t) - 5;
-                                    cartesianChart1.AxisX[0].MaxValue = Math.Round(t) + 0.1;
-                                
-                            })); 
-                            */
-
-                            cartesianCharts[0].BeginInvoke(new Action(() =>
-                            {
                                 Obs[0].Add(new ObservablePoint(t, current_data_point));
                                 if (Obs[0].Count > this.app_inp_prm.max_pnt_plt)
                                 {
                                     Obs[0].RemoveAt(0);
                                 }
-                                Obs[1].Add(new ObservablePoint(t, current_point2));
-                                if (Obs[0].Count > this.app_inp_prm.max_pnt_plt)
+                                
+                                Obs[1].Add(new ObservablePoint(t, current_point2 - 5));
+                                if (Obs[1].Count > this.app_inp_prm.max_pnt_plt)
                                 {
                                     Obs[1].RemoveAt(0);
                                 }
-                                Obs[2].Add(new ObservablePoint(t, current_data_point - current_point2));
+
+                                Obs[2].Add(new ObservablePoint(t, current_data_point - current_point2 - 10));
                                 if (Obs[2].Count > this.app_inp_prm.max_pnt_plt)
                                 {
                                     Obs[2].RemoveAt(0);
                                 }
-                            }));
+                                //cartesianChart1.AxisX[0].MinValue = t - 1.5;
+                                //cartesianChart1.AxisX[0].MaxValue = t + 0.1;
 
-
+                            })); 
+                            
 
                             // queue data and calc rms 
                             data_queue.Enqueue(current_data_point);
