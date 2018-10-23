@@ -191,13 +191,21 @@ namespace WindowsFormsApp4
                 }));
 
                 Byte[] bytes = new Byte[16384];
-                Queue<double> data_queue_1 = new Queue<double>();
-                Queue<double> data_queue_2 = new Queue<double>();
 
-                double oldest_val_1 = 0, newest_val_1 = 0, oldest_val_2 = 0, newest_val_2 = 0;
-                double current_rms_sq_1 = 0, current_rms_sq_2 = 0;
-                double current_rms_1 = -1, current_rms_2 = -1; // not initiated 
-                
+                int nchan2plt = 2; 
+                Queue<double>[] data_queue_arr = new Queue<double>[nchan2plt];
+                double[] current_val_arr = new double[nchan2plt];
+                double oldest_val, newest_val; 
+                double[] current_rms_sq_arr = new double[nchan2plt], current_rms_arr = new double[nchan2plt];
+                Color[] color_level_arr = new Color[nchan2plt];
+                int[] level_idx_arr = new int[nchan2plt]; 
+                for (int i = 0; i < nchan2plt; i++)
+                {
+                    data_queue_arr[i] = new Queue<double>();
+                    current_rms_sq_arr[i] = 0;
+                    current_rms_arr[i] = -1; 
+                }
+
                 while (true)
                 {
                     int stream_read;
@@ -215,104 +223,67 @@ namespace WindowsFormsApp4
                         for (int ix = 0; ix < app_inp_prm.nsamp_per_block; ix++)
                         {
                             int idx_chan_samp_1, idx_chan_samp_2;
-                            double current_data_point_1, current_data_point_2;
                             double t;                            
 
                             idx_chan_samp_1 = ix + app_inp_prm.chan_idx2plt * app_inp_prm.nsamp_per_block;
-                            double.TryParse(current_data_chunk[idx_chan_samp_1], out current_data_point_1);
+                            double.TryParse(current_data_chunk[idx_chan_samp_1], out current_val_arr[0]);
 
                             idx_chan_samp_2 = ix + 1 * app_inp_prm.nsamp_per_block;
-                            double.TryParse(current_data_chunk[idx_chan_samp_2], out current_data_point_2);
+                            double.TryParse(current_data_chunk[idx_chan_samp_2], out current_val_arr[1]);
 
+                            double[] viz = {    current_rms_arr[0],
+                                                current_rms_arr[1] - 5,
+                                                current_rms_arr[0] - current_rms_arr[1] - 10 };
                             t = ((double)count) / this.app_inp_prm.Fs;
                             cartesianChart1.BeginInvoke(new Action(() => {
 
-                                Obs[0].Add(new ObservablePoint(t, current_data_point_1));
-                                if (Obs[0].Count > this.app_inp_prm.max_pnt_plt)
+                                for (int i_obs = 0; i_obs < viz.Length; i_obs++)
                                 {
-                                    Obs[0].RemoveAt(0);
+                                    Obs[i_obs].Add(new ObservablePoint(t, viz[i_obs]));
+                                    if (Obs[i_obs].Count > this.app_inp_prm.max_pnt_plt)
+                                    {
+                                        Obs[i_obs].RemoveAt(0);
+                                    }
                                 }
-                                
-                                Obs[1].Add(new ObservablePoint(t, current_data_point_2-5));
-                                if (Obs[1].Count > this.app_inp_prm.max_pnt_plt)
-                                {
-                                    Obs[1].RemoveAt(0);
-                                }
-
-                                Obs[2].Add(new ObservablePoint(t, current_data_point_1 - current_data_point_2 - 10));
-                                if (Obs[2].Count > this.app_inp_prm.max_pnt_plt)
-                                {
-                                    Obs[2].RemoveAt(0);
-                                }
-                                
-                                if (Obs[0].Count > this.app_inp_prm.max_pnt_plt / 2)
-                                {
-                                    cartesianChart1.AxisY[0].MinValue = -12;
-                                    cartesianChart1.AxisY[0].MaxValue = 3;
-
-                                    cartesianChart1.AxisX[0].MinValue = t - 3;
-                                    cartesianChart1.AxisX[0].MaxValue = t + 0.1;
-                                }
-
                             }));
-                            // queue data and calc rms 
-                            data_queue_1.Enqueue(current_data_point_1);
-                            
-                            if (count < app_inp_prm.nmax_queue_total - 1)
-                            {
-                                current_rms_sq_1 += current_data_point_1 * current_data_point_1;
-                            }
-                            else if (count == app_inp_prm.nmax_queue_total - 1)
-                            {
-                                current_rms_1 = Math.Sqrt(current_rms_sq_1 / app_inp_prm.nmax_queue_total);
-                            }
-                            else
-                            {
-                                oldest_val_1 = data_queue_1.Dequeue();                                
-                                oldest_val_1 = oldest_val_1 * oldest_val_1 / app_inp_prm.nmax_queue_total;
-                                newest_val_1 = current_data_point_1 * current_data_point_1 / app_inp_prm.nmax_queue_total;
-                                current_rms_sq_1 = current_rms_1 * current_rms_1; 
-                                current_rms_1 = Math.Sqrt(current_rms_sq_1 - oldest_val_1 + newest_val_1);
-                            }
-                            
 
-                            data_queue_2.Enqueue(current_data_point_2);
-                            
-                            if (count < app_inp_prm.nmax_queue_total - 1)
+                            for (int iq = 0; iq < nchan2plt; iq++)
                             {
-                                current_rms_sq_2 += current_data_point_2 * current_data_point_2;
-                            }
-                            else if (count == app_inp_prm.nmax_queue_total - 1)
-                            {
-                                current_rms_2 = Math.Sqrt(current_rms_sq_2 / app_inp_prm.nmax_queue_total);
-                            }
-                            else
-                            {
-                                oldest_val_2 = data_queue_2.Dequeue();
-                                oldest_val_2 = oldest_val_2 * oldest_val_2 / app_inp_prm.nmax_queue_total;
-                                newest_val_2 = current_data_point_2 * current_data_point_2 / app_inp_prm.nmax_queue_total;
-                                current_rms_sq_2 = current_rms_2 * current_rms_2;
-                                current_rms_2 = Math.Sqrt(current_rms_sq_2 - oldest_val_2 + newest_val_2);
-                            }
+                                data_queue_arr[iq].Enqueue(current_val_arr[iq]);
+
+                                if (count < app_inp_prm.nmax_queue_total - 1)
+                                {
+                                    current_rms_sq_arr[iq] += current_val_arr[iq] * current_val_arr[iq];
+                                }
+                                else if (count == app_inp_prm.nmax_queue_total - 1)
+                                {
+                                    current_rms_arr[iq] = Math.Sqrt(current_rms_sq_arr[iq] / app_inp_prm.nmax_queue_total);
+                                }
+                                else
+                                {
+                                    oldest_val = data_queue_arr[iq].Dequeue();
+                                    oldest_val = oldest_val * oldest_val / app_inp_prm.nmax_queue_total;
+                                    newest_val = current_val_arr[iq] * current_val_arr[iq] / app_inp_prm.nmax_queue_total;
+                                    current_rms_sq_arr[iq] = current_rms_arr[iq] * current_rms_arr[iq];
+
+                                    current_rms_arr[iq] = Math.Sqrt(current_rms_sq_arr[iq] - oldest_val + newest_val);
+                                }
+                                return_indicated_color(current_rms_arr[iq], out color_level_arr[iq], out level_idx_arr[iq]);
+                            }              
                             
-                            
-                            Color color_level_1, color_level_2;
-                            int level_idx_1, level_idx_2;
-                            return_indicated_color(current_rms_1, out color_level_1, out level_idx_1);
-                            panel1.BackColor = color_level_1;
+                            panel1.BackColor = color_level_arr[0];
+                            panel2.BackColor = color_level_arr[1];
 
-                            return_indicated_color(current_rms_2, out color_level_2, out level_idx_2);
-
-                            // rms_val : will be a certain delay 
-                            // consider to rid of 
-
-                            rms_val.BeginInvoke(new Action(() => {
-                                rms_val.Text = String.Format("{0}", current_rms_1);
+                            rms_val1.BeginInvoke(new Action(() => {
+                                rms_val1.Text = String.Format("{0}", current_rms_arr[0]);
+                            }));
+                            rms_val2.BeginInvoke(new Action(() => {
+                                rms_val2.Text = String.Format("{0}", current_rms_arr[1]);
                             }));
                             
                             string nextLine = string.Format("{0};{1};{2};{3};{4};{5}\n", 
-                                current_data_point_1, current_rms_1, level_idx_1,
-                                current_data_point_2, current_rms_2, level_idx_2);
+                                current_val_arr[0], current_rms_arr[0], level_idx_arr[0],
+                                current_val_arr[1], current_rms_arr[1], level_idx_arr[1]);
                             File.AppendAllText(csvFilePath, nextLine);
                             
                             count++;
@@ -332,7 +303,6 @@ namespace WindowsFormsApp4
                 drawAndReport();
             }
         }
-
 
     }
 }

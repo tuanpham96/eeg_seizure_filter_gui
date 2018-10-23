@@ -16,6 +16,7 @@ namespace WindowsFormsApp4
         public int nmax_queue_total { get; set; }
         public int nsamp_per_block { get; set; }
         public int chan_idx2plt { get; set; }
+        public string channels2plt { get; set; }
 
         public string output_file_name { get; set; }
 
@@ -30,7 +31,7 @@ namespace WindowsFormsApp4
 
         public Dictionary<string, string> nameAndProp;
 
-        public int max_pnt_plt = 512*4;
+        public int max_pnt_plt = 512*2;
 
         public object GetPropValue(string propName)
         {
