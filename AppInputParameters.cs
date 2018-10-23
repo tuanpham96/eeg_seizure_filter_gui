@@ -30,7 +30,7 @@ namespace WindowsFormsApp4
 
         public Dictionary<string, string> nameAndProp;
 
-        public int max_pnt_plt = 512/2;
+        public int max_pnt_plt = 512*4;
 
         public object GetPropValue(string propName)
         {
@@ -75,7 +75,7 @@ namespace WindowsFormsApp4
             nsamp_per_block = 4;
             chan_idx2plt = 0;
 
-            output_file_name = @"C:\Users\Towle\Desktop\Tuan\data\testfile_TP.csv";
+            output_file_name = @"C:\Users\Towle\Desktop\Tuan\general_towle\data\testfile_TP.csv";
 
             danger_upperbound = 1.4;
             danger_lowerbound = 0.6;
