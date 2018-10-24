@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppInputParameters.cs" />
+    <Compile Include="DataQueueAndCalculator.cs" />
     <Compile Include="Prompt.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

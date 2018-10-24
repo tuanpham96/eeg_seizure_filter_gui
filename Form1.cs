@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Net.Sockets;
 using System.Collections.Generic;
-
+using System.Diagnostics; 
 using LiveCharts;
 using LiveCharts.Wpf; 
 using LiveCharts.Configurations;
@@ -192,6 +192,7 @@ namespace WindowsFormsApp4
 
                 Byte[] bytes = new Byte[16384];
 
+                /*
                 int nchan2plt = 2; 
                 Queue<double>[] data_queue_arr = new Queue<double>[nchan2plt];
                 double[] current_val_arr = new double[nchan2plt];
@@ -205,7 +206,12 @@ namespace WindowsFormsApp4
                     current_rms_sq_arr[i] = 0;
                     current_rms_arr[i] = -1; 
                 }
+                */
 
+                DataQueueAndCalculator dqc_0 = new DataQueueAndCalculator(this.app_inp_prm.nmax_queue_total);
+                DataQueueAndCalculator dqc_1 = new DataQueueAndCalculator(this.app_inp_prm.nmax_queue_total);
+
+                
                 while (true)
                 {
                     int stream_read;
@@ -213,7 +219,7 @@ namespace WindowsFormsApp4
                     Stream stream = client.GetStream();
 
                     string csvFilePath = this.app_inp_prm.output_file_name;
-                    File.WriteAllText(csvFilePath, "Data_1;RMS_1;Level_1;Data_2;RMS_2;Level_2\n");
+                    File.WriteAllText(csvFilePath, "Data_1;RMS_1;Level_1;Data_2;RMS_2;Level_2;Elapsed\n");
 
                     while ((stream_read = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
@@ -222,18 +228,29 @@ namespace WindowsFormsApp4
 
                         for (int ix = 0; ix < app_inp_prm.nsamp_per_block; ix++)
                         {
+                            var stopwatch = Stopwatch.StartNew(); 
+                        
                             int idx_chan_samp_1, idx_chan_samp_2;
                             double t;                            
 
                             idx_chan_samp_1 = ix + app_inp_prm.chan_idx2plt * app_inp_prm.nsamp_per_block;
-                            double.TryParse(current_data_chunk[idx_chan_samp_1], out current_val_arr[0]);
+                            //double.TryParse(current_data_chunk[idx_chan_samp_1], out current_val_arr[0]);
+                            dqc_0.ParseCurrentValue(current_data_chunk[idx_chan_samp_1]); 
 
                             idx_chan_samp_2 = ix + 1 * app_inp_prm.nsamp_per_block;
-                            double.TryParse(current_data_chunk[idx_chan_samp_2], out current_val_arr[1]);
+                            //double.TryParse(current_data_chunk[idx_chan_samp_2], out current_val_arr[1]);
+                            dqc_1.ParseCurrentValue(current_data_chunk[idx_chan_samp_2]);
 
-                            double[] viz = {    current_rms_arr[0],
-                                                current_rms_arr[1] - 5,
-                                                current_rms_arr[0] - current_rms_arr[1] - 10 };
+                            /*
+                            double[] viz = {    current_val_arr[0],
+                                                current_val_arr[1] - 5,
+                                                current_val_arr[0] - current_val_arr[1] - 10 };
+                            */
+                            double[] viz = {    dqc_0.current_val,
+                                                dqc_1.current_val - 5,
+                                                dqc_0.current_val - dqc_1.current_val - 10 };
+                            
+
                             t = ((double)count) / this.app_inp_prm.Fs;
                             cartesianChart1.BeginInvoke(new Action(() => {
 
@@ -245,8 +262,16 @@ namespace WindowsFormsApp4
                                         Obs[i_obs].RemoveAt(0);
                                     }
                                 }
+                                if (Obs[0].Count  == this.app_inp_prm.max_pnt_plt/2)
+                                {
+                                    cartesianChart1.AxisX[0].Title = "Time (s)";
+                                    //cartesianChart1.AxisX[0].MinValue = t - 10.5;
+                                    //cartesianChart1.AxisX[0].MaxValue = t + 0.1;
+                                    
+                                }
                             }));
 
+                            /*
                             for (int iq = 0; iq < nchan2plt; iq++)
                             {
                                 data_queue_arr[iq].Enqueue(current_val_arr[iq]);
@@ -270,7 +295,23 @@ namespace WindowsFormsApp4
                                 }
                                 return_indicated_color(current_rms_arr[iq], out color_level_arr[iq], out level_idx_arr[iq]);
                             }              
+                            */
+                            dqc_0.CalculateRMS(count);
+                            dqc_1.CalculateRMS(count); 
+
+                            Color[] color_level_arr = new Color[2];
+                            int[] level_idx_arr = new int[2];
+                            double[] current_rms_arr = new double[2], current_val_arr = new double[2];
+                            current_rms_arr[0] = dqc_0.current_rms;
+                            current_val_arr[0] = dqc_0.current_val;
+
+                            current_rms_arr[1] = dqc_1.current_rms;
+                            current_val_arr[1] = dqc_1.current_val;
                             
+                            return_indicated_color(current_rms_arr[0], out color_level_arr[0], out level_idx_arr[0]);
+                            return_indicated_color(current_rms_arr[1], out color_level_arr[1], out level_idx_arr[1]);
+                            
+
                             panel1.BackColor = color_level_arr[0];
                             panel2.BackColor = color_level_arr[1];
 
@@ -280,10 +321,13 @@ namespace WindowsFormsApp4
                             rms_val2.BeginInvoke(new Action(() => {
                                 rms_val2.Text = String.Format("{0}", current_rms_arr[1]);
                             }));
-                            
-                            string nextLine = string.Format("{0};{1};{2};{3};{4};{5}\n", 
+
+                            stopwatch.Stop();
+                            Console.WriteLine("Elapsed = {0}", stopwatch.Elapsed); 
+                            string nextLine = string.Format("{0};{1};{2};{3};{4};{5};{6}\n", 
                                 current_val_arr[0], current_rms_arr[0], level_idx_arr[0],
-                                current_val_arr[1], current_rms_arr[1], level_idx_arr[1]);
+                                current_val_arr[1], current_rms_arr[1], level_idx_arr[1],
+                                (stopwatch.Elapsed.TotalMilliseconds*1000).ToString("0.00"));
                             File.AppendAllText(csvFilePath, nextLine);
                             
                             count++;

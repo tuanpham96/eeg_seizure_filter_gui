@@ -31,7 +31,7 @@ namespace WindowsFormsApp4
 
         public Dictionary<string, string> nameAndProp;
 
-        public int max_pnt_plt = 512*2;
+        public int max_pnt_plt = 512*10;
 
         public object GetPropValue(string propName)
         {
