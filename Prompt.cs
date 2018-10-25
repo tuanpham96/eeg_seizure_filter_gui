@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace WindowsFormsApp4
         {
             prompt = new Form()
             {
-                Width = 600,
+                Width = 670,
                 Height = 700,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 Text = caption,
@@ -37,11 +38,12 @@ namespace WindowsFormsApp4
             };
 
             Label promptTitle = new Label() {
-                Left = 50,
-                Top = 10,
+                Left = 10,
+                Top = 20,
+                Width = 600,
                 Text = title,
-                Dock = DockStyle.Top,
-                TextAlign = ContentAlignment.MiddleCenter
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
             };
             prompt.Controls.Add(promptTitle);
             
@@ -50,9 +52,11 @@ namespace WindowsFormsApp4
             Label[] inputLabels = new Label[number_inputs];
             string prop_alias, prop_name, prop_val;
 
-            int top_label = 30, left_label = 10, width_label = 200;
-            int top_box = 30, left_box = 220, width_box = 300;
-            int spacing = 30; 
+            int top_label = 70, left_label = 10, width_label = 200;
+            int top_box = 70, left_box = 220, width_box = 420, mod_width_box;
+            int spacing = 30;
+
+            int idx_output_folder = -1, idx_output_file_name = -1; 
 
             for (int i_inp = 0; i_inp < number_inputs; i_inp++)
             {
@@ -66,26 +70,65 @@ namespace WindowsFormsApp4
                     Top = top_label,
                     Text = prop_alias,
                     Width = width_label, 
-                    TextAlign = ContentAlignment.TopRight
+                    TextAlign = ContentAlignment.TopRight,
+                    Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
                 };
                 top_label += spacing;
+
+                if (string.Compare(prop_name, "output_folder") == 0)
+                {
+                    mod_width_box = width_box - 100;
+                    idx_output_folder = i_inp;
+                } else {
+                    mod_width_box = width_box;
+                }
+                if (string.Compare(prop_name, "output_file_name") == 0)
+                {
+                    idx_output_file_name = i_inp; 
+                }
                 textBoxes[i_inp] = new TextBox()
                 {
                     Left = left_box,
                     Top = top_box,
-                    Width = width_box, 
-                    Text = prop_val
+                    Width = mod_width_box, 
+                    Text = prop_val,
+                    Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
                 };
                 top_box += spacing;
                 prompt.Controls.Add(inputLabels[i_inp]);
                 prompt.Controls.Add(textBoxes[i_inp]);
             }
-             
+
+            Button openfolderdialog = new Button()
+            {
+                Text = "Choose folder",
+                Left = textBoxes[idx_output_folder].Left + textBoxes[idx_output_folder].Width + 10,
+                Width = 90,
+                Top = textBoxes[idx_output_folder].Top,
+            };
+            openfolderdialog.Click += (sender, e) => {
+                // https://stackoverflow.com/questions/11624298/how-to-use-openfiledialog-to-select-a-folder by Daniel Ballinger 
+                OpenFileDialog folderBrowser = new OpenFileDialog();
+                folderBrowser.ValidateNames = false;
+                folderBrowser.CheckFileExists = false;
+                folderBrowser.CheckPathExists = true;
+                folderBrowser.InitialDirectory = input_params.output_folder;
+                folderBrowser.FileName = "Select folder";
+                if (folderBrowser.ShowDialog() == DialogResult.OK)
+                {
+                    string fileName = Path.GetFileName(folderBrowser.FileName); 
+                    string folderPath = Path.GetDirectoryName(folderBrowser.FileName);
+                    textBoxes[idx_output_folder].Text = folderPath;
+                    textBoxes[idx_output_file_name].Text = fileName; 
+                }
+            };
+            prompt.Controls.Add(openfolderdialog);
 
             Button confirmation = new Button() {
                 Text = "Ok",
-                Left = 100, Width = 
-                100, Top = 500,
+                Left = 100,
+                Width = 100,
+                Top = 500,
                 DialogResult = DialogResult.OK
             };            
             confirmation.Click += (sender, e) => { prompt.Close(); };            
