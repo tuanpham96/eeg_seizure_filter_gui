@@ -32,7 +32,8 @@ namespace WindowsFormsApp4
         public Color warning_color { get; set; }
         public Color normal_color { get; set; }
 
-        public int max_pnt_plt = 512*10;
+        public int max_pnt_plt { get; set; }
+        public double nsec_plt { get; set; }
 
         public double[] display_gains { get; set; }
         public string gain_str { get; set; }
@@ -75,6 +76,7 @@ namespace WindowsFormsApp4
                 {"DANGER lower bound",  "danger_lowerbound" },
                 {"WARNING upper bound", "warning_upperbound" },
                 {"WARNING lower bound", "warning_lowerbound" },
+                {"Display duration (seconds)", "nsec_plt" },
                 {"Display gains", "gain_str" },
                 {"Display separation", "display_sep" }
             };
@@ -101,6 +103,7 @@ namespace WindowsFormsApp4
             warning_color = Color.FromArgb(255, 255, 0);
             normal_color = Color.FromArgb(0, 255, 0);
 
+            nsec_plt = 2.5; 
             gain_str = "1;1;1";
             display_sep = 5; 
         }
@@ -115,6 +118,8 @@ namespace WindowsFormsApp4
             }
 
             output_file_name = Path.Combine(output_folder, output_file_name);
+
+            max_pnt_plt = (int)(512 * nsec_plt);
 
             string[] gains_arr = gain_str.Split(';');
             display_gains = new double[gains_arr.Length]; 

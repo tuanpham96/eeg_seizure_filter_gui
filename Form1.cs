@@ -128,7 +128,9 @@ namespace WindowsFormsApp4
 
             Obs = new ChartValues<ObservablePoint>[3];
             System.Windows.Media.Brushes[] colors = new System.Windows.Media.Brushes[3];
-
+            string[] legends = {"Ch " + app_inp_prm.chan_idx2plt[0],
+                                "Ch " + app_inp_prm.chan_idx2plt[1],
+                                "Ch " + app_inp_prm.chan_idx2plt[0] + " - Ch " + app_inp_prm.chan_idx2plt[1]};
             for (int idx_obs = 0; idx_obs < 3; idx_obs++)
             {
                 Obs[idx_obs] = new ChartValues<ObservablePoint>();
@@ -139,12 +141,14 @@ namespace WindowsFormsApp4
                     PointGeometry = DefaultGeometries.None,
                     LineSmoothness = 0,
                     Fill = System.Windows.Media.Brushes.Transparent,
-                    
+                    Title = legends[idx_obs]
+
                 });
             }
             cartesianChart1.DisableAnimations = true; // for performance 
             cartesianChart1.Hoverable = false;
             cartesianChart1.DataTooltip = null;
+            cartesianChart1.LegendLocation = LegendLocation.Right;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -190,6 +194,16 @@ namespace WindowsFormsApp4
             txtbx.Text = s; 
         }
 
+        private void UpdateLabel(Label lbl, string s)
+        {
+            if (InvokeRequired)
+            {
+                lbl.BeginInvoke(new Action<Label, string>(UpdateLabel), new object[] { lbl, s });
+                return;
+            }
+            lbl.Text = s;
+        }
+
         private void UpdatePanelColor(Panel pnl, Color c)
         {
             if (InvokeRequired)
@@ -211,6 +225,10 @@ namespace WindowsFormsApp4
                     Obs[i_obs].RemoveAt(0);
                 }
             }
+            if (Obs[0].Count > 100)
+            {
+                cartesianChart1.AxisX[0].Title = "Time (seconds)"; 
+            }
         }
 
         public void DrawAndReport()
@@ -220,7 +238,9 @@ namespace WindowsFormsApp4
                 TcpClient client = new TcpClient();
                 client.Connect(this.app_inp_prm.hostname, app_inp_prm.port);
 
-                UpdateTextBox(log, WelcomeMessage()); 
+                UpdateTextBox(log, WelcomeMessage());
+                UpdateLabel(chan_label1, "Channel " + app_inp_prm.chan_idx2plt[0]);
+                UpdateLabel(chan_label2, "Channel " + app_inp_prm.chan_idx2plt[1]);
 
                 Byte[] bytes = new Byte[16384];
                 int[] chan_idx = { app_inp_prm.chan_idx2plt[0], app_inp_prm.chan_idx2plt[1]};

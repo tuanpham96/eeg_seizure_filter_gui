@@ -19,9 +19,10 @@ namespace WindowsFormsApp4
         private Form prompt { get; set; }
         public AppInputParameters Result { get; }
         public AppInputParameters input_params;
-
+        private string fontname { get; }
         public Prompt(string text, string caption)
         {
+            fontname = "Arial"; 
             input_params = new AppInputParameters();
             Result = ShowDialog(text, caption);
         }
@@ -43,7 +44,7 @@ namespace WindowsFormsApp4
                 Width = 600,
                 Text = title,
                 TextAlign = ContentAlignment.MiddleCenter,
-                Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+                Font = new System.Drawing.Font(fontname, 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
             };
             prompt.Controls.Add(promptTitle);
             
@@ -54,7 +55,7 @@ namespace WindowsFormsApp4
 
             int top_label = 70, left_label = 10, width_label = 200;
             int top_box = 70, left_box = 220, width_box = 420, mod_width_box;
-            int spacing = 30;
+            int spacing = 32;
 
             int idx_output_folder = -1, idx_output_file_name = -1; 
 
@@ -70,21 +71,23 @@ namespace WindowsFormsApp4
                     Top = top_label,
                     Text = prop_alias,
                     Width = width_label, 
-                    TextAlign = ContentAlignment.TopRight,
-                    Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+                    TextAlign = ContentAlignment.MiddleRight,
+                    Font = new System.Drawing.Font(fontname, 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
                 };
                 top_label += spacing;
+                
 
-                if (string.Compare(prop_name, "output_folder") == 0)
+                if (string.Compare(prop_name, "output_folder") == 0) 
                 {
-                    mod_width_box = width_box - 100;
+                    mod_width_box = width_box - 150;
                     idx_output_folder = i_inp;
-                } else {
-                    mod_width_box = width_box;
-                }
-                if (string.Compare(prop_name, "output_file_name") == 0)
+                } else if (string.Compare(prop_name, "output_file_name") == 0)
                 {
-                    idx_output_file_name = i_inp; 
+                    mod_width_box = width_box - 150;
+                    idx_output_file_name = i_inp;
+                } else 
+                {
+                    mod_width_box = width_box;
                 }
                 textBoxes[i_inp] = new TextBox()
                 {
@@ -92,7 +95,7 @@ namespace WindowsFormsApp4
                     Top = top_box,
                     Width = mod_width_box, 
                     Text = prop_val,
-                    Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+                    Font = new System.Drawing.Font(fontname, 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
                 };
                 top_box += spacing;
                 prompt.Controls.Add(inputLabels[i_inp]);
@@ -101,10 +104,12 @@ namespace WindowsFormsApp4
 
             Button openfolderdialog = new Button()
             {
-                Text = "Choose folder",
+                Text = "Choose folder and \n file name",
+                Height = 58,
                 Left = textBoxes[idx_output_folder].Left + textBoxes[idx_output_folder].Width + 10,
-                Width = 90,
+                Width = 140,
                 Top = textBoxes[idx_output_folder].Top,
+                Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
             };
             openfolderdialog.Click += (sender, e) => {
                 // https://stackoverflow.com/questions/11624298/how-to-use-openfiledialog-to-select-a-folder by Daniel Ballinger 
@@ -113,7 +118,7 @@ namespace WindowsFormsApp4
                 folderBrowser.CheckFileExists = false;
                 folderBrowser.CheckPathExists = true;
                 folderBrowser.InitialDirectory = input_params.output_folder;
-                folderBrowser.FileName = "Select folder";
+                folderBrowser.FileName = "Choose folder then enter desired file name here";
                 if (folderBrowser.ShowDialog() == DialogResult.OK)
                 {
                     string fileName = Path.GetFileName(folderBrowser.FileName); 
@@ -125,11 +130,13 @@ namespace WindowsFormsApp4
             prompt.Controls.Add(openfolderdialog);
 
             Button confirmation = new Button() {
-                Text = "Ok",
-                Left = 100,
-                Width = 100,
-                Top = 500,
-                DialogResult = DialogResult.OK
+                Text = "Continue",
+                Left = 520,
+                Width = 120,
+                Height = 40, 
+                Top = 600,
+                DialogResult = DialogResult.OK,
+                Font = new System.Drawing.Font(fontname, 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
             };            
             confirmation.Click += (sender, e) => { prompt.Close(); };            
             prompt.Controls.Add(confirmation);
