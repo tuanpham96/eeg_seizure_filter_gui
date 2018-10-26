@@ -39,8 +39,11 @@ namespace WindowsFormsApp4
         public string gain_str { get; set; }
         public double display_sep { get; set; }
 
-        public Dictionary<string, string> nameAndProp;
+        public bool refresh_display { get; set; }
+        public Dictionary<string, bool> display_refresh_options; 
 
+        public Dictionary<string, string> nameAndProp;
+        
         public object GetPropValue(string propName)
         {
             return this.GetType().GetRuntimeProperty(propName)?.GetValue(this);
@@ -68,7 +71,7 @@ namespace WindowsFormsApp4
                 {"Port", "port" },
                 {"Sample frequency (Hz)", "Fs" },
                 {"RMS window (#points)", "nmax_queue_total" },
-                {"Number of samples/channel/epoch", "nsamp_per_block" },
+                {"Number of samples / channel / epoch", "nsamp_per_block" },
                 {"Channels to display", "channels2plt" },
                 {"Output folder", "output_folder"},
                 {"Output file name",  "output_file_name" },
@@ -78,9 +81,14 @@ namespace WindowsFormsApp4
                 {"WARNING lower bound", "warning_lowerbound" },
                 {"Display duration (seconds)", "nsec_plt" },
                 {"Display gains", "gain_str" },
-                {"Display separation", "display_sep" }
+                {"Display separation", "display_sep" },
+                {"Display refreshed", "refresh_display" }
             };
 
+            display_refresh_options = new Dictionary<string, bool> {
+                {"Refreshable", true },
+                {"Continuous", false }
+            };
 
             hostname = "127.0.0.1";
             port = 1234;
@@ -103,12 +111,25 @@ namespace WindowsFormsApp4
             warning_color = Color.FromArgb(255, 255, 0);
             normal_color = Color.FromArgb(0, 255, 0);
 
-            nsec_plt = 2.5; 
+            nsec_plt = 10; 
             gain_str = "1;1;1";
-            display_sep = 5; 
+            display_sep = 5;
+
+            refresh_display = true; 
         }
         
         public void CompleteInitialize()
+        {
+            InitializeChannelIndex();
+
+            output_file_name = Path.Combine(output_folder, output_file_name);
+
+            max_pnt_plt = (int)(Fs * nsec_plt);
+
+            InitializeDisplayGains();        
+        }
+
+        public void InitializeChannelIndex()
         {
             string[] chans = channels2plt.Split(';');
             chan_idx2plt = new int[chans.Length];
@@ -116,16 +137,14 @@ namespace WindowsFormsApp4
             {
                 int.TryParse(chans[ich], out chan_idx2plt[ich]);
             }
-
-            output_file_name = Path.Combine(output_folder, output_file_name);
-
-            max_pnt_plt = (int)(512 * nsec_plt);
-
+        }
+        public void InitializeDisplayGains()
+        {
             string[] gains_arr = gain_str.Split(';');
-            display_gains = new double[gains_arr.Length]; 
-            for (int ig = 0; ig < gains_arr.Length; ig ++)
+            display_gains = new double[gains_arr.Length];
+            for (int ig = 0; ig < gains_arr.Length; ig++)
             {
-                double.TryParse(gains_arr[ig], out display_gains[ig]); 
+                double.TryParse(gains_arr[ig], out display_gains[ig]);
             }
         }
     }

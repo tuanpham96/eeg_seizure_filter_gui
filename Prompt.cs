@@ -20,9 +20,10 @@ namespace WindowsFormsApp4
         public AppInputParameters Result { get; }
         public AppInputParameters input_params;
         private string fontname { get; }
+
         public Prompt(string text, string caption)
         {
-            fontname = "Arial"; 
+            fontname = "Arial";
             input_params = new AppInputParameters();
             Result = ShowDialog(text, caption);
         }
@@ -30,7 +31,7 @@ namespace WindowsFormsApp4
         {
             prompt = new Form()
             {
-                Width = 670,
+                Width = 800,
                 Height = 700,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 Text = caption,
@@ -38,8 +39,9 @@ namespace WindowsFormsApp4
                 TopMost = true
             };
 
-            Label promptTitle = new Label() {
-                Left = 10,
+            Label promptTitle = new Label()
+            {
+                Left = 100,
                 Top = 20,
                 Width = 600,
                 Text = title,
@@ -47,61 +49,87 @@ namespace WindowsFormsApp4
                 Font = new System.Drawing.Font(fontname, 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
             };
             prompt.Controls.Add(promptTitle);
-            
+
             int number_inputs = input_params.nameAndProp.Count;
             TextBox[] textBoxes = new TextBox[number_inputs];
             Label[] inputLabels = new Label[number_inputs];
-            string prop_alias, prop_name, prop_val;
+            RadioButton radioButton1, radioButton2; string radiobutton_choice = "";
 
-            int top_label = 70, left_label = 10, width_label = 200;
-            int top_box = 70, left_box = 220, width_box = 420, mod_width_box;
+            int top_label = 70, left_label = 10, width_label = 300;
+            int top_box = 70, left_box = 320, width_box = 420, mod_width_box;
             int spacing = 32;
 
-            int idx_output_folder = -1, idx_output_file_name = -1; 
+            void radiobutton_change(object sender, EventArgs e)
+            {
+                RadioButton rb = sender as RadioButton;
+                if (rb == null) { MessageBox.Show("Sender is not a RadioButton"); return; }
+                if (rb.Checked) { radiobutton_choice = rb.Text; }
+            }
 
+            Dictionary<string, int> name_idx_dict = new Dictionary<string, int>();
+            string prop_alias, prop_name, prop_val;
             for (int i_inp = 0; i_inp < number_inputs; i_inp++)
             {
                 prop_alias = input_params.nameAndProp.Keys.ElementAt(i_inp);
                 prop_name = input_params.nameAndProp[prop_alias].ToString();
                 prop_val = input_params.GetPropValue(prop_name).ToString();
 
+                name_idx_dict.Add(prop_name, i_inp);
+
                 inputLabels[i_inp] = new Label()
                 {
                     Left = left_label,
                     Top = top_label,
                     Text = prop_alias,
-                    Width = width_label, 
+                    Width = width_label,
                     TextAlign = ContentAlignment.MiddleRight,
-                    Font = new System.Drawing.Font(fontname, 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+                    Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
                 };
+                prompt.Controls.Add(inputLabels[i_inp]);
                 top_label += spacing;
-                
 
-                if (string.Compare(prop_name, "output_folder") == 0) 
+                if (string.Compare(prop_name, "output_folder") == 0 || string.Compare(prop_name, "output_file_name") == 0)
                 {
                     mod_width_box = width_box - 150;
-                    idx_output_folder = i_inp;
-                } else if (string.Compare(prop_name, "output_file_name") == 0)
-                {
-                    mod_width_box = width_box - 150;
-                    idx_output_file_name = i_inp;
-                } else 
+                }
+                else
                 {
                     mod_width_box = width_box;
                 }
+
+                if (string.Compare(prop_name, "refresh_display") == 0)
+                {
+                    radioButton1 = new RadioButton()
+                    {
+                        Location = new System.Drawing.Point(left_box + 20, top_box),
+                        Text = input_params.display_refresh_options.Keys.ElementAt(0)
+                    };
+                    radioButton2 = new RadioButton()
+                    {
+                        Location = new System.Drawing.Point(left_box + 250, top_box),
+                        Text = input_params.display_refresh_options.Keys.ElementAt(1)
+                    };
+                    radioButton1.CheckedChanged += new EventHandler(radiobutton_change);
+                    radioButton2.CheckedChanged += new EventHandler(radiobutton_change);
+                    radioButton1.Checked = true; 
+                    prompt.Controls.Add(radioButton1);
+                    prompt.Controls.Add(radioButton2);
+                    continue;
+                }
+
                 textBoxes[i_inp] = new TextBox()
                 {
                     Left = left_box,
                     Top = top_box,
-                    Width = mod_width_box, 
+                    Width = mod_width_box,
                     Text = prop_val,
-                    Font = new System.Drawing.Font(fontname, 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+                    Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
                 };
                 top_box += spacing;
-                prompt.Controls.Add(inputLabels[i_inp]);
                 prompt.Controls.Add(textBoxes[i_inp]);
             }
 
+            int idx_output_folder = name_idx_dict["output_folder"], idx_output_file_name = name_idx_dict["output_file_name"];
             Button openfolderdialog = new Button()
             {
                 Text = "Choose folder and \n file name",
@@ -121,24 +149,25 @@ namespace WindowsFormsApp4
                 folderBrowser.FileName = "Choose folder then enter desired file name here";
                 if (folderBrowser.ShowDialog() == DialogResult.OK)
                 {
-                    string fileName = Path.GetFileName(folderBrowser.FileName); 
+                    string fileName = Path.GetFileName(folderBrowser.FileName);
                     string folderPath = Path.GetDirectoryName(folderBrowser.FileName);
                     textBoxes[idx_output_folder].Text = folderPath;
-                    textBoxes[idx_output_file_name].Text = fileName; 
+                    textBoxes[idx_output_file_name].Text = fileName;
                 }
             };
             prompt.Controls.Add(openfolderdialog);
 
-            Button confirmation = new Button() {
+            Button confirmation = new Button()
+            {
                 Text = "Continue",
                 Left = 520,
                 Width = 120,
-                Height = 40, 
+                Height = 40,
                 Top = 600,
                 DialogResult = DialogResult.OK,
                 Font = new System.Drawing.Font(fontname, 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-            };            
-            confirmation.Click += (sender, e) => { prompt.Close(); };            
+            };
+            confirmation.Click += (sender, e) => { prompt.Close(); };
             prompt.Controls.Add(confirmation);
             prompt.AcceptButton = confirmation;
 
@@ -147,12 +176,18 @@ namespace WindowsFormsApp4
                 for (int i_inp = 0; i_inp < number_inputs; i_inp++)
                 {
                     prop_alias = input_params.nameAndProp.Keys.ElementAt(i_inp);
-                    prop_name = input_params.nameAndProp[prop_alias].ToString();                    
-                    input_params.SetPropValue(prop_name, textBoxes[i_inp].Text); 
+                    prop_name = input_params.nameAndProp[prop_alias].ToString();
+                    if (string.Compare(prop_name, "refresh_display") == 0)
+                    {
+                        Console.WriteLine("My choice is " + radiobutton_choice); 
+                        input_params.SetPropValue(prop_name, input_params.display_refresh_options[radiobutton_choice]);
+                        continue; 
+                    }
+                    string set_new_val = textBoxes[i_inp].Text;
+                    input_params.SetPropValue(prop_name, set_new_val);
                 }
             }
-                return input_params; 
-            // return prompt.ShowDialog() == DialogResult.OK ? input_params : input_params;
+            return input_params;
         }
 
         public void Dispose()

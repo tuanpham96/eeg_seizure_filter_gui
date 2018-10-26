@@ -4,12 +4,12 @@ using System.Threading;
 using System.Windows.Forms;
 using System.IO;
 using System.Net.Sockets;
-using System.Windows; 
+
 using LiveCharts;
 using LiveCharts.Wpf; 
 using LiveCharts.Configurations;
 using LiveCharts.Defaults;
-using System.Reflection;
+using LiveCharts.Geared;
 
 /** SEIZURE FILTER EEG PROGRAM
  * Started by Dominic DiCarlo September 2018
@@ -104,8 +104,7 @@ namespace WindowsFormsApp4
     {
         private AppInputParameters app_inp_prm; 
         private Thread logic_thread;
-        public ChartValues<ObservablePoint>[] Obs { get; set; }
-
+        public GearedValues<ObservablePoint>[] Obs { get; set; }
         public Form1()
         {
             InitializeComponent();
@@ -126,29 +125,33 @@ namespace WindowsFormsApp4
                             .Y(value => value.Y);
             Charting.For<ObservablePoint>(mapper);
 
-            Obs = new ChartValues<ObservablePoint>[3];
-            System.Windows.Media.Brushes[] colors = new System.Windows.Media.Brushes[3];
+            Obs = new GearedValues<ObservablePoint>[3];
+            var colors =  System.Windows.Media.Brushes.Red ;
+            if (colors.CanFreeze) { colors.Freeze(); }
             string[] legends = {"Ch " + app_inp_prm.chan_idx2plt[0],
                                 "Ch " + app_inp_prm.chan_idx2plt[1],
                                 "Ch " + app_inp_prm.chan_idx2plt[0] + " - Ch " + app_inp_prm.chan_idx2plt[1]};
+
             for (int idx_obs = 0; idx_obs < 3; idx_obs++)
             {
-                Obs[idx_obs] = new ChartValues<ObservablePoint>();
-                cartesianChart1.Series.Add(new LineSeries
+                Obs[idx_obs] = new GearedValues<ObservablePoint>();
+                Obs[idx_obs].Quality = Quality.Highest; 
+                cartesianChart1.Series.Add(new GLineSeries
                 {
                     Values = Obs[idx_obs],
                     StrokeThickness = 1,
                     PointGeometry = DefaultGeometries.None,
                     LineSmoothness = 0,
                     Fill = System.Windows.Media.Brushes.Transparent,
-                    Title = legends[idx_obs]
-
+                    Title = legends[idx_obs],
+                    Stroke = colors
                 });
             }
             cartesianChart1.DisableAnimations = true; // for performance 
             cartesianChart1.Hoverable = false;
             cartesianChart1.DataTooltip = null;
             cartesianChart1.LegendLocation = LegendLocation.Right;
+            cartesianChart1.Invalidate(); 
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -231,6 +234,32 @@ namespace WindowsFormsApp4
             }
         }
 
+        private void UpdateSeriesPlot(int count, double t, double[] values)
+        {
+            int residue = count % app_inp_prm.max_pnt_plt;
+            double yval; 
+            for (int i_obs = 0; i_obs < values.Length; i_obs++)
+            {
+                yval = values[i_obs] * app_inp_prm.display_gains[i_obs] - app_inp_prm.display_sep * (i_obs);
+                if (Obs[i_obs].Count == app_inp_prm.max_pnt_plt)
+                {
+                    Obs[i_obs].Clear(); 
+                }
+                Obs[i_obs].Add(new ObservablePoint(t, yval));
+            }
+
+            double maxsec = this.app_inp_prm.nsec_plt;
+            double min_bound = (Math.Floor(t / maxsec) * maxsec); 
+            double max_bound = (Math.Floor(t / maxsec) + 1) * maxsec;
+
+            if (Obs[0].Count > 100)
+            {
+                cartesianChart1.AxisX[0].Title = "Time (seconds)";
+                cartesianChart1.AxisX[0].MinValue = min_bound;
+                cartesianChart1.AxisX[0].MaxValue = max_bound;
+            }
+
+        }
         public void DrawAndReport()
         {
             try
@@ -278,9 +307,16 @@ namespace WindowsFormsApp4
                                                 dqc[0].current_val - dqc[1].current_val };
                             double t = ((double)count) / this.app_inp_prm.Fs;
 
-                            cartesianChart1.BeginInvoke(new Action<double, double[]>(UpdateSeriesPlot), t, viz); 
+                            if (app_inp_prm.refresh_display)
+                            {
+                                cartesianChart1.BeginInvoke(new Action<int, double, double[]>(UpdateSeriesPlot), count, t, viz);
+                            } else
+                            {
+                                cartesianChart1.BeginInvoke(new Action<double, double[]>(UpdateSeriesPlot), t, viz);
 
-                            TimeSpan tsp = TimeSpan.FromSeconds(t); 
+                            }
+
+                            TimeSpan tsp = TimeSpan.FromSeconds(t);
                             for (int ich = 0; ich < nchan; ich++)
                             {
                                 dqc[ich].CalculateRMS(count);
