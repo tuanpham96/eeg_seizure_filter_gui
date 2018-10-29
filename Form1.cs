@@ -10,6 +10,7 @@ using LiveCharts.Wpf;
 using LiveCharts.Configurations;
 using LiveCharts.Defaults;
 using LiveCharts.Geared;
+using System.Collections.Generic;
 
 /** SEIZURE FILTER EEG PROGRAM
  * Started by Dominic DiCarlo September 2018
@@ -126,8 +127,7 @@ namespace WindowsFormsApp4
             Charting.For<ObservablePoint>(mapper);
 
             Obs = new GearedValues<ObservablePoint>[3];
-            var colors =  System.Windows.Media.Brushes.Red ;
-            if (colors.CanFreeze) { colors.Freeze(); }
+
             string[] legends = {"Ch " + app_inp_prm.chan_idx2plt[0],
                                 "Ch " + app_inp_prm.chan_idx2plt[1],
                                 "Ch " + app_inp_prm.chan_idx2plt[0] + " - Ch " + app_inp_prm.chan_idx2plt[1]};
@@ -135,7 +135,7 @@ namespace WindowsFormsApp4
             for (int idx_obs = 0; idx_obs < 3; idx_obs++)
             {
                 Obs[idx_obs] = new GearedValues<ObservablePoint>();
-                Obs[idx_obs].Quality = Quality.Highest; 
+                Obs[idx_obs].Quality = app_inp_prm.display_quality; 
                 cartesianChart1.Series.Add(new GLineSeries
                 {
                     Values = Obs[idx_obs],
@@ -143,8 +143,7 @@ namespace WindowsFormsApp4
                     PointGeometry = DefaultGeometries.None,
                     LineSmoothness = 0,
                     Fill = System.Windows.Media.Brushes.Transparent,
-                    Title = legends[idx_obs],
-                    Stroke = colors
+                    Title = legends[idx_obs]
                 });
             }
             cartesianChart1.DisableAnimations = true; // for performance 

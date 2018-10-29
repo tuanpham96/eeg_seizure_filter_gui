@@ -32,7 +32,7 @@ namespace WindowsFormsApp4
             prompt = new Form()
             {
                 Width = 800,
-                Height = 700,
+                Height = 710,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 Text = caption,
                 StartPosition = FormStartPosition.CenterScreen,
@@ -53,17 +53,23 @@ namespace WindowsFormsApp4
             int number_inputs = input_params.nameAndProp.Count;
             TextBox[] textBoxes = new TextBox[number_inputs];
             Label[] inputLabels = new Label[number_inputs];
-            RadioButton radioButton1, radioButton2; string radiobutton_choice = "";
+
+            Panel rdbt_refresh_group, rdbt_quality_group; 
+            RadioButton[] rdbt_refresh = new RadioButton[input_params.display_refresh_options.Count];
+            string rdbt_refresh_choice = "";
+
+            RadioButton[] rdbt_quality = new RadioButton[input_params.gear_quality_dict.Count];
+            string rdbt_quality_choice = "";
 
             int top_label = 70, left_label = 10, width_label = 300;
             int top_box = 70, left_box = 320, width_box = 420, mod_width_box;
             int spacing = 32;
 
-            void radiobutton_change(object sender, EventArgs e)
+            void radiobutton_change(object sender, EventArgs e, ref string rdbt_choice)
             {
                 RadioButton rb = sender as RadioButton;
                 if (rb == null) { MessageBox.Show("Sender is not a RadioButton"); return; }
-                if (rb.Checked) { radiobutton_choice = rb.Text; }
+                if (rb.Checked) { rdbt_choice = rb.Text; }
             }
 
             Dictionary<string, int> name_idx_dict = new Dictionary<string, int>();
@@ -99,21 +105,53 @@ namespace WindowsFormsApp4
 
                 if (string.Compare(prop_name, "refresh_display") == 0)
                 {
-                    radioButton1 = new RadioButton()
+                    rdbt_refresh_group = new Panel()
                     {
-                        Location = new System.Drawing.Point(left_box + 20, top_box),
-                        Text = input_params.display_refresh_options.Keys.ElementAt(0)
+                        Location = new System.Drawing.Point(left_box, top_box - 5),
+                        Size = new System.Drawing.Size(mod_width_box, spacing + 5),
+                        BorderStyle = BorderStyle.None
                     };
-                    radioButton2 = new RadioButton()
+                    for (int i_rdbtr = 0; i_rdbtr < input_params.display_refresh_options.Count; i_rdbtr++)
                     {
-                        Location = new System.Drawing.Point(left_box + 250, top_box),
-                        Text = input_params.display_refresh_options.Keys.ElementAt(1)
+                        rdbt_refresh[i_rdbtr] = new RadioButton()
+                        {
+                            Location = new System.Drawing.Point(20 + 100 * i_rdbtr, 5),
+                            Size = new System.Drawing.Size(100, spacing), 
+                            Text = input_params.display_refresh_options.Keys.ElementAt(i_rdbtr)
+                        };
+                        rdbt_refresh[i_rdbtr].CheckedChanged += new EventHandler((sender, e) => { radiobutton_change(sender, e, ref rdbt_refresh_choice); });
+
+                        rdbt_refresh_group.Controls.Add(rdbt_refresh[i_rdbtr]);
+                    }
+                    rdbt_refresh[0].Checked = true;
+                    prompt.Controls.Add(rdbt_refresh_group);
+                    top_box += spacing;
+                    continue;
+                }
+
+                if (string.Compare(prop_name, "display_quality") == 0)
+                {
+                    rdbt_quality_group = new Panel()
+                    {
+                        Location = new System.Drawing.Point(left_box, top_box - 5),
+                        Size = new System.Drawing.Size(mod_width_box, spacing + 5),
+                        BorderStyle = BorderStyle.None
                     };
-                    radioButton1.CheckedChanged += new EventHandler(radiobutton_change);
-                    radioButton2.CheckedChanged += new EventHandler(radiobutton_change);
-                    radioButton1.Checked = true; 
-                    prompt.Controls.Add(radioButton1);
-                    prompt.Controls.Add(radioButton2);
+                    for (int i_rdbtr = 0; i_rdbtr < input_params.gear_quality_dict.Count; i_rdbtr++)
+                    {
+                        rdbt_quality[i_rdbtr] = new RadioButton()
+                        {
+                            Location = new System.Drawing.Point(20 + 100 * i_rdbtr, 5),
+                            Size = new System.Drawing.Size(100, spacing),
+                            Text = input_params.gear_quality_dict.Keys.ElementAt(i_rdbtr)
+                        };
+                        rdbt_quality[i_rdbtr].CheckedChanged += new EventHandler((sender, e) => { radiobutton_change(sender, e, ref rdbt_quality_choice); });
+
+                        rdbt_quality_group.Controls.Add(rdbt_quality[i_rdbtr]);
+                    }
+                    rdbt_quality[0].Checked = true;
+                    prompt.Controls.Add(rdbt_quality_group);
+                    top_box += spacing;
                     continue;
                 }
 
@@ -160,12 +198,12 @@ namespace WindowsFormsApp4
             Button confirmation = new Button()
             {
                 Text = "Continue",
-                Left = 520,
+                Left = 620,
                 Width = 120,
-                Height = 40,
-                Top = 600,
+                Height = 30,
+                Top = 620,
                 DialogResult = DialogResult.OK,
-                Font = new System.Drawing.Font(fontname, 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+                Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
             };
             confirmation.Click += (sender, e) => { prompt.Close(); };
             prompt.Controls.Add(confirmation);
@@ -179,10 +217,16 @@ namespace WindowsFormsApp4
                     prop_name = input_params.nameAndProp[prop_alias].ToString();
                     if (string.Compare(prop_name, "refresh_display") == 0)
                     {
-                        Console.WriteLine("My choice is " + radiobutton_choice); 
-                        input_params.SetPropValue(prop_name, input_params.display_refresh_options[radiobutton_choice]);
+                        input_params.SetPropValue(prop_name, input_params.display_refresh_options[rdbt_refresh_choice]);
                         continue; 
                     }
+
+                    if (string.Compare(prop_name, "display_quality") == 0)
+                    {
+                        input_params.SetPropValue(prop_name, input_params.gear_quality_dict[rdbt_quality_choice]);
+                        continue;
+                    }
+
                     string set_new_val = textBoxes[i_inp].Text;
                     input_params.SetPropValue(prop_name, set_new_val);
                 }

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
+using LiveCharts.Geared; 
 
 namespace WindowsFormsApp4
 {
@@ -40,32 +38,23 @@ namespace WindowsFormsApp4
         public double display_sep { get; set; }
 
         public bool refresh_display { get; set; }
-        public Dictionary<string, bool> display_refresh_options; 
 
-        public Dictionary<string, string> nameAndProp;
-        
-        public object GetPropValue(string propName)
-        {
-            return this.GetType().GetRuntimeProperty(propName)?.GetValue(this);
-        }
+        public Quality display_quality { get; set; }
 
-        public void SetPropValue(string propName, object newValue)
-        {
-            PropertyInfo propInfo = this.GetType().GetProperty(propName);
-            try
-            {
-                propInfo.SetValue(this, Convert.ChangeType(newValue, propInfo.PropertyType));
-            } catch (Exception e)
-            {
-                Console.WriteLine("Error in setting value: -> " + e.StackTrace); 
-            }
-        }
+        public Dictionary<string, bool> display_refresh_options = new Dictionary<string, bool> {
+                {"Refreshable", true },
+                {"Continuous", false }
+        };
 
-        /* !!! Need to check for conditions of Channel_Idx and Gains_Arr
-         */  
-        public AppInputParameters()
+        public Dictionary<string, Quality> gear_quality_dict = new Dictionary<string, Quality>
         {
-            nameAndProp = new Dictionary<string, string>
+            {"Low", Quality.Low },
+            {"Medium", Quality.Medium },
+            {"High", Quality.High },
+            {"Highest", Quality.Highest }
+        };
+
+        public Dictionary<string, string> nameAndProp = new Dictionary<string, string>
             {
                 {"Host name", "hostname" },
                 {"Port", "port" },
@@ -82,14 +71,14 @@ namespace WindowsFormsApp4
                 {"Display duration (seconds)", "nsec_plt" },
                 {"Display gains", "gain_str" },
                 {"Display separation", "display_sep" },
-                {"Display refreshed", "refresh_display" }
+                {"Display refreshed", "refresh_display" },
+                {"Display quality", "display_quality" }
             };
 
-            display_refresh_options = new Dictionary<string, bool> {
-                {"Refreshable", true },
-                {"Continuous", false }
-            };
-
+        /* !!! Need to check for conditions of Channel_Idx and Gains_Arr
+         */  
+        public AppInputParameters()
+        {            
             hostname = "127.0.0.1";
             port = 1234;
 
@@ -115,7 +104,8 @@ namespace WindowsFormsApp4
             gain_str = "1;1;1";
             display_sep = 5;
 
-            refresh_display = true; 
+            refresh_display = true;
+            display_quality = Quality.Low; 
         }
         
         public void CompleteInitialize()
@@ -147,5 +137,24 @@ namespace WindowsFormsApp4
                 double.TryParse(gains_arr[ig], out display_gains[ig]);
             }
         }
+
+        public object GetPropValue(string propName)
+        {
+            return this.GetType().GetRuntimeProperty(propName)?.GetValue(this);
+        }
+
+        public void SetPropValue(string propName, object newValue)
+        {
+            PropertyInfo propInfo = this.GetType().GetProperty(propName);
+            try
+            {
+                propInfo.SetValue(this, Convert.ChangeType(newValue, propInfo.PropertyType));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error in setting value: -> " + e.StackTrace);
+            }
+        }
+
     }
 }
