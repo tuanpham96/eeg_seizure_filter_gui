@@ -36,6 +36,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.cartesianChart1 = new LiveCharts.WinForms.CartesianChart();
+            this.cartesianChart2 = new LiveCharts.WinForms.CartesianChart();
             this.chan_label1 = new System.Windows.Forms.Label();
             this.chan_label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
@@ -74,7 +75,7 @@
             this.log.Margin = new System.Windows.Forms.Padding(2);
             this.log.Multiline = true;
             this.log.Name = "log";
-            this.log.Size = new System.Drawing.Size(402, 146);
+            this.log.Size = new System.Drawing.Size(402, 119);
             this.log.TabIndex = 4;
             // 
             // safety_lab
@@ -109,12 +110,20 @@
             // 
             // cartesianChart1
             // 
-            this.cartesianChart1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.cartesianChart1.Location = new System.Drawing.Point(536, 0);
+            //this.cartesianChart1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.cartesianChart1.Location = new System.Drawing.Point(540, 20);
             this.cartesianChart1.Name = "cartesianChart1";
-            this.cartesianChart1.Size = new System.Drawing.Size(964, 500);
+            this.cartesianChart1.Size = new System.Drawing.Size(1300, 500);
             this.cartesianChart1.TabIndex = 8;
             this.cartesianChart1.Text = "cartesianChart1";
+            // 
+            // cartesianChart2
+            // 
+            this.cartesianChart2.Location = new System.Drawing.Point(540, 600);
+            this.cartesianChart2.Name = "cartesianChart2";
+            this.cartesianChart2.Size = new System.Drawing.Size(1300, 300);
+            this.cartesianChart2.TabIndex = 9;
+            this.cartesianChart2.Text = "cartesianChart2"; 
             // 
             // chan_label1
             // 
@@ -125,7 +134,7 @@
             this.chan_label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.chan_label1.Name = "chan_label1";
             this.chan_label1.Size = new System.Drawing.Size(99, 24);
-            this.chan_label1.TabIndex = 9;
+            this.chan_label1.TabIndex = 10;
             this.chan_label1.Text = "Channel A";
             // 
             // chan_label2
@@ -137,7 +146,7 @@
             this.chan_label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.chan_label2.Name = "chan_label2";
             this.chan_label2.Size = new System.Drawing.Size(98, 24);
-            this.chan_label2.TabIndex = 10;
+            this.chan_label2.TabIndex = 11;
             this.chan_label2.Text = "Channel B";
             // 
             // Form1
@@ -145,10 +154,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1500, 500);
+            this.ClientSize = new System.Drawing.Size(1900, 1000);
             this.Controls.Add(this.chan_label2);
             this.Controls.Add(this.chan_label1);
             this.Controls.Add(this.cartesianChart1);
+            this.Controls.Add(this.cartesianChart2);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.safety_lab);
@@ -174,6 +184,7 @@
         private System.Windows.Forms.TextBox log;
         private System.Windows.Forms.Label safety_lab;
         private LiveCharts.WinForms.CartesianChart cartesianChart1;
+        private LiveCharts.WinForms.CartesianChart cartesianChart2;
         private System.Windows.Forms.Label chan_label1;
         private System.Windows.Forms.Label chan_label2;
     }

@@ -25,7 +25,7 @@ namespace WindowsFormsApp4
         }
         public void CalculateRMS(int count) {
             double oldest_sq, newest_sq;
-            this.data_queue.Enqueue(this.current_val); 
+            this.data_queue.Enqueue(this.current_val);
             if (count < this.nmax_queue_total - 1)
             {
                 this.current_rms_sq += this.current_val * this.current_val; 

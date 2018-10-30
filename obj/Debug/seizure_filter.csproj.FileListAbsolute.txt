@@ -88,3 +88,5 @@ C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\obj\Debug\seizure_filter.cspr
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\obj\Debug\seizure_filter.exe
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\obj\Debug\seizure_filter.pdb
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\LiveCharts.Geared.dll
+C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\NAudio.dll
+C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\NAudio.xml

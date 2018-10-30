@@ -10,7 +10,6 @@ using LiveCharts.Wpf;
 using LiveCharts.Configurations;
 using LiveCharts.Defaults;
 using LiveCharts.Geared;
-using System.Collections.Generic;
 
 /** SEIZURE FILTER EEG PROGRAM
  * Started by Dominic DiCarlo September 2018
@@ -103,18 +102,40 @@ namespace WindowsFormsApp4
 {
     public partial class Form1 : Form
     {
-        private AppInputParameters app_inp_prm; 
+        private AppInputParameters app_inp_prm;
         private Thread logic_thread;
+        
+        public STFTCalculator fftcalc; 
         public GearedValues<ObservablePoint>[] Obs { get; set; }
         public Form1()
         {
+            double[] myarray = new double[] { -1.2, 2.4, 67.1, 54, 243, 212, -23.4, 353.1, -44, 347.7, 656.1, -464 };
+            Console.WriteLine("My old array length is " + myarray.Length);
+            for (int i = 0; i < myarray.Length; i++)
+            {
+                Console.Write("\t " + myarray[i]);
+            }
+
+            Array.Copy(myarray, 3, myarray, 0, myarray.Length - 3);
+            int countcount = myarray.Length - 3;
+            myarray[countcount++] = 32321;
+            myarray[countcount++] = -31.32;
+            myarray[countcount++] = 233.1;
+            Console.WriteLine("\n My new array length is " + myarray.Length + " first element is " + myarray[0] + " and count = " + countcount);
+            for (int i = 0; i < myarray.Length; i++)
+            {
+                Console.Write("\t " + myarray[i]);
+            }
+            Console.WriteLine("\nWasup");
             InitializeComponent();
 
             using (Prompt prompt = new Prompt("ENTER THE INPUT PARAMETERS", "Input parameters"))
             {
                 app_inp_prm = prompt.Result;
             }
-            app_inp_prm.CompleteInitialize(); 
+            app_inp_prm.CompleteInitialize();
+            fftcalc = new STFTCalculator(app_inp_prm.Fs);
+
             InitializePlot();             
             this.Load += Form1_Load;
         }
@@ -259,6 +280,8 @@ namespace WindowsFormsApp4
             }
 
         }
+
+
         public void DrawAndReport()
         {
             try
@@ -270,7 +293,7 @@ namespace WindowsFormsApp4
                 UpdateLabel(chan_label1, "Channel " + app_inp_prm.chan_idx2plt[0]);
                 UpdateLabel(chan_label2, "Channel " + app_inp_prm.chan_idx2plt[1]);
 
-                Byte[] bytes = new Byte[16384];
+                Byte[] bytes = new Byte[1024];
                 int[] chan_idx = { app_inp_prm.chan_idx2plt[0], app_inp_prm.chan_idx2plt[1]};
                 int nchan = chan_idx.Length;
                 DataQueueAndCalculator[] dqc = new DataQueueAndCalculator[nchan];
@@ -278,6 +301,7 @@ namespace WindowsFormsApp4
                 System.Windows.Forms.Panel[] panels = { panel1, panel2 } ;
                 System.Windows.Forms.TextBox[] rms_vals = { rms_val1, rms_val2 }; 
 
+                
                 while (true)
                 {
                     int stream_read;
