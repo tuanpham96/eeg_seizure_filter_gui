@@ -121,7 +121,7 @@ namespace WindowsFormsApp4
                 app_inp_prm = prompt.Result;
             }
             app_inp_prm.CompleteInitialize();
-            fftcalc = new STFTCalculator(app_inp_prm.Fs, app_inp_prm.output_file_name, true);
+            fftcalc = new STFTCalculator(app_inp_prm.Fs, app_inp_prm.output_file_name, false, new double[] { 0, 7 });
 
             InitializePlot();             
             this.Load += Form1_Load;
@@ -289,17 +289,17 @@ namespace WindowsFormsApp4
         private void UpdateSTFTPlot()
         {
             mystft.Clear();
+            fftcalc.CalculatePSD(); 
             ObservablePoint[] stft_new = new ObservablePoint[fftcalc.n_valid]; 
             for (int i = 0; i < fftcalc.n_valid; i++)
             {
                 stft_new[i] = new ObservablePoint(fftcalc.freq_vec[i], fftcalc.mag_freq[i]); 
             }
-            mystft.AddRange(stft_new); 
-            /*
-            for (int i = 0; i < fftcalc.n_valid; i++)
-            {
-                mystft.Add(new ObservablePoint(fftcalc.freq_vec[i], fftcalc.mag_freq[i]));
-            }*/
+            mystft.AddRange(stft_new);
+
+            cartesianChart2.AxisX[0].Title = "Frequency (Hz)";
+            cartesianChart2.AxisX[0].MinValue = 0;
+            cartesianChart2.AxisX[0].MaxValue = 40;
         }
 
 
