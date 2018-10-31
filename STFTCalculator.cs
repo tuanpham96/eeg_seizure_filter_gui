@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using NAudio.Wave;
-using NAudio.CoreAudioApi;
 using System.IO;
 
 namespace WindowsFormsApp4
@@ -14,19 +8,21 @@ namespace WindowsFormsApp4
     {
 
         public double[] array, freq_vec, mag_freq; 
-        public int n_epoch, n_skip, n_valid;
+        public int n_epoch, n_skip, n_valid, n_display;
         public double Rate, fft_maxf, fft_fspacing;
         public int current_count;
         public bool ready2plt;
         public string savedfile, delim = ";";
-        public bool saving_option; 
-
-        public STFTCalculator(double Fs, string file_prefix, bool saving_option)
+        public bool saving_option;
+        public double minf_display, maxf_display;
+        public int lower_idx, upper_idx; 
+        public STFTCalculator(double Fs, string file_prefix, bool saving_option, double minf_display, double maxf_display)
         {
             Rate = Fs;
             n_epoch = (int)(Fs * 2);
             n_skip = (int)(Fs * 0.2);
             n_valid = (int)(n_epoch / 2);
+            n_display = n_valid; 
 
             fft_maxf = Fs / 2;
             fft_fspacing = Fs / n_epoch;
@@ -35,6 +31,14 @@ namespace WindowsFormsApp4
 
             array = new double[n_epoch];
 
+            this.minf_display = minf_display;
+            this.maxf_display = maxf_display; 
+
+            if (!(minf_display <= 0 && maxf_display >= fft_fspacing * (n_valid - 1))) {
+                lower_idx = (int)(minf_display / fft_fspacing);
+                upper_idx = (int)(maxf_display / fft_fspacing);
+                n_display = upper_idx - lower_idx + 1; 
+            }
             GenerateFrequencyVector();
 
             this.saving_option = saving_option;
@@ -61,10 +65,10 @@ namespace WindowsFormsApp4
         
         public void GenerateFrequencyVector()
         {
-            freq_vec = new double[n_valid];            
+            freq_vec = new double[n_display];
             for (int i = 0; i < freq_vec.Length; i++)
             {
-                freq_vec[i] = i * fft_fspacing;
+                freq_vec[i] = minf_display + i * fft_fspacing; 
             }
         }
         public void AddData(double d)
@@ -101,13 +105,13 @@ namespace WindowsFormsApp4
          */   
         public double[] FFT(double[] data)
         {
-            double[] fft = new double[(int)(data.Length/2)];
+            double[] fft = new double[n_display];
             System.Numerics.Complex[] fftComplex = new System.Numerics.Complex[data.Length];
             for (int i = 0; i < data.Length; i++)
                 fftComplex[i] = new System.Numerics.Complex(data[i], 0.0);
             Accord.Math.FourierTransform.FFT(fftComplex, Accord.Math.FourierTransform.Direction.Forward);
             for (int i = 0; i < fft.Length; i++)
-                fft[i] = fftComplex[i].Magnitude;
+                fft[i] = fftComplex[i+lower_idx].Magnitude;
             return fft;
         }
 

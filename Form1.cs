@@ -106,7 +106,7 @@ namespace WindowsFormsApp4
         private Thread logic_thread;
         
         public STFTCalculator fftcalc; 
-        public GearedValues<ObservablePoint> mystft { get; set; }
+        public ChartValues<HeatPoint> mystft { get; set; }
 
         
         public GearedValues<ObservablePoint>[] Obs { get; set; }
@@ -121,7 +121,7 @@ namespace WindowsFormsApp4
                 app_inp_prm = prompt.Result;
             }
             app_inp_prm.CompleteInitialize();
-            fftcalc = new STFTCalculator(app_inp_prm.Fs, app_inp_prm.output_file_name, true);
+            fftcalc = new STFTCalculator(app_inp_prm.Fs, app_inp_prm.output_file_name, false, 0, 40);
 
             InitializePlot();             
             this.Load += Form1_Load;
@@ -160,15 +160,21 @@ namespace WindowsFormsApp4
             cartesianChart1.LegendLocation = LegendLocation.Right;
             cartesianChart1.Invalidate();
 
-            mystft = new GearedValues<ObservablePoint>() { Quality = app_inp_prm.display_quality };
-            cartesianChart2.Series.Add(new GLineSeries
+            mystft = new ChartValues<HeatPoint>();
+            cartesianChart2.Series.Add(new HeatSeries
             {
                 Values = mystft,
-                StrokeThickness = 1,
-                PointGeometry = DefaultGeometries.None,
-                LineSmoothness = 0,
-                Fill = System.Windows.Media.Brushes.Transparent,
-                Title = "MY STFT test"
+                //StrokeThickness = 1,
+                //PointGeometry = DefaultGeometries.None,
+                //LineSmoothness = 0,
+                //Fill = System.Windows.Media.Brushes.Transparent,
+                Title = "MY STFT test",
+
+                GradientStopCollection = new System.Windows.Media.GradientStopCollection
+                {
+                    new System.Windows.Media.GradientStop(System.Windows.Media.Color.FromRgb(250,250,250), 0),
+                    new System.Windows.Media.GradientStop(System.Windows.Media.Color.FromRgb(255,0,0), 1)
+                }
             });
 
             cartesianChart2.DisableAnimations = true; // for performance 
@@ -176,6 +182,7 @@ namespace WindowsFormsApp4
             cartesianChart2.DataTooltip = null;
             cartesianChart2.LegendLocation = LegendLocation.Right;
             cartesianChart2.Invalidate();
+
 
         }
 
@@ -286,15 +293,31 @@ namespace WindowsFormsApp4
 
         }
 
-        private void UpdateSTFTPlot()
+        private void UpdateSTFTPlot(double t)
         {
-            mystft.Clear();
-            ObservablePoint[] stft_new = new ObservablePoint[fftcalc.n_valid]; 
-            for (int i = 0; i < fftcalc.n_valid; i++)
+            //mystft.Clear();
+            HeatPoint[] stft_new = new HeatPoint[fftcalc.n_display]; 
+            for (int i = 0; i < fftcalc.n_display; i++)
             {
-                stft_new[i] = new ObservablePoint(fftcalc.freq_vec[i], fftcalc.mag_freq[i]); 
+                stft_new[i] = new HeatPoint(t, fftcalc.freq_vec[i], fftcalc.mag_freq[i]); 
             }
-            mystft.AddRange(stft_new); 
+            mystft.AddRange(stft_new);
+
+            double maxsec = this.app_inp_prm.nsec_plt;
+            double min_bound = (Math.Floor(t / maxsec) * maxsec);
+            double max_bound = (Math.Floor(t / maxsec) + 1) * maxsec;
+
+            if (mystft.Count > 100)
+            {
+                cartesianChart2.AxisX[0].Title = "Time (seconds)";
+                cartesianChart2.AxisX[0].MinValue = min_bound;
+                cartesianChart2.AxisX[0].MaxValue = max_bound;
+            }
+
+            if (mystft.Count > fftcalc.n_display * maxsec * 10)
+            {
+                mystft.Clear(); 
+            }
             /*
             for (int i = 0; i < fftcalc.n_valid; i++)
             {
@@ -363,7 +386,7 @@ namespace WindowsFormsApp4
                             }
                             if (fftcalc.ready2plt)
                             {
-                                cartesianChart2.BeginInvoke(new Action(UpdateSTFTPlot));
+                                cartesianChart2.BeginInvoke(new Action<double>(UpdateSTFTPlot), t);
                             }
                             TimeSpan tsp = TimeSpan.FromSeconds(t);
                             for (int ich = 0; ich < nchan; ich++)
