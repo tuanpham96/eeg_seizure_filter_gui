@@ -14,31 +14,38 @@ namespace WindowsFormsApp4
     {
 
         public double[] array, freq_vec, mag_freq; 
-        public int nfft, nskip;
+        public int n_epoch, n_skip, n_valid;
         public double Rate, fft_maxf, fft_fspacing;
         public int current_count;
         public bool ready2plt;
-        public string savedfile = @"C:\Users\Towle\Desktop\Tuan\general_towle\data\mystft.csv";
-        public string delim = ";";
-        public int col_count; 
-        public STFTCalculator(double Fs)
+        public string savedfile, delim = ";";
+        public bool saving_option; 
+
+        public STFTCalculator(double Fs, string file_prefix, bool saving_option)
         {
             Rate = Fs;
-            nfft = (int)(Fs * 2);
-            nskip = (int)(Fs * 0.2);
+            n_epoch = (int)(Fs * 2);
+            n_skip = (int)(Fs * 0.2);
+            n_valid = (int)(n_epoch / 2);
 
             fft_maxf = Fs / 2;
-            fft_fspacing = Fs / nfft;
+            fft_fspacing = Fs / n_epoch;
             current_count = 0;
-            col_count = 0; 
             ready2plt = false;
 
-            array = new double[nfft];
+            array = new double[n_epoch];
 
             GenerateFrequencyVector();
-            File.WriteAllText(savedfile, "Freq\n");
-            File.AppendAllLines(savedfile,
-                freq_vec.Select(d => d.ToString()));       
+
+            this.saving_option = saving_option;
+            if (saving_option)
+            {
+                savedfile = file_prefix.Replace(".csv", "_stft.csv");
+                File.WriteAllText(savedfile, "Freq\n");
+                File.AppendAllLines(savedfile,
+                    freq_vec.Select(d => d.ToString()));      
+            }
+
 
         }
         
@@ -54,7 +61,7 @@ namespace WindowsFormsApp4
         
         public void GenerateFrequencyVector()
         {
-            freq_vec = new double[(int)(nfft / 2)];            
+            freq_vec = new double[n_valid];            
             for (int i = 0; i < freq_vec.Length; i++)
             {
                 freq_vec[i] = i * fft_fspacing;
@@ -67,20 +74,19 @@ namespace WindowsFormsApp4
         }
         public void ShiftArray()
         {
-            Array.Copy(array, nskip, array, 0, nfft - nskip);
-            current_count = nfft - nskip;
+            Array.Copy(array, n_skip, array, 0, n_epoch - n_skip);
+            current_count = n_epoch - n_skip;
         }
         public void CalculateFFT(double t, double d)
         {
-            if (current_count == nfft)
+            if (current_count == n_epoch)
             {
-                mag_freq = new double[freq_vec.Length];
+                mag_freq = new double[n_valid];
                 mag_freq = FFT(array);
                 ready2plt = true;
-                col_count++;
-                WriteToFile(string.Format("t = {0:0.00}", t), mag_freq);
+                if (saving_option) { WriteToFile(string.Format("t = {0:0.00}", t), mag_freq); }
                 ShiftArray();
-            } else if (current_count < nfft)
+            } else if (current_count < n_epoch)
             {
                 AddData(d);
                 ready2plt = false; 
