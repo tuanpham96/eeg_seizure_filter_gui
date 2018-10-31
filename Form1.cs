@@ -293,7 +293,7 @@ namespace WindowsFormsApp4
             ObservablePoint[] stft_new = new ObservablePoint[fftcalc.n_valid]; 
             for (int i = 0; i < fftcalc.n_valid; i++)
             {
-                stft_new[i] = new ObservablePoint(fftcalc.freq_vec[i], fftcalc.mag_freq[i]); 
+                stft_new[i] = new ObservablePoint(fftcalc.freq_vec[i], fftcalc.psd[i]); 
             }
             mystft.AddRange(stft_new);
 
