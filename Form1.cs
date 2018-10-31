@@ -121,7 +121,7 @@ namespace WindowsFormsApp4
                 app_inp_prm = prompt.Result;
             }
             app_inp_prm.CompleteInitialize();
-            fftcalc = new STFTCalculator(app_inp_prm.Fs);
+            fftcalc = new STFTCalculator(app_inp_prm.Fs, app_inp_prm.output_file_name, true);
 
             InitializePlot();             
             this.Load += Form1_Load;
@@ -169,7 +169,14 @@ namespace WindowsFormsApp4
                 LineSmoothness = 0,
                 Fill = System.Windows.Media.Brushes.Transparent,
                 Title = "MY STFT test"
-            }); 
+            });
+
+            cartesianChart2.DisableAnimations = true; // for performance 
+            cartesianChart2.Hoverable = false;
+            cartesianChart2.DataTooltip = null;
+            cartesianChart2.LegendLocation = LegendLocation.Right;
+            cartesianChart2.Invalidate();
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -282,11 +289,17 @@ namespace WindowsFormsApp4
         private void UpdateSTFTPlot()
         {
             mystft.Clear();
-
-            for (int i = 0; i < fftcalc.freq_vec.Length; i++)
+            ObservablePoint[] stft_new = new ObservablePoint[fftcalc.n_valid]; 
+            for (int i = 0; i < fftcalc.n_valid; i++)
+            {
+                stft_new[i] = new ObservablePoint(fftcalc.freq_vec[i], fftcalc.mag_freq[i]); 
+            }
+            mystft.AddRange(stft_new); 
+            /*
+            for (int i = 0; i < fftcalc.n_valid; i++)
             {
                 mystft.Add(new ObservablePoint(fftcalc.freq_vec[i], fftcalc.mag_freq[i]));
-            }
+            }*/
         }
 
 
@@ -304,8 +317,8 @@ namespace WindowsFormsApp4
                 Byte[] bytes = new Byte[1024];
                 int[] chan_idx = { app_inp_prm.chan_idx2plt[0], app_inp_prm.chan_idx2plt[1]};
                 int nchan = chan_idx.Length;
-                DataQueueAndCalculator[] dqc = new DataQueueAndCalculator[nchan];
-                for (int ich = 0; ich < nchan; ich++) { dqc[ich] = new DataQueueAndCalculator(this.app_inp_prm.nmax_queue_total); }
+                RMSCalculator[] dqc = new RMSCalculator[nchan];
+                for (int ich = 0; ich < nchan; ich++) { dqc[ich] = new RMSCalculator(this.app_inp_prm.nmax_queue_total); }
                 System.Windows.Forms.Panel[] panels = { panel1, panel2 } ;
                 System.Windows.Forms.TextBox[] rms_vals = { rms_val1, rms_val2 };
                 
@@ -339,10 +352,7 @@ namespace WindowsFormsApp4
                             double t = ((double)count) / this.app_inp_prm.Fs;
 
                             fftcalc.CalculateFFT(t, dqc[0].current_val);
-                            if (fftcalc.ready2plt)
-                            {
-                                cartesianChart2.BeginInvoke(new Action(UpdateSTFTPlot)); 
-                            }
+                            
                             if (app_inp_prm.refresh_display)
                             {
                                 cartesianChart1.BeginInvoke(new Action<int, double, double[]>(UpdateSeriesPlot), count, t, viz);
@@ -351,7 +361,10 @@ namespace WindowsFormsApp4
                                 cartesianChart1.BeginInvoke(new Action<double, double[]>(UpdateSeriesPlot), t, viz);
 
                             }
-
+                            if (fftcalc.ready2plt)
+                            {
+                                cartesianChart2.BeginInvoke(new Action(UpdateSTFTPlot));
+                            }
                             TimeSpan tsp = TimeSpan.FromSeconds(t);
                             for (int ich = 0; ich < nchan; ich++)
                             {
