@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using NAudio.Wave;
 using NAudio.CoreAudioApi;
+using System.IO;
 
 namespace WindowsFormsApp4
 {
@@ -16,19 +17,41 @@ namespace WindowsFormsApp4
         public int nfft, nskip;
         public double Rate, fft_maxf, fft_fspacing;
         public int current_count;
-        public bool ready2plt; 
+        public bool ready2plt;
+        public string savedfile = @"C:\Users\Towle\Desktop\Tuan\general_towle\data\mystft.csv";
+        public string delim = ";";
+        public int col_count; 
         public STFTCalculator(double Fs)
         {
             Rate = Fs;
             nfft = (int)(Fs * 2);
             nskip = (int)(Fs * 0.2);
-            array = new double[nfft];
+
             fft_maxf = Fs / 2;
             fft_fspacing = Fs / nfft;
             current_count = 0;
-            ready2plt = false; 
-            GenerateFrequencyVector(); 
+            col_count = 0; 
+            ready2plt = false;
+
+            array = new double[nfft];
+
+            GenerateFrequencyVector();
+            File.WriteAllText(savedfile, "Freq\n");
+            File.AppendAllLines(savedfile,
+                freq_vec.Select(d => d.ToString()));       
+
         }
+        
+        public void WriteToFile(string s, double[] d)
+        {
+            var next_col = File.ReadLines(savedfile)
+                .Select((line, index) => index == 0
+                ? line + delim + s
+                : line + delim + d[index - 1].ToString())
+                .ToList();
+            File.WriteAllLines(savedfile, next_col);
+        }
+        
         public void GenerateFrequencyVector()
         {
             freq_vec = new double[(int)(nfft / 2)];            
@@ -47,18 +70,23 @@ namespace WindowsFormsApp4
             Array.Copy(array, nskip, array, 0, nfft - nskip);
             current_count = nfft - nskip;
         }
-        public void CalculateFFT(double d)
+        public void CalculateFFT(double t, double d)
         {
             if (current_count == nfft)
             {
                 mag_freq = new double[freq_vec.Length];
                 mag_freq = FFT(array);
-                ready2plt = true; 
+                ready2plt = true;
+                col_count++;
+                WriteToFile(string.Format("t = {0:0.00}", t), mag_freq);
                 ShiftArray();
-            } else
+            } else if (current_count < nfft)
             {
                 AddData(d);
                 ready2plt = false; 
+            } else
+            {
+                throw new System.Exception("Attribute `current_count` is greater than the allowed size of of the array"); 
             }
         }
 

@@ -90,3 +90,10 @@ C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\obj\Debug\seizure_filter.pdb
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\LiveCharts.Geared.dll
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\NAudio.dll
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\NAudio.xml
+C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\Accord.dll.config
+C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\Accord.dll
+C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\Accord.Math.Core.dll
+C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\Accord.Math.dll
+C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\Accord.xml
+C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\Accord.Math.xml
+C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\Accord.Math.Core.xml

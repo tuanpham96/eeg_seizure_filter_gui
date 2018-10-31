@@ -106,27 +106,14 @@ namespace WindowsFormsApp4
         private Thread logic_thread;
         
         public STFTCalculator fftcalc; 
+        public GearedValues<ObservablePoint> mystft { get; set; }
+
+        
         public GearedValues<ObservablePoint>[] Obs { get; set; }
         public Form1()
         {
-            double[] myarray = new double[] { -1.2, 2.4, 67.1, 54, 243, 212, -23.4, 353.1, -44, 347.7, 656.1, -464 };
-            Console.WriteLine("My old array length is " + myarray.Length);
-            for (int i = 0; i < myarray.Length; i++)
-            {
-                Console.Write("\t " + myarray[i]);
-            }
+            //MiscellaneousTesting misctest = new MiscellaneousTesting();
 
-            Array.Copy(myarray, 3, myarray, 0, myarray.Length - 3);
-            int countcount = myarray.Length - 3;
-            myarray[countcount++] = 32321;
-            myarray[countcount++] = -31.32;
-            myarray[countcount++] = 233.1;
-            Console.WriteLine("\n My new array length is " + myarray.Length + " first element is " + myarray[0] + " and count = " + countcount);
-            for (int i = 0; i < myarray.Length; i++)
-            {
-                Console.Write("\t " + myarray[i]);
-            }
-            Console.WriteLine("\nWasup");
             InitializeComponent();
 
             using (Prompt prompt = new Prompt("ENTER THE INPUT PARAMETERS", "Input parameters"))
@@ -171,7 +158,18 @@ namespace WindowsFormsApp4
             cartesianChart1.Hoverable = false;
             cartesianChart1.DataTooltip = null;
             cartesianChart1.LegendLocation = LegendLocation.Right;
-            cartesianChart1.Invalidate(); 
+            cartesianChart1.Invalidate();
+
+            mystft = new GearedValues<ObservablePoint>() { Quality = app_inp_prm.display_quality };
+            cartesianChart2.Series.Add(new GLineSeries
+            {
+                Values = mystft,
+                StrokeThickness = 1,
+                PointGeometry = DefaultGeometries.None,
+                LineSmoothness = 0,
+                Fill = System.Windows.Media.Brushes.Transparent,
+                Title = "MY STFT test"
+            }); 
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -281,6 +279,16 @@ namespace WindowsFormsApp4
 
         }
 
+        private void UpdateSTFTPlot()
+        {
+            mystft.Clear();
+
+            for (int i = 0; i < fftcalc.freq_vec.Length; i++)
+            {
+                mystft.Add(new ObservablePoint(fftcalc.freq_vec[i], fftcalc.mag_freq[i]));
+            }
+        }
+
 
         public void DrawAndReport()
         {
@@ -299,8 +307,7 @@ namespace WindowsFormsApp4
                 DataQueueAndCalculator[] dqc = new DataQueueAndCalculator[nchan];
                 for (int ich = 0; ich < nchan; ich++) { dqc[ich] = new DataQueueAndCalculator(this.app_inp_prm.nmax_queue_total); }
                 System.Windows.Forms.Panel[] panels = { panel1, panel2 } ;
-                System.Windows.Forms.TextBox[] rms_vals = { rms_val1, rms_val2 }; 
-
+                System.Windows.Forms.TextBox[] rms_vals = { rms_val1, rms_val2 };
                 
                 while (true)
                 {
@@ -325,11 +332,17 @@ namespace WindowsFormsApp4
                             {
                                 dqc[ich].ParseCurrentValue(current_data_chunk[ix + chan_idx[ich] * app_inp_prm.nsamp_per_block]); 
                             }
+
                             double[] viz = {    dqc[0].current_val,
                                                 dqc[1].current_val,
                                                 dqc[0].current_val - dqc[1].current_val };
                             double t = ((double)count) / this.app_inp_prm.Fs;
 
+                            fftcalc.CalculateFFT(t, dqc[0].current_val);
+                            if (fftcalc.ready2plt)
+                            {
+                                cartesianChart2.BeginInvoke(new Action(UpdateSTFTPlot)); 
+                            }
                             if (app_inp_prm.refresh_display)
                             {
                                 cartesianChart1.BeginInvoke(new Action<int, double, double[]>(UpdateSeriesPlot), count, t, viz);

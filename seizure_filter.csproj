@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppInputParameters.cs" />
+    <Compile Include="MiscellaneousTesting.cs" />
     <Compile Include="STFTCalculator.cs" />
     <Compile Include="DataQueueAndCalculator.cs" />
     <Compile Include="Prompt.cs" />
