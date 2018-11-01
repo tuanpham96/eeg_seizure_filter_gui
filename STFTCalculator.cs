@@ -7,25 +7,51 @@ using System.Threading.Tasks;
 using NAudio.Wave;
 using NAudio.CoreAudioApi;
 using System.IO;
+using System.Reflection;
 
 namespace WindowsFormsApp4
 {
     public class STFTCalculator
     {
+        #region Attributes
+        private double[] array, window;
+        private double psd_scale; 
+        private string savedfile, delim = ";";
+        private bool saving_option;
 
-        public double[] array, freq_vec, mag_freq, psd; 
+        public double[] freq_vec, mag_freq, psd;
+        public double band_power;
         public int n_epoch, n_skip, n_valid;
         public double Rate, fft_maxf, fft_fspacing;
         public int current_count;
         public bool ready2plt;
-        public string savedfile, delim = ";";
-        public bool saving_option;
-        public double[] freq_range_calc_power; 
-        public STFTCalculator(double Fs, string file_prefix, bool saving_option, double[] freq_range_calc_power)
+        public double[] bandpower_freqrange;
+
+        #endregion
+
+        #region Window functions
+        public enum WindowType { Hanning, Hamming, Rectangle, Triangle};
+        private class WindowFunctions
+        {
+            private const double pi = Math.PI; 
+            public double Rectangle(int n, int N)   { return 1; }
+            public double Triangle(int n, int N)    { return 1 - Math.Abs( (n - (N-1)*0.5) / (N/2) ); }
+            public double Hanning(int n, int N)     { return General_Cosine(n, N, 0.5); }
+            public double Hamming(int n, int N)     { return General_Cosine(n, N, 25.0 / 46.0); }
+            private double General_Cosine(int n, int N, double a0) { return a0 - (1 - a0) * Math.Cos(2 * pi * n / (N - 1));  }
+            public MethodInfo function(string method)
+            {
+                return GetType().GetMethod(method); 
+            }
+            
+        }
+        #endregion 
+
+        public STFTCalculator(double Fs, double[] BPFR, WindowType win_type = WindowType.Rectangle, string file_prefix = "", bool saving_option = false)
         {
             Rate = Fs;
-            n_epoch = (int)(Fs * 16);
-            n_skip = (int)(Fs * 0.5);
+            n_epoch = (int)(Fs * 8);
+            n_skip = (int)(Fs * 0.2);
             n_valid = (int)(n_epoch / 2);
 
             fft_maxf = Fs / 2;
@@ -35,55 +61,77 @@ namespace WindowsFormsApp4
 
             array = new double[n_epoch];
 
-            this.freq_range_calc_power = new double[2]; 
-            if (freq_range_calc_power.Length == 2)
-            {
-                if (freq_range_calc_power[0] < freq_range_calc_power[1])
-                {
-                    this.freq_range_calc_power[0] = freq_range_calc_power[0];
-                    this.freq_range_calc_power[1] = freq_range_calc_power[1];
-                } else
-                {
-                    throw new System.ArgumentException("`freq_range_calc_power` can only have 2 values of increasing order"); 
-                }
-            } else
-            {
-                throw new System.IndexOutOfRangeException("`freq_range_calc_power` can only have 2 values of increasing order");
-            }
-           
+            Configure_Frequency_Range(BPFR); 
+            
             GenerateFrequencyVector();
+            GenerateWindow(win_type);
 
             this.saving_option = saving_option;
-            if (saving_option)
+            Configure_Saving_Options(file_prefix);
+
+        }
+        #region Initialization
+        private void Configure_Frequency_Range(double[] d)
+        {
+            bandpower_freqrange = new double[2];
+            string err_mess = "`bandpower_freqrange` can only have 2 values of increasing order";
+            if (d.Length == 2)
             {
-                savedfile = file_prefix.Replace(".csv", "_stft.csv");
-                File.WriteAllText(savedfile, "Freq\n");
-                File.AppendAllLines(savedfile,
-                    freq_vec.Select(d => d.ToString()));      
+                if (d[0] < d[1])
+                {
+                    bandpower_freqrange[0] = d[0];
+                    bandpower_freqrange[1] = d[1];
+                }
+                else
+                {
+                    throw new System.ArgumentException(err_mess);
+                }
+            }
+            else
+            {
+                throw new System.IndexOutOfRangeException(err_mess);
+            }
+        }
+
+        private void GenerateWindow(WindowType win_type)
+        {
+            string win_name = win_type.ToString();
+            WindowFunctions wf = new WindowFunctions();
+            MethodInfo method = wf.function(win_name);
+
+            window = new double[n_epoch];
+            psd_scale = 0; 
+            for (int i = 0; i < n_epoch; i++)
+            {
+                window[i] = Convert.ToDouble(method.Invoke(wf, new object[] { i, n_epoch }));
+                psd_scale += window[i] * window[i]; 
             }
 
+            psd_scale = 1 / (psd_scale * Rate);
+        }
 
-        }
-        
-        public void WriteToFile(string s, double[] d)
+        private void GenerateFrequencyVector()
         {
-            var next_col = File.ReadLines(savedfile)
-                .Select((line, index) => index == 0
-                ? line + delim + s
-                : line + delim + d[index - 1].ToString())
-                .ToList();
-            File.WriteAllLines(savedfile, next_col);
-        }
-        
-        public void GenerateFrequencyVector()
-        {
-            freq_vec = new double[n_valid];            
+            freq_vec = new double[n_valid];
             for (int i = 0; i < freq_vec.Length; i++)
             {
                 freq_vec[i] = i * fft_fspacing;
             }
         }
 
+        private void Configure_Saving_Options(string file_prefix)
+        {
+            if (saving_option)
+            {
+                savedfile = file_prefix.Replace(".csv", "_stft.csv");
+                File.WriteAllText(savedfile, "Freq\n");
+                File.AppendAllLines(savedfile,
+                    freq_vec.Select(d => d.ToString()));
+            }
+        }
+        #endregion
+
+        #region Manipulating data 
         public void AddData(double d)
         {
             array[current_count] = d;
@@ -96,14 +144,30 @@ namespace WindowsFormsApp4
             current_count = n_epoch - n_skip;
         }
 
+        private void WriteToFile(string s, double[] d)
+        {
+            var next_col = File.ReadLines(savedfile)
+                .Select((line, index) => index == 0
+                ? line + delim + s
+                : line + delim + d[index - 1].ToString())
+                .ToList();
+            File.WriteAllLines(savedfile, next_col);
+        }
+        #endregion
+
+        #region Calculations
         public void CalculatePSD()
         {
             psd = new double[n_valid];
-            double factor = 1 / (Rate * n_epoch);
-            psd[0] = 10*Math.Log10(mag_freq[0] * mag_freq[0] * factor);
+            band_power = 0; 
+
             for (int i = 0; i < n_valid; i++)
             {
-                psd[i] = 10*Math.Log10(mag_freq[i] * mag_freq[i] * factor * 2); 
+                psd[i] = psd_scale * mag_freq[i] * mag_freq[i];
+                if (freq_vec[i] >= bandpower_freqrange[0] && freq_vec[i] <= bandpower_freqrange[1])
+                {
+                    band_power += psd[i]; 
+                }
             }
         }
 
@@ -134,13 +198,14 @@ namespace WindowsFormsApp4
             double[] fft = new double[(int)(data.Length/2)];
             System.Numerics.Complex[] fftComplex = new System.Numerics.Complex[data.Length];
             for (int i = 0; i < data.Length; i++)
-                fftComplex[i] = new System.Numerics.Complex(data[i], 0.0);
+                fftComplex[i] = new System.Numerics.Complex(data[i] * window[i], 0.0);
             Accord.Math.FourierTransform.FFT(fftComplex, Accord.Math.FourierTransform.Direction.Forward);
             for (int i = 0; i < fft.Length; i++)
                 fft[i] = fftComplex[i].Magnitude;
             return fft;
         }
 
+        #endregion
 
     }
 }

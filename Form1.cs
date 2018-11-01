@@ -121,7 +121,7 @@ namespace WindowsFormsApp4
                 app_inp_prm = prompt.Result;
             }
             app_inp_prm.CompleteInitialize();
-            fftcalc = new STFTCalculator(app_inp_prm.Fs, app_inp_prm.output_file_name, false, new double[] { 0, 7 });
+            fftcalc = new STFTCalculator(app_inp_prm.Fs, new double[] { 15, 20}, STFTCalculator.WindowType.Hamming); // app_inp_prm.output_file_name, false, );
 
             InitializePlot();             
             this.Load += Form1_Load;
@@ -199,6 +199,7 @@ namespace WindowsFormsApp4
             }
         }
 
+        #region Update functions for simple WF objects 
         private string WelcomeMessage()
         {
             string message = String.Format("Connected to HOST@{0} - PORT@{1}\r\n",
@@ -241,7 +242,9 @@ namespace WindowsFormsApp4
             }
             pnl.BackColor = c; 
         }
+        #endregion f 
 
+        #region Update functions for the plots
         private void UpdateSeriesPlot(double t, double[] values)
         {
             for (int i_obs = 0; i_obs < values.Length; i_obs++)
@@ -273,9 +276,7 @@ namespace WindowsFormsApp4
                 Obs[i_obs].Add(new ObservablePoint(t, yval));
             }
 
-            double maxsec = this.app_inp_prm.nsec_plt;
-            double min_bound = (Math.Floor(t / maxsec) * maxsec); 
-            double max_bound = (Math.Floor(t / maxsec) + 1) * maxsec;
+            RefreshableAxisLimits(t, out double min_bound, out double max_bound);
 
             if (Obs[0].Count > 100)
             {
@@ -286,6 +287,31 @@ namespace WindowsFormsApp4
 
         }
 
+        private void RefreshableAxisLimits(double t, out double min_bound, out double max_bound)
+        {
+            double maxsec = this.app_inp_prm.nsec_plt;
+            min_bound = (Math.Floor(t / maxsec) * maxsec);
+            max_bound = (Math.Floor(t / maxsec) + 1) * maxsec;
+        }
+
+        private void UpdateBandPowerPlot(double t)
+        {
+            fftcalc.CalculatePSD();
+            mystft.Add(new ObservablePoint(t, fftcalc.band_power));
+
+            RefreshableAxisLimits(t, out double min_bound, out double max_bound);
+            if (mystft.Count > 100)
+            {
+                cartesianChart2.AxisX[0].Title = "Time (seconds)";
+                cartesianChart2.AxisX[0].MinValue = min_bound;
+                cartesianChart2.AxisX[0].MaxValue = max_bound;
+            }
+            if (mystft.Count >= 5000)
+            {
+                mystft.Clear(); 
+            }
+        }
+
         private void UpdateSTFTPlot()
         {
             mystft.Clear();
@@ -293,7 +319,7 @@ namespace WindowsFormsApp4
             ObservablePoint[] stft_new = new ObservablePoint[fftcalc.n_valid]; 
             for (int i = 0; i < fftcalc.n_valid; i++)
             {
-                stft_new[i] = new ObservablePoint(fftcalc.freq_vec[i], fftcalc.psd[i]); 
+                stft_new[i] = new ObservablePoint(fftcalc.freq_vec[i], fftcalc.mag_freq[i]); 
             }
             mystft.AddRange(stft_new);
 
@@ -302,6 +328,7 @@ namespace WindowsFormsApp4
             cartesianChart2.AxisX[0].MaxValue = 40;
         }
 
+        #endregion
 
         public void DrawAndReport()
         {
@@ -319,8 +346,8 @@ namespace WindowsFormsApp4
                 int nchan = chan_idx.Length;
                 RMSCalculator[] dqc = new RMSCalculator[nchan];
                 for (int ich = 0; ich < nchan; ich++) { dqc[ich] = new RMSCalculator(this.app_inp_prm.nmax_queue_total); }
-                System.Windows.Forms.Panel[] panels = { panel1, panel2 } ;
-                System.Windows.Forms.TextBox[] rms_vals = { rms_val1, rms_val2 };
+                Panel[] panels = { panel1, panel2 } ;
+                TextBox[] rms_vals = { rms_val1, rms_val2 };
                 
                 while (true)
                 {
@@ -363,7 +390,8 @@ namespace WindowsFormsApp4
                             }
                             if (fftcalc.ready2plt)
                             {
-                                cartesianChart2.BeginInvoke(new Action(UpdateSTFTPlot));
+                                //cartesianChart2.BeginInvoke(new Action(UpdateSTFTPlot));
+                                cartesianChart2.BeginInvoke(new Action<double>(UpdateBandPowerPlot), t);
                             }
                             TimeSpan tsp = TimeSpan.FromSeconds(t);
                             for (int ich = 0; ich < nchan; ich++)
