@@ -32,10 +32,10 @@ namespace WindowsFormsApp4
             prompt = new Form()
             {
                 Width = 800,
-                Height = 710,
+                Height = 1000,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 Text = caption,
-                StartPosition = FormStartPosition.CenterScreen,
+                StartPosition = FormStartPosition.CenterParent,
                 TopMost = true
             };
 
@@ -54,12 +54,18 @@ namespace WindowsFormsApp4
             TextBox[] textBoxes = new TextBox[number_inputs];
             Label[] inputLabels = new Label[number_inputs];
 
-            Panel rdbt_refresh_group, rdbt_quality_group; 
+            Panel rdbt_refresh_group, rdbt_quality_group, rdbt_wintype_group, rdbt_stftsave_group; 
             RadioButton[] rdbt_refresh = new RadioButton[input_params.display_refresh_options.Count];
             string rdbt_refresh_choice = "";
 
             RadioButton[] rdbt_quality = new RadioButton[input_params.gear_quality_dict.Count];
             string rdbt_quality_choice = "";
+
+            RadioButton[] rdbt_wintype = new RadioButton[input_params.wintype_dict.Count];
+            string rdbt_wintype_choice = "";
+
+            RadioButton[] rdbt_stftsave = new RadioButton[input_params.stft_saving_options.Count];
+            string rdbt_stftsave_choice = "";
 
             int top_label = 70, left_label = 10, width_label = 300;
             int top_box = 70, left_box = 320, width_box = 420, mod_width_box;
@@ -111,19 +117,27 @@ namespace WindowsFormsApp4
                         Size = new System.Drawing.Size(mod_width_box, spacing + 5),
                         BorderStyle = BorderStyle.None
                     };
+
+                    int default_idx = -1;
                     for (int i_rdbtr = 0; i_rdbtr < input_params.display_refresh_options.Count; i_rdbtr++)
                     {
+                        var i_key = input_params.display_refresh_options.Keys.ElementAt(i_rdbtr);
                         rdbt_refresh[i_rdbtr] = new RadioButton()
                         {
                             Location = new System.Drawing.Point(20 + 100 * i_rdbtr, 5),
                             Size = new System.Drawing.Size(100, spacing), 
-                            Text = input_params.display_refresh_options.Keys.ElementAt(i_rdbtr)
+                            Text = i_key
                         };
                         rdbt_refresh[i_rdbtr].CheckedChanged += new EventHandler((sender, e) => { radiobutton_change(sender, e, ref rdbt_refresh_choice); });
 
                         rdbt_refresh_group.Controls.Add(rdbt_refresh[i_rdbtr]);
+
+                        if (string.Compare(prop_val.ToString(), input_params.display_refresh_options[i_key].ToString()) == 0)
+                        {
+                            default_idx = i_rdbtr;
+                        }
                     }
-                    rdbt_refresh[0].Checked = true;
+                    rdbt_refresh[default_idx].Checked = true;
                     prompt.Controls.Add(rdbt_refresh_group);
                     top_box += spacing;
                     continue;
@@ -137,20 +151,94 @@ namespace WindowsFormsApp4
                         Size = new System.Drawing.Size(mod_width_box, spacing + 5),
                         BorderStyle = BorderStyle.None
                     };
+
+                    int default_idx = -1;
                     for (int i_rdbtr = 0; i_rdbtr < input_params.gear_quality_dict.Count; i_rdbtr++)
                     {
+                        var i_key = input_params.gear_quality_dict.Keys.ElementAt(i_rdbtr);
                         rdbt_quality[i_rdbtr] = new RadioButton()
                         {
                             Location = new System.Drawing.Point(20 + 100 * i_rdbtr, 5),
                             Size = new System.Drawing.Size(100, spacing),
-                            Text = input_params.gear_quality_dict.Keys.ElementAt(i_rdbtr)
+                            Text = i_key
                         };
                         rdbt_quality[i_rdbtr].CheckedChanged += new EventHandler((sender, e) => { radiobutton_change(sender, e, ref rdbt_quality_choice); });
 
                         rdbt_quality_group.Controls.Add(rdbt_quality[i_rdbtr]);
+                        
+                        if (string.Compare(prop_val.ToString(), input_params.gear_quality_dict[i_key].ToString()) == 0)
+                        {
+                            default_idx = i_rdbtr;
+                        } 
                     }
-                    rdbt_quality[0].Checked = true;
+                    rdbt_quality[default_idx].Checked = true;
                     prompt.Controls.Add(rdbt_quality_group);
+                    top_box += spacing;
+                    continue;
+                }
+
+                if (string.Compare(prop_name, "window_type") == 0)
+                {
+                    rdbt_wintype_group = new Panel()
+                    {
+                        Location = new System.Drawing.Point(left_box, top_box - 5),
+                        Size = new System.Drawing.Size(mod_width_box, spacing + 5),
+                        BorderStyle = BorderStyle.None
+                    };
+                    int default_idx = -1;
+                    for (int i_rdbtr = 0; i_rdbtr < input_params.wintype_dict.Count; i_rdbtr++)
+                    {
+                        var i_key = input_params.wintype_dict.Keys.ElementAt(i_rdbtr);
+                        rdbt_wintype[i_rdbtr] = new RadioButton()
+                        {
+                            Location = new System.Drawing.Point(20 + 100 * i_rdbtr, 5),
+                            Size = new System.Drawing.Size(100, spacing),
+                            Text = i_key
+                        };
+                        rdbt_wintype[i_rdbtr].CheckedChanged += new EventHandler((sender, e) => { radiobutton_change(sender, e, ref rdbt_wintype_choice); });
+
+                        rdbt_wintype_group.Controls.Add(rdbt_wintype[i_rdbtr]);
+
+                        if (string.Compare(prop_val.ToString(), input_params.wintype_dict[i_key].ToString()) == 0)
+                        {
+                            default_idx = i_rdbtr;
+                        }
+                    }
+                    rdbt_wintype[default_idx].Checked = true;
+                    prompt.Controls.Add(rdbt_wintype_group);
+                    top_box += spacing;
+                    continue;
+                }
+
+                if (string.Compare(prop_name, "stft_saving_option") == 0)
+                {
+                    rdbt_stftsave_group = new Panel()
+                    {
+                        Location = new System.Drawing.Point(left_box, top_box - 5),
+                        Size = new System.Drawing.Size(mod_width_box, spacing + 5),
+                        BorderStyle = BorderStyle.None
+                    };
+                    int default_idx = -1;
+                    for (int i_rdbtr = 0; i_rdbtr < input_params.stft_saving_options.Count; i_rdbtr++)
+                    {
+                        var i_key = input_params.stft_saving_options.Keys.ElementAt(i_rdbtr);
+                        rdbt_stftsave[i_rdbtr] = new RadioButton()
+                        {
+                            Location = new System.Drawing.Point(20 + 100 * i_rdbtr, 5),
+                            Size = new System.Drawing.Size(100, spacing),
+                            Text = i_key
+                        };
+                        rdbt_stftsave[i_rdbtr].CheckedChanged += new EventHandler((sender, e) => { radiobutton_change(sender, e, ref rdbt_stftsave_choice); });
+
+                        rdbt_stftsave_group.Controls.Add(rdbt_stftsave[i_rdbtr]);
+
+                        if (string.Compare(prop_val.ToString(), input_params.stft_saving_options[i_key].ToString()) == 0)
+                        {
+                            default_idx = i_rdbtr;
+                        }
+                    }
+                    rdbt_stftsave[default_idx].Checked = true;
+                    prompt.Controls.Add(rdbt_stftsave_group);
                     top_box += spacing;
                     continue;
                 }
@@ -201,7 +289,7 @@ namespace WindowsFormsApp4
                 Left = 620,
                 Width = 120,
                 Height = 30,
-                Top = 620,
+                Top = 900,
                 DialogResult = DialogResult.OK,
                 Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
             };
@@ -224,6 +312,18 @@ namespace WindowsFormsApp4
                     if (string.Compare(prop_name, "display_quality") == 0)
                     {
                         input_params.SetPropValue(prop_name, input_params.gear_quality_dict[rdbt_quality_choice]);
+                        continue;
+                    }
+
+                    if (string.Compare(prop_name, "window_type") == 0)
+                    {
+                        input_params.SetPropValue(prop_name, input_params.wintype_dict[rdbt_wintype_choice]);
+                        continue;
+                    }
+
+                    if (string.Compare(prop_name, "stft_saving_option") == 0)
+                    {
+                        input_params.SetPropValue(prop_name, input_params.stft_saving_options[rdbt_stftsave_choice]);
                         continue;
                     }
 

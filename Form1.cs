@@ -121,7 +121,8 @@ namespace WindowsFormsApp4
                 app_inp_prm = prompt.Result;
             }
             app_inp_prm.CompleteInitialize();
-            fftcalc = new STFTCalculator(app_inp_prm.Fs, new double[] { 15, 20}, STFTCalculator.WindowType.Hamming); // app_inp_prm.output_file_name, false, );
+            fftcalc = new STFTCalculator(app_inp_prm.Fs, app_inp_prm.n_epoch, app_inp_prm.n_skip,
+                new double[] { 15, 20}, STFTCalculator.WindowType.Hamming, app_inp_prm.output_file_name, app_inp_prm.stft_saving_option );
 
             InitializePlot();             
             this.Load += Form1_Load;
@@ -200,19 +201,6 @@ namespace WindowsFormsApp4
         }
 
         #region Update functions for simple WF objects 
-        private string WelcomeMessage()
-        {
-            string message = String.Format("Connected to HOST@{0} - PORT@{1}\r\n",
-                        this.app_inp_prm.hostname, this.app_inp_prm.port);
-            message += "\t+ Sampling frequency: " + this.app_inp_prm.Fs + "\r\n";
-            message += "\t+ Number of samples/epoch:" + this.app_inp_prm.nsamp_per_block + "\r\n";
-            message += "\t+ Channels to plot: Ch" + string.Join("   Ch",this.app_inp_prm.chan_idx2plt) + "\r\n";
-            message += String.Format("\t+ RMS window is: {0} points ({1:0} ms)\r\n",
-                       this.app_inp_prm.nmax_queue_total, this.app_inp_prm.nmax_queue_total * 1000 / this.app_inp_prm.Fs); 
-
-            return message; 
-        }
-
         private void UpdateTextBox(TextBox txtbx, string s)
         {
             if (InvokeRequired)
@@ -337,7 +325,7 @@ namespace WindowsFormsApp4
                 TcpClient client = new TcpClient();
                 client.Connect(this.app_inp_prm.hostname, app_inp_prm.port);
 
-                UpdateTextBox(log, WelcomeMessage());
+                UpdateTextBox(log, app_inp_prm.WelcomeMessage);
                 UpdateLabel(chan_label1, "Channel " + app_inp_prm.chan_idx2plt[0]);
                 UpdateLabel(chan_label2, "Channel " + app_inp_prm.chan_idx2plt[1]);
 

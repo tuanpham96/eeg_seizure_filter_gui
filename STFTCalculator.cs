@@ -14,7 +14,7 @@ namespace WindowsFormsApp4
     public class STFTCalculator
     {
         #region Attributes
-        private double[] array, window;
+        private double[] data_array, window;
         private double psd_scale; 
         private string savedfile, delim = ";";
         private bool saving_option;
@@ -45,13 +45,14 @@ namespace WindowsFormsApp4
             }
             
         }
-        #endregion 
+        #endregion
 
-        public STFTCalculator(double Fs, double[] BPFR, WindowType win_type = WindowType.Rectangle, string file_prefix = "", bool saving_option = false)
+        #region Constructor
+        public STFTCalculator(double Fs, int n_epoch, int n_skip, double[] BPFR, WindowType win_type = WindowType.Rectangle, string file_prefix = "", bool saving_option = false)
         {
             Rate = Fs;
-            n_epoch = (int)(Fs * 8);
-            n_skip = (int)(Fs * 0.2);
+            this.n_epoch = n_epoch; 
+            this.n_skip = n_skip; 
             n_valid = (int)(n_epoch / 2);
 
             fft_maxf = Fs / 2;
@@ -59,7 +60,7 @@ namespace WindowsFormsApp4
             current_count = 0;
             ready2plt = false;
 
-            array = new double[n_epoch];
+            data_array = new double[n_epoch];
 
             Configure_Frequency_Range(BPFR); 
             
@@ -70,6 +71,8 @@ namespace WindowsFormsApp4
             Configure_Saving_Options(file_prefix);
 
         }
+        #endregion
+
         #region Initialization
         private void Configure_Frequency_Range(double[] d)
         {
@@ -134,13 +137,13 @@ namespace WindowsFormsApp4
         #region Manipulating data 
         public void AddData(double d)
         {
-            array[current_count] = d;
+            data_array[current_count] = d;
             current_count++;
         }
 
         public void ShiftArray()
         {
-            Array.Copy(array, n_skip, array, 0, n_epoch - n_skip);
+            Array.Copy(data_array, n_skip, data_array, 0, n_epoch - n_skip);
             current_count = n_epoch - n_skip;
         }
 
@@ -176,7 +179,7 @@ namespace WindowsFormsApp4
             if (current_count == n_epoch)
             {
                 mag_freq = new double[n_valid];
-                mag_freq = FFT(array);
+                mag_freq = FFT(data_array);
                 ready2plt = true;
                 if (saving_option) { WriteToFile(string.Format("t = {0:0.00}", t), mag_freq); }
                 ShiftArray();

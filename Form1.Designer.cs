@@ -75,7 +75,7 @@
             this.log.Margin = new System.Windows.Forms.Padding(2);
             this.log.Multiline = true;
             this.log.Name = "log";
-            this.log.Size = new System.Drawing.Size(402, 119);
+            this.log.Size = new System.Drawing.Size(402, 172);
             this.log.TabIndex = 4;
             // 
             // safety_lab
@@ -110,7 +110,6 @@
             // 
             // cartesianChart1
             // 
-            //this.cartesianChart1.Dock = System.Windows.Forms.DockStyle.Right;
             this.cartesianChart1.Location = new System.Drawing.Point(540, 20);
             this.cartesianChart1.Name = "cartesianChart1";
             this.cartesianChart1.Size = new System.Drawing.Size(1300, 500);
@@ -123,7 +122,7 @@
             this.cartesianChart2.Name = "cartesianChart2";
             this.cartesianChart2.Size = new System.Drawing.Size(1300, 300);
             this.cartesianChart2.TabIndex = 9;
-            this.cartesianChart2.Text = "cartesianChart2"; 
+            this.cartesianChart2.Text = "cartesianChart2";
             // 
             // chan_label1
             // 
