@@ -53,6 +53,7 @@ namespace WindowsFormsApp4
         public bool stft_saving_option { get; set; }
 
         public string WelcomeMessage { get; set; }
+        public int nchan { get; set; }
         #endregion
 
         #region Dictionaries for categorical options 
@@ -151,7 +152,7 @@ namespace WindowsFormsApp4
 
             nsec_fft = 2.0;
             per_overlap = 90;   
-            window_type = WindowType.Rectangle;
+            window_type = WindowType.Hanning;
             f_bandpower_lower = 2;
             f_bandpower_upper = 8;
             stft_saving_option = false;
@@ -190,6 +191,7 @@ namespace WindowsFormsApp4
             {
                 int.TryParse(chans[ich], out chan_idx2plt[ich]);
             }
+            nchan = chan_idx2plt.Length;
             WelcomeMessage += "+ Channels to plot: Ch" + string.Join("   Ch", chan_idx2plt) + "\r\n";
         }
 

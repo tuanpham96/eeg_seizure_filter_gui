@@ -105,11 +105,10 @@ namespace WindowsFormsApp4
         private AppInputParameters app_inp_prm;
         private Thread logic_thread;
         
-        public STFTCalculator fftcalc; 
-        public GearedValues<ObservablePoint> mystft { get; set; }
-
-        
-        public GearedValues<ObservablePoint>[] Obs { get; set; }
+        public STFTCalculator[] STFTCalcs; 
+        public GearedValues<ObservablePoint>[] STFTSeries { get; set; }
+        public GearedValues<ObservablePoint>[] RMSSeries { get; set; }
+        public GearedValues<ObservablePoint>[] ChannelSeries { get; set; }
         public Form1()
         {
             //MiscellaneousTesting misctest = new MiscellaneousTesting();
@@ -121,13 +120,28 @@ namespace WindowsFormsApp4
                 app_inp_prm = prompt.Result;
             }
             app_inp_prm.CompleteInitialize();
-            fftcalc = new STFTCalculator(app_inp_prm.Fs, app_inp_prm.n_epoch, app_inp_prm.n_skip,
-                new double[] { 15, 20}, STFTCalculator.WindowType.Hamming, app_inp_prm.output_file_name, app_inp_prm.stft_saving_option );
 
+            InitializeCalculators(); 
             InitializePlot();             
             this.Load += Form1_Load;
         }
 
+        private void InitializeCalculators()
+        {
+            int nchan = app_inp_prm.nchan;
+            STFTCalcs = new STFTCalculator[nchan];
+            for (int i = 0; i < nchan; i++)
+            {
+                STFTCalcs[i] = new STFTCalculator(
+                    app_inp_prm.Fs, 
+                    app_inp_prm.n_epoch, 
+                    app_inp_prm.n_skip,
+                    new double[] { app_inp_prm.f_bandpower_lower, app_inp_prm.f_bandpower_upper }, 
+                    STFTCalculator.WindowType.Hamming, 
+                    app_inp_prm.output_file_name, 
+                    app_inp_prm.stft_saving_option);
+            }
+        }
         private void InitializePlot()
         {
             var mapper = Mappers.Xy<ObservablePoint>()
@@ -135,7 +149,7 @@ namespace WindowsFormsApp4
                             .Y(value => value.Y);
             Charting.For<ObservablePoint>(mapper);
 
-            Obs = new GearedValues<ObservablePoint>[3];
+            ChannelSeries = new GearedValues<ObservablePoint>[3];
 
             string[] legends = {"Ch " + app_inp_prm.chan_idx2plt[0],
                                 "Ch " + app_inp_prm.chan_idx2plt[1],
@@ -143,11 +157,11 @@ namespace WindowsFormsApp4
 
             for (int idx_obs = 0; idx_obs < 3; idx_obs++)
             {
-                Obs[idx_obs] = new GearedValues<ObservablePoint>();
-                Obs[idx_obs].Quality = app_inp_prm.display_quality; 
-                cartesianChart1.Series.Add(new GLineSeries
+                ChannelSeries[idx_obs] = new GearedValues<ObservablePoint>();
+                ChannelSeries[idx_obs].Quality = app_inp_prm.display_quality; 
+                channel_plots.Series.Add(new GLineSeries
                 {
-                    Values = Obs[idx_obs],
+                    Values = ChannelSeries[idx_obs],
                     StrokeThickness = 1,
                     PointGeometry = DefaultGeometries.None,
                     LineSmoothness = 0,
@@ -155,28 +169,53 @@ namespace WindowsFormsApp4
                     Title = legends[idx_obs]
                 });
             }
-            cartesianChart1.DisableAnimations = true; // for performance 
-            cartesianChart1.Hoverable = false;
-            cartesianChart1.DataTooltip = null;
-            cartesianChart1.LegendLocation = LegendLocation.Right;
-            cartesianChart1.Invalidate();
 
-            mystft = new GearedValues<ObservablePoint>() { Quality = app_inp_prm.display_quality };
-            cartesianChart2.Series.Add(new GLineSeries
+            int nchan = app_inp_prm.nchan;
+
+            RMSSeries = new GearedValues<ObservablePoint>[nchan];
+            STFTSeries = new GearedValues<ObservablePoint>[nchan];
+            for (int ichan = 0; ichan < nchan; ichan++)
             {
-                Values = mystft,
-                StrokeThickness = 1,
-                PointGeometry = DefaultGeometries.None,
-                LineSmoothness = 0,
-                Fill = System.Windows.Media.Brushes.Transparent,
-                Title = "MY STFT test"
-            });
+                RMSSeries[ichan] = new GearedValues<ObservablePoint>() { Quality = app_inp_prm.display_quality };
+                rms_plots.Series.Add(new GLineSeries
+                {
+                    Values = RMSSeries[ichan],
+                    StrokeThickness = 1,
+                    PointGeometry = DefaultGeometries.None,
+                    LineSmoothness = 0,
+                    Fill = System.Windows.Media.Brushes.Transparent,
+                    Title = legends[ichan] + " RMS"
+                });
 
-            cartesianChart2.DisableAnimations = true; // for performance 
-            cartesianChart2.Hoverable = false;
-            cartesianChart2.DataTooltip = null;
-            cartesianChart2.LegendLocation = LegendLocation.Right;
-            cartesianChart2.Invalidate();
+                STFTSeries[ichan] = new GearedValues<ObservablePoint>() { Quality = app_inp_prm.display_quality };
+                spectral_plots.Series.Add(new GLineSeries
+                {
+                    Values = STFTSeries[ichan],
+                    StrokeThickness = 1,
+                    PointGeometry = DefaultGeometries.None,
+                    LineSmoothness = 0,
+                    Fill = System.Windows.Media.Brushes.Transparent,
+                    Title = legends[ichan] + " STFT"
+                });
+            }
+
+            channel_plots.DisableAnimations = true; // for performance 
+            channel_plots.Hoverable = false;
+            channel_plots.DataTooltip = null;
+            channel_plots.LegendLocation = LegendLocation.Right;
+            channel_plots.Invalidate();
+
+            rms_plots.DisableAnimations = true;
+            rms_plots.Hoverable = false;
+            rms_plots.DataTooltip = null;
+            rms_plots.LegendLocation = LegendLocation.Right;
+            rms_plots.Invalidate();
+
+            spectral_plots.DisableAnimations = true; 
+            spectral_plots.Hoverable = false;
+            spectral_plots.DataTooltip = null;
+            spectral_plots.LegendLocation = LegendLocation.Right;
+            spectral_plots.Invalidate();
 
         }
 
@@ -230,50 +269,9 @@ namespace WindowsFormsApp4
             }
             pnl.BackColor = c; 
         }
-        #endregion f 
+        #endregion
 
         #region Update functions for the plots
-        private void UpdateSeriesPlot(double t, double[] values)
-        {
-            for (int i_obs = 0; i_obs < values.Length; i_obs++)
-            {
-                Obs[i_obs].Add(new ObservablePoint(t, 
-                    values[i_obs]*app_inp_prm.display_gains[i_obs] - app_inp_prm.display_sep*(i_obs)));
-                if (Obs[i_obs].Count > this.app_inp_prm.max_pnt_plt)
-                {
-                    Obs[i_obs].RemoveAt(0);
-                }
-            }
-            if (Obs[0].Count > 100)
-            {
-                cartesianChart1.AxisX[0].Title = "Time (seconds)"; 
-            }
-        }
-
-        private void UpdateSeriesPlot(int count, double t, double[] values)
-        {
-            int residue = count % app_inp_prm.max_pnt_plt;
-            double yval; 
-            for (int i_obs = 0; i_obs < values.Length; i_obs++)
-            {
-                yval = values[i_obs] * app_inp_prm.display_gains[i_obs] - app_inp_prm.display_sep * (i_obs);
-                if (Obs[i_obs].Count == app_inp_prm.max_pnt_plt)
-                {
-                    Obs[i_obs].Clear(); 
-                }
-                Obs[i_obs].Add(new ObservablePoint(t, yval));
-            }
-
-            RefreshableAxisLimits(t, out double min_bound, out double max_bound);
-
-            if (Obs[0].Count > 100)
-            {
-                cartesianChart1.AxisX[0].Title = "Time (seconds)";
-                cartesianChart1.AxisX[0].MinValue = min_bound;
-                cartesianChart1.AxisX[0].MaxValue = max_bound;
-            }
-
-        }
 
         private void RefreshableAxisLimits(double t, out double min_bound, out double max_bound)
         {
@@ -282,38 +280,127 @@ namespace WindowsFormsApp4
             max_bound = (Math.Floor(t / maxsec) + 1) * maxsec;
         }
 
-        private void UpdateBandPowerPlot(double t)
+        private void UpdateChannelSeriesPlot(double t, double[] values)
         {
-            fftcalc.CalculatePSD();
-            mystft.Add(new ObservablePoint(t, fftcalc.band_power));
+            for (int i_obs = 0; i_obs < values.Length; i_obs++)
+            {
+                ChannelSeries[i_obs].Add(new ObservablePoint(t, 
+                    values[i_obs]*app_inp_prm.display_gains[i_obs] - app_inp_prm.display_sep*(i_obs)));
+                if (ChannelSeries[i_obs].Count > this.app_inp_prm.max_pnt_plt)
+                {
+                    ChannelSeries[i_obs].RemoveAt(0);
+                }
+            }
+            if (ChannelSeries[0].Count > 200)
+            {
+                channel_plots.AxisX[0].Title = "Time (seconds)"; 
+            }
+        }
+
+        private void UpdateChannelSeriesPlot(int count, double t, double[] values)
+        {
+            int residue = count % app_inp_prm.max_pnt_plt;
+            double yval; 
+            for (int i_obs = 0; i_obs < values.Length; i_obs++)
+            {
+                yval = values[i_obs] * app_inp_prm.display_gains[i_obs] - app_inp_prm.display_sep * (i_obs);
+                if (ChannelSeries[i_obs].Count == app_inp_prm.max_pnt_plt)
+                {
+                    ChannelSeries[i_obs].Clear(); 
+                }
+                ChannelSeries[i_obs].Add(new ObservablePoint(t, yval));
+            }
 
             RefreshableAxisLimits(t, out double min_bound, out double max_bound);
-            if (mystft.Count > 100)
+
+            if (ChannelSeries[0].Count > 200)
             {
-                cartesianChart2.AxisX[0].Title = "Time (seconds)";
-                cartesianChart2.AxisX[0].MinValue = min_bound;
-                cartesianChart2.AxisX[0].MaxValue = max_bound;
+                channel_plots.AxisX[0].Title = "Time (seconds)";
+                channel_plots.AxisX[0].MinValue = min_bound;
+                channel_plots.AxisX[0].MaxValue = max_bound;
             }
-            if (mystft.Count >= 5000)
+
+        }
+
+        private void UpdateRMSSeriesPlot(double t, double[] values)
+        {
+            for (int i_obs = 0; i_obs < values.Length; i_obs++)
             {
-                mystft.Clear(); 
+               RMSSeries[i_obs].Add(new ObservablePoint(t,
+                    values[i_obs] * app_inp_prm.display_gains[i_obs] - app_inp_prm.display_sep * (i_obs)));
+                if (RMSSeries[i_obs].Count > this.app_inp_prm.max_pnt_plt)
+                {
+                    RMSSeries[i_obs].RemoveAt(0);
+                }
             }
+            if (RMSSeries[0].Count > 200)
+            {
+                rms_plots.AxisX[0].Title = "Time (seconds)";
+            }
+        }
+
+        private void UpdateRMSSeriesPlot(int count, double t, double[] values)
+        {
+            int residue = count % app_inp_prm.max_pnt_plt;
+            double yval;
+            for (int i_obs = 0; i_obs < values.Length; i_obs++)
+            {
+                yval = values[i_obs] * app_inp_prm.display_gains[i_obs] - app_inp_prm.display_sep * (i_obs);
+                if (RMSSeries[i_obs].Count == app_inp_prm.max_pnt_plt)
+                {
+                    RMSSeries[i_obs].Clear();
+                }
+                RMSSeries[i_obs].Add(new ObservablePoint(t, yval));
+            }
+
+            RefreshableAxisLimits(t, out double min_bound, out double max_bound);
+
+            if (RMSSeries[0].Count > 200)
+            {
+                rms_plots.AxisX[0].Title = "Time (seconds)";
+                rms_plots.AxisX[0].MinValue = min_bound;
+                rms_plots.AxisX[0].MaxValue = max_bound;
+            }
+
+        }
+        private void UpdateBandPowerPlot(double t)
+        {
+            for (int i = 0; i < app_inp_prm.nchan; i++)
+            {
+                STFTCalcs[i].CalculatePSD();
+                STFTSeries[i].Add(new ObservablePoint(t, STFTCalcs[i].band_power));
+                if (STFTSeries[i].Count >= 5000)
+                {
+                    STFTSeries[i].Clear();
+                }
+            }
+            RefreshableAxisLimits(t, out double min_bound, out double max_bound);
+
+            if (STFTSeries[0].Count > 100)
+            {
+                spectral_plots.AxisX[0].Title = "Time (seconds)";
+                spectral_plots.AxisX[0].MinValue = min_bound;
+                spectral_plots.AxisX[0].MaxValue = max_bound;
+            }
+
         }
 
         private void UpdateSTFTPlot()
         {
-            mystft.Clear();
-            fftcalc.CalculatePSD(); 
-            ObservablePoint[] stft_new = new ObservablePoint[fftcalc.n_valid]; 
-            for (int i = 0; i < fftcalc.n_valid; i++)
+            for (int ichan = 0; ichan < app_inp_prm.nchan; ichan++)
             {
-                stft_new[i] = new ObservablePoint(fftcalc.freq_vec[i], fftcalc.mag_freq[i]); 
+                STFTSeries[ichan].Clear();
+                STFTCalcs[ichan].CalculatePSD();
+                ObservablePoint[] stft_new = new ObservablePoint[STFTCalcs[ichan].n_valid];
+                for (int idat = 0; idat < STFTCalcs[ichan].n_valid; idat++)
+                {
+                    stft_new[idat] = new ObservablePoint(STFTCalcs[ichan].freq_vec[idat], STFTCalcs[ichan].mag_freq[idat]);
+                }
+                STFTSeries[ichan].AddRange(stft_new);
             }
-            mystft.AddRange(stft_new);
-
-            cartesianChart2.AxisX[0].Title = "Frequency (Hz)";
-            cartesianChart2.AxisX[0].MinValue = 0;
-            cartesianChart2.AxisX[0].MaxValue = 40;
+            spectral_plots.AxisX[0].Title = "Frequency (Hz)";
+            spectral_plots.AxisX[0].MinValue = 0;
+            spectral_plots.AxisX[0].MaxValue = 40;
         }
 
         #endregion
@@ -331,11 +418,10 @@ namespace WindowsFormsApp4
 
                 Byte[] bytes = new Byte[1024];
                 int[] chan_idx = { app_inp_prm.chan_idx2plt[0], app_inp_prm.chan_idx2plt[1]};
-                int nchan = chan_idx.Length;
+                int nchan = app_inp_prm.nchan;
                 RMSCalculator[] dqc = new RMSCalculator[nchan];
                 for (int ich = 0; ich < nchan; ich++) { dqc[ich] = new RMSCalculator(this.app_inp_prm.nmax_queue_total); }
-                Panel[] panels = { panel1, panel2 } ;
-                TextBox[] rms_vals = { rms_val1, rms_val2 };
+                Panel[] panels = { rms_alarm1, rms_alarm2 } ;
                 
                 while (true)
                 {
@@ -355,32 +441,31 @@ namespace WindowsFormsApp4
                         string[] current_data_chunk = data.Split(',');              
 
                         for (int ix = 0; ix < app_inp_prm.nsamp_per_block; ix++)
-                        {                        
+                        {
+                            double t = ((double)count) / this.app_inp_prm.Fs;
                             for (int ich = 0; ich < nchan; ich++)
                             {
-                                dqc[ich].ParseCurrentValue(current_data_chunk[ix + chan_idx[ich] * app_inp_prm.nsamp_per_block]); 
+                                dqc[ich].ParseCurrentValue(current_data_chunk[ix + chan_idx[ich] * app_inp_prm.nsamp_per_block]);
+
+                                STFTCalcs[ich].CalculateFFT(t, dqc[ich].current_val);
+                                if (STFTCalcs[ich].ready2plt)
+                                {
+                                    spectral_plots.BeginInvoke(new Action(UpdateSTFTPlot));
+                                    //spectral_plots.BeginInvoke(new Action<double>(UpdateBandPowerPlot), t);
+                                }
                             }
 
                             double[] viz = {    dqc[0].current_val,
                                                 dqc[1].current_val,
                                                 dqc[0].current_val - dqc[1].current_val };
-                            double t = ((double)count) / this.app_inp_prm.Fs;
 
-                            fftcalc.CalculateFFT(t, dqc[0].current_val);
-                            
                             if (app_inp_prm.refresh_display)
                             {
-                                cartesianChart1.BeginInvoke(new Action<int, double, double[]>(UpdateSeriesPlot), count, t, viz);
-                            } else
-                            {
-                                cartesianChart1.BeginInvoke(new Action<double, double[]>(UpdateSeriesPlot), t, viz);
+                                channel_plots.BeginInvoke(new Action<int, double, double[]>(UpdateChannelSeriesPlot), count, t, viz);
+                            } else {
+                                channel_plots.BeginInvoke(new Action<double, double[]>(UpdateChannelSeriesPlot), t, viz);
+                            }
 
-                            }
-                            if (fftcalc.ready2plt)
-                            {
-                                //cartesianChart2.BeginInvoke(new Action(UpdateSTFTPlot));
-                                cartesianChart2.BeginInvoke(new Action<double>(UpdateBandPowerPlot), t);
-                            }
                             TimeSpan tsp = TimeSpan.FromSeconds(t);
                             for (int ich = 0; ich < nchan; ich++)
                             {
@@ -389,8 +474,18 @@ namespace WindowsFormsApp4
                                 current_val_arr[ich] = dqc[ich].current_val;
                                 ReturnRMSLevel(current_rms_arr[ich], out color_level_arr[ich], out level_idx_arr[ich]);
                                 UpdatePanelColor(panels[ich], color_level_arr[ich]);
-                                UpdateTextBox(rms_vals[ich], tsp.ToString(@"mm\:ss\:fff"));
                             }
+
+                            if (app_inp_prm.refresh_display)
+                            {
+                                rms_plots.BeginInvoke(new Action<int, double, double[]>(UpdateRMSSeriesPlot), count, t, current_rms_arr);
+                            }
+                            else
+                            {
+                                rms_plots.BeginInvoke(new Action<int, double, double[]>(UpdateRMSSeriesPlot), t, current_rms_arr);
+
+                            }
+                            UpdateLabel(clock, tsp.ToString(@"hh\:mm\:ss\:fff"));
 
                             string nextLine = string.Format("{0};{1};{2};{3};{4};{5}\n", 
                                 current_val_arr[0], current_rms_arr[0], level_idx_arr[0],
@@ -414,6 +509,5 @@ namespace WindowsFormsApp4
                 DrawAndReport();
             }
         }
-
     }
 }

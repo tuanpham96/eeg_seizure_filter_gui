@@ -28,101 +28,84 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.rms_lab = new System.Windows.Forms.Label();
-            this.rms_val1 = new System.Windows.Forms.TextBox();
-            this.rms_val2 = new System.Windows.Forms.TextBox();
             this.log = new System.Windows.Forms.TextBox();
-            this.safety_lab = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.cartesianChart1 = new LiveCharts.WinForms.CartesianChart();
-            this.cartesianChart2 = new LiveCharts.WinForms.CartesianChart();
+            this.safety_rms_lab = new System.Windows.Forms.Label();
+            this.rms_alarm1 = new System.Windows.Forms.Panel();
+            this.rms_alarm2 = new System.Windows.Forms.Panel();
+            this.channel_plots = new LiveCharts.WinForms.CartesianChart();
+            this.rms_plots = new LiveCharts.WinForms.CartesianChart();
+            this.spectral_plots = new LiveCharts.WinForms.CartesianChart();
             this.chan_label1 = new System.Windows.Forms.Label();
             this.chan_label2 = new System.Windows.Forms.Label();
+            this.spectral_alarm1 = new System.Windows.Forms.Panel();
+            this.spectral_alarm2 = new System.Windows.Forms.Panel();
+            this.safety_spectral_lab = new System.Windows.Forms.Label();
+            this.clock_lab = new System.Windows.Forms.Label();
+            this.clock = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // rms_lab
-            // 
-            this.rms_lab.AutoSize = true;
-            this.rms_lab.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rms_lab.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rms_lab.Location = new System.Drawing.Point(93, 75);
-            this.rms_lab.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.rms_lab.Name = "rms_lab";
-            this.rms_lab.Size = new System.Drawing.Size(123, 26);
-            this.rms_lab.TabIndex = 1;
-            this.rms_lab.Text = "RMS Value";
-            // 
-            // rms_val1
-            // 
-            this.rms_val1.Location = new System.Drawing.Point(226, 83);
-            this.rms_val1.Margin = new System.Windows.Forms.Padding(2);
-            this.rms_val1.Name = "rms_val1";
-            this.rms_val1.Size = new System.Drawing.Size(101, 20);
-            this.rms_val1.TabIndex = 2;
-            // 
-            // rms_val2
-            // 
-            this.rms_val2.Location = new System.Drawing.Point(375, 83);
-            this.rms_val2.Margin = new System.Windows.Forms.Padding(2);
-            this.rms_val2.Name = "rms_val2";
-            this.rms_val2.Size = new System.Drawing.Size(101, 20);
-            this.rms_val2.TabIndex = 3;
             // 
             // log
             // 
-            this.log.Location = new System.Drawing.Point(74, 181);
+            this.log.Location = new System.Drawing.Point(47, 252);
             this.log.Margin = new System.Windows.Forms.Padding(2);
             this.log.Multiline = true;
             this.log.Name = "log";
-            this.log.Size = new System.Drawing.Size(402, 172);
+            this.log.Size = new System.Drawing.Size(429, 195);
             this.log.TabIndex = 4;
             // 
-            // safety_lab
+            // safety_rms_lab
             // 
-            this.safety_lab.AutoSize = true;
-            this.safety_lab.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.safety_lab.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.safety_lab.Location = new System.Drawing.Point(27, 120);
-            this.safety_lab.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.safety_lab.Name = "safety_lab";
-            this.safety_lab.Size = new System.Drawing.Size(187, 26);
-            this.safety_lab.TabIndex = 5;
-            this.safety_lab.Text = "Seizure Threshold";
+            this.safety_rms_lab.AutoSize = true;
+            this.safety_rms_lab.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.safety_rms_lab.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.safety_rms_lab.Location = new System.Drawing.Point(18, 83);
+            this.safety_rms_lab.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.safety_rms_lab.Name = "safety_rms_lab";
+            this.safety_rms_lab.Size = new System.Drawing.Size(125, 26);
+            this.safety_rms_lab.TabIndex = 5;
+            this.safety_rms_lab.Text = "RMS Alarm";
             // 
-            // panel1
+            // rms_alarm1
             // 
-            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.panel1.Location = new System.Drawing.Point(226, 120);
-            this.panel1.Margin = new System.Windows.Forms.Padding(2);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(101, 31);
-            this.panel1.TabIndex = 6;
+            this.rms_alarm1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.rms_alarm1.Location = new System.Drawing.Point(226, 83);
+            this.rms_alarm1.Margin = new System.Windows.Forms.Padding(2);
+            this.rms_alarm1.Name = "rms_alarm1";
+            this.rms_alarm1.Size = new System.Drawing.Size(101, 31);
+            this.rms_alarm1.TabIndex = 6;
             // 
-            // panel2
+            // rms_alarm2
             // 
-            this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.panel2.Location = new System.Drawing.Point(375, 120);
-            this.panel2.Margin = new System.Windows.Forms.Padding(2);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(101, 31);
-            this.panel2.TabIndex = 7;
+            this.rms_alarm2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.rms_alarm2.Location = new System.Drawing.Point(375, 83);
+            this.rms_alarm2.Margin = new System.Windows.Forms.Padding(2);
+            this.rms_alarm2.Name = "rms_alarm2";
+            this.rms_alarm2.Size = new System.Drawing.Size(101, 31);
+            this.rms_alarm2.TabIndex = 7;
             // 
-            // cartesianChart1
+            // channel_plots
             // 
-            this.cartesianChart1.Location = new System.Drawing.Point(540, 20);
-            this.cartesianChart1.Name = "cartesianChart1";
-            this.cartesianChart1.Size = new System.Drawing.Size(1300, 500);
-            this.cartesianChart1.TabIndex = 8;
-            this.cartesianChart1.Text = "cartesianChart1";
+            this.channel_plots.Location = new System.Drawing.Point(540, 20);
+            this.channel_plots.Name = "channel_plots";
+            this.channel_plots.Size = new System.Drawing.Size(1300, 250);
+            this.channel_plots.TabIndex = 8;
+            this.channel_plots.Text = "channel_plots";
             // 
-            // cartesianChart2
+            // rms_plots
             // 
-            this.cartesianChart2.Location = new System.Drawing.Point(540, 600);
-            this.cartesianChart2.Name = "cartesianChart2";
-            this.cartesianChart2.Size = new System.Drawing.Size(1300, 300);
-            this.cartesianChart2.TabIndex = 9;
-            this.cartesianChart2.Text = "cartesianChart2";
+            this.rms_plots.Location = new System.Drawing.Point(540, 300);
+            this.rms_plots.Name = "rms_plots";
+            this.rms_plots.Size = new System.Drawing.Size(1300, 250);
+            this.rms_plots.TabIndex = 9;
+            this.rms_plots.Text = "rms_plots";
+            // 
+            // spectral_plots
+            // 
+            this.spectral_plots.Location = new System.Drawing.Point(540, 600);
+            this.spectral_plots.Name = "spectral_plots";
+            this.spectral_plots.Size = new System.Drawing.Size(1300, 250);
+            this.spectral_plots.TabIndex = 10;
+            this.spectral_plots.Text = "spectral_plots";
             // 
             // chan_label1
             // 
@@ -133,7 +116,7 @@
             this.chan_label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.chan_label1.Name = "chan_label1";
             this.chan_label1.Size = new System.Drawing.Size(99, 24);
-            this.chan_label1.TabIndex = 10;
+            this.chan_label1.TabIndex = 11;
             this.chan_label1.Text = "Channel A";
             // 
             // chan_label2
@@ -145,8 +128,63 @@
             this.chan_label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.chan_label2.Name = "chan_label2";
             this.chan_label2.Size = new System.Drawing.Size(98, 24);
-            this.chan_label2.TabIndex = 11;
+            this.chan_label2.TabIndex = 12;
             this.chan_label2.Text = "Channel B";
+            // 
+            // spectral_alarm1
+            // 
+            this.spectral_alarm1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.spectral_alarm1.Location = new System.Drawing.Point(226, 134);
+            this.spectral_alarm1.Margin = new System.Windows.Forms.Padding(2);
+            this.spectral_alarm1.Name = "spectral_alarm1";
+            this.spectral_alarm1.Size = new System.Drawing.Size(101, 31);
+            this.spectral_alarm1.TabIndex = 15;
+            // 
+            // spectral_alarm2
+            // 
+            this.spectral_alarm2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.spectral_alarm2.Location = new System.Drawing.Point(375, 134);
+            this.spectral_alarm2.Margin = new System.Windows.Forms.Padding(2);
+            this.spectral_alarm2.Name = "spectral_alarm2";
+            this.spectral_alarm2.Size = new System.Drawing.Size(101, 31);
+            this.spectral_alarm2.TabIndex = 14;
+            // 
+            // safety_spectral_lab
+            // 
+            this.safety_spectral_lab.AutoSize = true;
+            this.safety_spectral_lab.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.safety_spectral_lab.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.safety_spectral_lab.Location = new System.Drawing.Point(18, 134);
+            this.safety_spectral_lab.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.safety_spectral_lab.Name = "safety_spectral_lab";
+            this.safety_spectral_lab.Size = new System.Drawing.Size(156, 26);
+            this.safety_spectral_lab.TabIndex = 13;
+            this.safety_spectral_lab.Text = "Spectral Alarm";
+            // 
+            // clock_lab
+            // 
+            this.clock_lab.AutoSize = true;
+            this.clock_lab.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.clock_lab.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.clock_lab.Location = new System.Drawing.Point(18, 183);
+            this.clock_lab.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.clock_lab.Name = "clock_lab";
+            this.clock_lab.Size = new System.Drawing.Size(67, 26);
+            this.clock_lab.TabIndex = 16;
+            this.clock_lab.Text = "Clock";
+            // 
+            // clock
+            // 
+            this.clock.AutoSize = true;
+            this.clock.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.clock.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.clock.Location = new System.Drawing.Point(350, 183);
+            this.clock.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.clock.Name = "clock";
+            this.clock.Size = new System.Drawing.Size(126, 26);
+            this.clock.TabIndex = 17;
+            this.clock.Text = "00:00:00.00";
+            this.clock.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // Form1
             // 
@@ -154,17 +192,20 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1900, 1000);
+            this.Controls.Add(this.clock);
+            this.Controls.Add(this.clock_lab);
+            this.Controls.Add(this.spectral_alarm1);
+            this.Controls.Add(this.spectral_alarm2);
+            this.Controls.Add(this.safety_spectral_lab);
             this.Controls.Add(this.chan_label2);
             this.Controls.Add(this.chan_label1);
-            this.Controls.Add(this.cartesianChart1);
-            this.Controls.Add(this.cartesianChart2);
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.safety_lab);
+            this.Controls.Add(this.channel_plots);
+            this.Controls.Add(this.rms_plots);
+            this.Controls.Add(this.spectral_plots);
+            this.Controls.Add(this.rms_alarm2);
+            this.Controls.Add(this.rms_alarm1);
+            this.Controls.Add(this.safety_rms_lab);
             this.Controls.Add(this.log);
-            this.Controls.Add(this.rms_val2);
-            this.Controls.Add(this.rms_val1);
-            this.Controls.Add(this.rms_lab);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Visualizing RMS of EEG";
@@ -174,18 +215,20 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Label rms_lab;
-        private System.Windows.Forms.TextBox rms_val1;
-        private System.Windows.Forms.TextBox rms_val2;
-        private System.Windows.Forms.Panel panel1; 
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel rms_alarm1; 
+        private System.Windows.Forms.Panel rms_alarm2;
         private System.Windows.Forms.TextBox log;
-        private System.Windows.Forms.Label safety_lab;
-        private LiveCharts.WinForms.CartesianChart cartesianChart1;
-        private LiveCharts.WinForms.CartesianChart cartesianChart2;
+        private System.Windows.Forms.Label safety_rms_lab;
+        private LiveCharts.WinForms.CartesianChart channel_plots;
+        private LiveCharts.WinForms.CartesianChart rms_plots;
+        private LiveCharts.WinForms.CartesianChart spectral_plots;
         private System.Windows.Forms.Label chan_label1;
         private System.Windows.Forms.Label chan_label2;
+        private System.Windows.Forms.Panel spectral_alarm1;
+        private System.Windows.Forms.Panel spectral_alarm2;
+        private System.Windows.Forms.Label safety_spectral_lab;
+        private System.Windows.Forms.Label clock_lab;
+        private System.Windows.Forms.Label clock;
     }
 }
 
