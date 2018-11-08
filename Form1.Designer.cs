@@ -42,6 +42,7 @@
             this.safety_spectral_lab = new System.Windows.Forms.Label();
             this.clock_lab = new System.Windows.Forms.Label();
             this.clock = new System.Windows.Forms.Label();
+            
             this.SuspendLayout();
             // 
             // log
@@ -211,7 +212,7 @@
             this.Text = "Visualizing RMS of EEG";
             this.ResumeLayout(false);
             this.PerformLayout();
-
+          
         }
 
         #endregion
@@ -229,6 +230,8 @@
         private System.Windows.Forms.Label safety_spectral_lab;
         private System.Windows.Forms.Label clock_lab;
         private System.Windows.Forms.Label clock;
+
+   
     }
 }
 

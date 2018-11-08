@@ -304,7 +304,7 @@ namespace WindowsFormsApp4
                     prop_alias = input_params.nameAndProp.Keys.ElementAt(i_inp);
                     prop_name = input_params.nameAndProp[prop_alias].ToString();
                     if (string.Compare(prop_name, "refresh_display") == 0)
-                    {
+                    {                      
                         input_params.SetPropValue(prop_name, input_params.display_refresh_options[rdbt_refresh_choice]);
                         continue; 
                     }

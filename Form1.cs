@@ -260,14 +260,19 @@ namespace WindowsFormsApp4
             lbl.Text = s;
         }
 
-        private void UpdatePanelColor(Panel pnl, Color c)
+        private void UpdatePanelColor(Panel pnl, Color c, double t)
         {
             if (InvokeRequired)
             {
-                pnl.BeginInvoke(new Action<Panel, Color>(UpdatePanelColor), new object[] { pnl, c });
+                pnl.BeginInvoke(new Action<Panel, Color, double>(UpdatePanelColor), new object[] { pnl, c, t });
                 return;
             }
-            pnl.BackColor = c; 
+            pnl.Refresh();
+            double per = (t - app_inp_prm.nsec_plt * Math.Floor(t / app_inp_prm.nsec_plt)) / app_inp_prm.nsec_plt;
+            Graphics g = pnl.CreateGraphics();
+            SolidBrush sb = new SolidBrush(c);
+            g.FillRectangle(sb, 0, 0, (int) Math.Ceiling(pnl.Width*per), pnl.Height);
+
         }
         #endregion
 
@@ -473,18 +478,16 @@ namespace WindowsFormsApp4
                                 current_rms_arr[ich] = dqc[ich].current_rms;
                                 current_val_arr[ich] = dqc[ich].current_val;
                                 ReturnRMSLevel(current_rms_arr[ich], out color_level_arr[ich], out level_idx_arr[ich]);
-                                UpdatePanelColor(panels[ich], color_level_arr[ich]);
+                                UpdatePanelColor(panels[ich], color_level_arr[ich], t);
                             }
 
                             if (app_inp_prm.refresh_display)
                             {
                                 rms_plots.BeginInvoke(new Action<int, double, double[]>(UpdateRMSSeriesPlot), count, t, current_rms_arr);
+                            } else {
+                                rms_plots.BeginInvoke(new Action<double, double[]>(UpdateRMSSeriesPlot), t, current_rms_arr);
                             }
-                            else
-                            {
-                                rms_plots.BeginInvoke(new Action<int, double, double[]>(UpdateRMSSeriesPlot), t, current_rms_arr);
 
-                            }
                             UpdateLabel(clock, tsp.ToString(@"hh\:mm\:ss\:fff"));
 
                             string nextLine = string.Format("{0};{1};{2};{3};{4};{5}\n", 
