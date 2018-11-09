@@ -42,7 +42,10 @@
             this.safety_spectral_lab = new System.Windows.Forms.Label();
             this.clock_lab = new System.Windows.Forms.Label();
             this.clock = new System.Windows.Forms.Label();
-            
+
+            this.rms_alarm_brush1 = new System.Drawing.SolidBrush(System.Drawing.Color.Black);
+            this.rms_alarm_brush2 = new System.Drawing.SolidBrush(System.Drawing.Color.Green);
+
             this.SuspendLayout();
             // 
             // log
@@ -74,6 +77,8 @@
             this.rms_alarm1.Name = "rms_alarm1";
             this.rms_alarm1.Size = new System.Drawing.Size(101, 31);
             this.rms_alarm1.TabIndex = 6;
+            this.rms_alarm1.CreateGraphics().FillRectangle(this.rms_alarm_brush1, 0, 0, this.rms_alarm1.Width, this.rms_alarm1.Height);
+        
             // 
             // rms_alarm2
             // 
@@ -83,6 +88,8 @@
             this.rms_alarm2.Name = "rms_alarm2";
             this.rms_alarm2.Size = new System.Drawing.Size(101, 31);
             this.rms_alarm2.TabIndex = 7;
+            this.rms_alarm2.CreateGraphics().FillRectangle(this.rms_alarm_brush2, 0, this.rms_alarm2.Height * 2 / 3, this.rms_alarm2.Width / 2, this.rms_alarm2.Height / 3);
+
             // 
             // channel_plots
             // 
@@ -231,7 +238,9 @@
         private System.Windows.Forms.Label clock_lab;
         private System.Windows.Forms.Label clock;
 
-   
+        private System.Drawing.SolidBrush rms_alarm_brush1;
+        private System.Drawing.SolidBrush rms_alarm_brush2;
+
     }
 }
 

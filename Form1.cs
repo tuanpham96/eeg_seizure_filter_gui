@@ -10,6 +10,7 @@ using LiveCharts.Wpf;
 using LiveCharts.Configurations;
 using LiveCharts.Defaults;
 using LiveCharts.Geared;
+using System.Collections.Generic;
 
 /** SEIZURE FILTER EEG PROGRAM
  * Started by Dominic DiCarlo September 2018
@@ -109,6 +110,7 @@ namespace WindowsFormsApp4
         public GearedValues<ObservablePoint>[] STFTSeries { get; set; }
         public GearedValues<ObservablePoint>[] RMSSeries { get; set; }
         public GearedValues<ObservablePoint>[] ChannelSeries { get; set; }
+
         public Form1()
         {
             //MiscellaneousTesting misctest = new MiscellaneousTesting();
@@ -176,7 +178,8 @@ namespace WindowsFormsApp4
             STFTSeries = new GearedValues<ObservablePoint>[nchan];
             for (int ichan = 0; ichan < nchan; ichan++)
             {
-                RMSSeries[ichan] = new GearedValues<ObservablePoint>() { Quality = app_inp_prm.display_quality };
+                RMSSeries[ichan] = new GearedValues<ObservablePoint>();
+                RMSSeries[ichan].Quality = app_inp_prm.display_quality;
                 rms_plots.Series.Add(new GLineSeries
                 {
                     Values = RMSSeries[ichan],
@@ -187,7 +190,8 @@ namespace WindowsFormsApp4
                     Title = legends[ichan] + " RMS"
                 });
 
-                STFTSeries[ichan] = new GearedValues<ObservablePoint>() { Quality = app_inp_prm.display_quality };
+                STFTSeries[ichan] = new GearedValues<ObservablePoint>();
+                STFTSeries[ichan].Quality = app_inp_prm.display_quality;
                 spectral_plots.Series.Add(new GLineSeries
                 {
                     Values = STFTSeries[ichan],
@@ -267,12 +271,18 @@ namespace WindowsFormsApp4
                 pnl.BeginInvoke(new Action<Panel, Color, double>(UpdatePanelColor), new object[] { pnl, c, t });
                 return;
             }
-            pnl.Refresh();
+            //pnl.Refresh();
             double per = (t - app_inp_prm.nsec_plt * Math.Floor(t / app_inp_prm.nsec_plt)) / app_inp_prm.nsec_plt;
-            Graphics g = pnl.CreateGraphics();
-            SolidBrush sb = new SolidBrush(c);
-            g.FillRectangle(sb, 0, 0, (int) Math.Ceiling(pnl.Width*per), pnl.Height);
+            pnl.CreateGraphics().FillRectangle(new SolidBrush(c), 0, 0, (int)Math.Ceiling(pnl.Width * per), pnl.Height / 2); 
+        }
 
+        private void UpdateBrushColor(Panel pnl, SolidBrush sb, Color c)
+        {
+            if (InvokeRequired)
+            {
+                this.BeginInvoke(new Action<Panel, SolidBrush, Color>(UpdateBrushColor), new object[] {pnl, sb, c });
+            }
+            sb.Color = c; 
         }
         #endregion
 
@@ -350,7 +360,7 @@ namespace WindowsFormsApp4
             double yval;
             for (int i_obs = 0; i_obs < values.Length; i_obs++)
             {
-                yval = values[i_obs] * app_inp_prm.display_gains[i_obs] - app_inp_prm.display_sep * (i_obs);
+                yval = values[i_obs];// * app_inp_prm.display_gains[i_obs] - app_inp_prm.display_sep * (i_obs);
                 if (RMSSeries[i_obs].Count == app_inp_prm.max_pnt_plt)
                 {
                     RMSSeries[i_obs].Clear();
@@ -394,12 +404,16 @@ namespace WindowsFormsApp4
         {
             for (int ichan = 0; ichan < app_inp_prm.nchan; ichan++)
             {
+                int n_valid = STFTCalcs[ichan].n_valid;
                 STFTSeries[ichan].Clear();
                 STFTCalcs[ichan].CalculatePSD();
-                ObservablePoint[] stft_new = new ObservablePoint[STFTCalcs[ichan].n_valid];
-                for (int idat = 0; idat < STFTCalcs[ichan].n_valid; idat++)
+                ObservablePoint[] stft_new = new ObservablePoint[n_valid];
+                double[] freq = new double[n_valid], mag = new double[n_valid];
+                Array.Copy(STFTCalcs[ichan].freq_vec, 0, freq, 0, n_valid);
+                Array.Copy(STFTCalcs[ichan].mag_freq, 0, mag, 0, n_valid);
+                for (int idat = 0; idat < n_valid; idat++)
                 {
-                    stft_new[idat] = new ObservablePoint(STFTCalcs[ichan].freq_vec[idat], STFTCalcs[ichan].mag_freq[idat]);
+                    stft_new[idat] = new ObservablePoint(freq[idat], mag[idat]);
                 }
                 STFTSeries[ichan].AddRange(stft_new);
             }
@@ -407,9 +421,15 @@ namespace WindowsFormsApp4
             spectral_plots.AxisX[0].MinValue = 0;
             spectral_plots.AxisX[0].MaxValue = 40;
         }
-
+        
         #endregion
 
+        private double[] Full_Deep_Copy(double[] source)
+        {
+            double[] destination = new double[source.Length];
+            Array.Copy(source, destination, source.Length);
+            return destination; 
+        }
         public void DrawAndReport()
         {
             try
@@ -427,7 +447,7 @@ namespace WindowsFormsApp4
                 RMSCalculator[] dqc = new RMSCalculator[nchan];
                 for (int ich = 0; ich < nchan; ich++) { dqc[ich] = new RMSCalculator(this.app_inp_prm.nmax_queue_total); }
                 Panel[] panels = { rms_alarm1, rms_alarm2 } ;
-                
+                SolidBrush[] sbs = { rms_alarm_brush1, rms_alarm_brush2 }; 
                 while (true)
                 {
                     int stream_read;
@@ -437,13 +457,18 @@ namespace WindowsFormsApp4
                     int[] level_idx_arr = new int[2];
                     double[] current_rms_arr = new double[2], current_val_arr = new double[2];
 
+                    List<double[]> freq_list = new List<double[]>();
+                    for (int ichan = 0; ichan < nchan; ichan++)
+                    {
+                        freq_list.Add(Full_Deep_Copy(STFTCalcs[ichan].freq_vec));
+                    }
                     string csvFilePath = this.app_inp_prm.output_file_name;
                     File.WriteAllText(csvFilePath, "Data_1;RMS_1;Level_1;Data_2;RMS_2;Level_2\n");
 
                     while ((stream_read = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
                         string data = System.Text.Encoding.ASCII.GetString(bytes, 0, stream_read);
-                        string[] current_data_chunk = data.Split(',');              
+                        string[] current_data_chunk = data.Split(',');
 
                         for (int ix = 0; ix < app_inp_prm.nsamp_per_block; ix++)
                         {
@@ -451,13 +476,6 @@ namespace WindowsFormsApp4
                             for (int ich = 0; ich < nchan; ich++)
                             {
                                 dqc[ich].ParseCurrentValue(current_data_chunk[ix + chan_idx[ich] * app_inp_prm.nsamp_per_block]);
-
-                                STFTCalcs[ich].CalculateFFT(t, dqc[ich].current_val);
-                                if (STFTCalcs[ich].ready2plt)
-                                {
-                                    spectral_plots.BeginInvoke(new Action(UpdateSTFTPlot));
-                                    //spectral_plots.BeginInvoke(new Action<double>(UpdateBandPowerPlot), t);
-                                }
                             }
 
                             double[] viz = {    dqc[0].current_val,
@@ -479,13 +497,25 @@ namespace WindowsFormsApp4
                                 current_val_arr[ich] = dqc[ich].current_val;
                                 ReturnRMSLevel(current_rms_arr[ich], out color_level_arr[ich], out level_idx_arr[ich]);
                                 UpdatePanelColor(panels[ich], color_level_arr[ich], t);
+                                UpdateBrushColor(panels[ich], sbs[ich], color_level_arr[ich]); 
                             }
-
+                            
+                            double[] viz_rms = Full_Deep_Copy(current_rms_arr); 
                             if (app_inp_prm.refresh_display)
                             {
-                                rms_plots.BeginInvoke(new Action<int, double, double[]>(UpdateRMSSeriesPlot), count, t, current_rms_arr);
+                                rms_plots.BeginInvoke(new Action<int, double, double[]>(UpdateRMSSeriesPlot), count, t, viz_rms);
                             } else {
-                                rms_plots.BeginInvoke(new Action<double, double[]>(UpdateRMSSeriesPlot), t, current_rms_arr);
+                                rms_plots.BeginInvoke(new Action<double, double[]>(UpdateRMSSeriesPlot), t, viz_rms);
+                            }
+
+                            for (int ich = 0; ich < nchan; ich++)
+                            { 
+                                STFTCalcs[ich].CalculateFFT(t, dqc[ich].current_val);
+                            }
+                            if (STFTCalcs[0].ready2plt)
+                            {
+                                spectral_plots.BeginInvoke(new Action(UpdateSTFTPlot));
+                                //spectral_plots.BeginInvoke(new Action<double>(UpdateBandPowerPlot), t);
                             }
 
                             UpdateLabel(clock, tsp.ToString(@"hh\:mm\:ss\:fff"));
