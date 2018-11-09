@@ -271,19 +271,10 @@ namespace WindowsFormsApp4
                 pnl.BeginInvoke(new Action<Panel, Color, double>(UpdatePanelColor), new object[] { pnl, c, t });
                 return;
             }
-            //pnl.Refresh();
-            double per = (t - app_inp_prm.nsec_plt * Math.Floor(t / app_inp_prm.nsec_plt)) / app_inp_prm.nsec_plt;
-            pnl.CreateGraphics().FillRectangle(new SolidBrush(c), 0, 0, (int)Math.Ceiling(pnl.Width * per), pnl.Height / 2); 
+            pnl.Refresh();
+            pnl.CreateGraphics().FillRectangle(new SolidBrush(c), 0, 0, pnl.Width, pnl.Height); 
         }
 
-        private void UpdateBrushColor(Panel pnl, SolidBrush sb, Color c)
-        {
-            if (InvokeRequired)
-            {
-                this.BeginInvoke(new Action<Panel, SolidBrush, Color>(UpdateBrushColor), new object[] {pnl, sb, c });
-            }
-            sb.Color = c; 
-        }
         #endregion
 
         #region Update functions for the plots
@@ -300,7 +291,7 @@ namespace WindowsFormsApp4
             for (int i_obs = 0; i_obs < values.Length; i_obs++)
             {
                 ChannelSeries[i_obs].Add(new ObservablePoint(t, 
-                    values[i_obs]*app_inp_prm.display_gains[i_obs] - app_inp_prm.display_sep*(i_obs)));
+                    values[i_obs]*app_inp_prm.display_channel_gains[i_obs] - app_inp_prm.display_channel_sep*(i_obs)));
                 if (ChannelSeries[i_obs].Count > this.app_inp_prm.max_pnt_plt)
                 {
                     ChannelSeries[i_obs].RemoveAt(0);
@@ -318,7 +309,7 @@ namespace WindowsFormsApp4
             double yval; 
             for (int i_obs = 0; i_obs < values.Length; i_obs++)
             {
-                yval = values[i_obs] * app_inp_prm.display_gains[i_obs] - app_inp_prm.display_sep * (i_obs);
+                yval = values[i_obs] * app_inp_prm.display_channel_gains[i_obs] - app_inp_prm.display_channel_sep * (i_obs);
                 if (ChannelSeries[i_obs].Count == app_inp_prm.max_pnt_plt)
                 {
                     ChannelSeries[i_obs].Clear(); 
@@ -342,7 +333,7 @@ namespace WindowsFormsApp4
             for (int i_obs = 0; i_obs < values.Length; i_obs++)
             {
                RMSSeries[i_obs].Add(new ObservablePoint(t,
-                    values[i_obs] * app_inp_prm.display_gains[i_obs] - app_inp_prm.display_sep * (i_obs)));
+                    values[i_obs] * app_inp_prm.display_rms_gains[i_obs] - app_inp_prm.display_rms_sep * (i_obs)));
                 if (RMSSeries[i_obs].Count > this.app_inp_prm.max_pnt_plt)
                 {
                     RMSSeries[i_obs].RemoveAt(0);
@@ -360,7 +351,7 @@ namespace WindowsFormsApp4
             double yval;
             for (int i_obs = 0; i_obs < values.Length; i_obs++)
             {
-                yval = values[i_obs];// * app_inp_prm.display_gains[i_obs] - app_inp_prm.display_sep * (i_obs);
+                yval = values[i_obs] * app_inp_prm.display_rms_gains[i_obs] - app_inp_prm.display_rms_sep * (i_obs);
                 if (RMSSeries[i_obs].Count == app_inp_prm.max_pnt_plt)
                 {
                     RMSSeries[i_obs].Clear();
@@ -447,7 +438,6 @@ namespace WindowsFormsApp4
                 RMSCalculator[] dqc = new RMSCalculator[nchan];
                 for (int ich = 0; ich < nchan; ich++) { dqc[ich] = new RMSCalculator(this.app_inp_prm.nmax_queue_total); }
                 Panel[] panels = { rms_alarm1, rms_alarm2 } ;
-                SolidBrush[] sbs = { rms_alarm_brush1, rms_alarm_brush2 }; 
                 while (true)
                 {
                     int stream_read;
@@ -457,11 +447,7 @@ namespace WindowsFormsApp4
                     int[] level_idx_arr = new int[2];
                     double[] current_rms_arr = new double[2], current_val_arr = new double[2];
 
-                    List<double[]> freq_list = new List<double[]>();
-                    for (int ichan = 0; ichan < nchan; ichan++)
-                    {
-                        freq_list.Add(Full_Deep_Copy(STFTCalcs[ichan].freq_vec));
-                    }
+                    
                     string csvFilePath = this.app_inp_prm.output_file_name;
                     File.WriteAllText(csvFilePath, "Data_1;RMS_1;Level_1;Data_2;RMS_2;Level_2\n");
 
@@ -497,7 +483,6 @@ namespace WindowsFormsApp4
                                 current_val_arr[ich] = dqc[ich].current_val;
                                 ReturnRMSLevel(current_rms_arr[ich], out color_level_arr[ich], out level_idx_arr[ich]);
                                 UpdatePanelColor(panels[ich], color_level_arr[ich], t);
-                                UpdateBrushColor(panels[ich], sbs[ich], color_level_arr[ich]); 
                             }
                             
                             double[] viz_rms = Full_Deep_Copy(current_rms_arr); 
@@ -542,5 +527,58 @@ namespace WindowsFormsApp4
                 DrawAndReport();
             }
         }
+
+        #region Events 
+        private void exit_button_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+            Environment.Exit(1); 
+        }
+
+        #region Channel gain and separation control for display 
+        private void changain_up_Click(object sender, EventArgs e)
+        {
+            app_inp_prm.Control_Channel_Gain(1); 
+        }
+
+
+        private void changain_down_Click(object sender, EventArgs e)
+        {
+            app_inp_prm.Control_Channel_Gain(-1);
+        }
+
+
+        private void chansep_up_Click(object sender, EventArgs e)
+        {
+            app_inp_prm.Control_Channel_Separation(1);
+        }
+
+        private void chansep_down_Click(object sender, EventArgs e)
+        {
+            app_inp_prm.Control_Channel_Separation(-1);
+        }
+        #endregion
+        #region RMS gain and separation control for display 
+        private void rmsgain_up_Click(object sender, EventArgs e)
+        {
+            app_inp_prm.Control_RMS_Gain(1);
+        }
+
+        private void rmsgain_down_Click(object sender, EventArgs e)
+        {
+            app_inp_prm.Control_RMS_Gain(-1);
+        }
+
+        private void rmssep_up_Click(object sender, EventArgs e)
+        {
+            app_inp_prm.Control_RMS_Separation(1);
+        }
+
+        private void rmssep_down_Click(object sender, EventArgs e)
+        {
+            app_inp_prm.Control_RMS_Separation(-1);
+        }
+        #endregion
+        #endregion
     }
 }

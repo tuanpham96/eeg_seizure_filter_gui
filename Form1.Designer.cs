@@ -42,10 +42,19 @@
             this.safety_spectral_lab = new System.Windows.Forms.Label();
             this.clock_lab = new System.Windows.Forms.Label();
             this.clock = new System.Windows.Forms.Label();
-
-            this.rms_alarm_brush1 = new System.Drawing.SolidBrush(System.Drawing.Color.Black);
-            this.rms_alarm_brush2 = new System.Drawing.SolidBrush(System.Drawing.Color.Green);
-
+            this.exit_button = new System.Windows.Forms.Button();
+            this.changain_up_button = new System.Windows.Forms.Button();
+            this.changain_down_button = new System.Windows.Forms.Button();
+            this.changain_cntrl_label = new System.Windows.Forms.Label();
+            this.chansep_cntrl_label = new System.Windows.Forms.Label();
+            this.chansep_down_button = new System.Windows.Forms.Button();
+            this.chansep_up_buttom = new System.Windows.Forms.Button();
+            this.rmssep_cntrl_label = new System.Windows.Forms.Label();
+            this.rmssep_down_button = new System.Windows.Forms.Button();
+            this.rmssep_up_button = new System.Windows.Forms.Button();
+            this.rmsgain_cntrl_label = new System.Windows.Forms.Label();
+            this.rmsgain_down_button = new System.Windows.Forms.Button();
+            this.rmsgain_up_button = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // log
@@ -71,25 +80,21 @@
             // 
             // rms_alarm1
             // 
-            this.rms_alarm1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.rms_alarm1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))));
             this.rms_alarm1.Location = new System.Drawing.Point(226, 83);
             this.rms_alarm1.Margin = new System.Windows.Forms.Padding(2);
             this.rms_alarm1.Name = "rms_alarm1";
             this.rms_alarm1.Size = new System.Drawing.Size(101, 31);
             this.rms_alarm1.TabIndex = 6;
-            this.rms_alarm1.CreateGraphics().FillRectangle(this.rms_alarm_brush1, 0, 0, this.rms_alarm1.Width, this.rms_alarm1.Height);
-        
             // 
             // rms_alarm2
             // 
-            this.rms_alarm2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.rms_alarm2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))));
             this.rms_alarm2.Location = new System.Drawing.Point(375, 83);
             this.rms_alarm2.Margin = new System.Windows.Forms.Padding(2);
             this.rms_alarm2.Name = "rms_alarm2";
             this.rms_alarm2.Size = new System.Drawing.Size(101, 31);
             this.rms_alarm2.TabIndex = 7;
-            this.rms_alarm2.CreateGraphics().FillRectangle(this.rms_alarm_brush2, 0, this.rms_alarm2.Height * 2 / 3, this.rms_alarm2.Width / 2, this.rms_alarm2.Height / 3);
-
             // 
             // channel_plots
             // 
@@ -141,7 +146,7 @@
             // 
             // spectral_alarm1
             // 
-            this.spectral_alarm1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.spectral_alarm1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))));
             this.spectral_alarm1.Location = new System.Drawing.Point(226, 134);
             this.spectral_alarm1.Margin = new System.Windows.Forms.Padding(2);
             this.spectral_alarm1.Name = "spectral_alarm1";
@@ -150,7 +155,7 @@
             // 
             // spectral_alarm2
             // 
-            this.spectral_alarm2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.spectral_alarm2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))));
             this.spectral_alarm2.Location = new System.Drawing.Point(375, 134);
             this.spectral_alarm2.Margin = new System.Windows.Forms.Padding(2);
             this.spectral_alarm2.Name = "spectral_alarm2";
@@ -186,13 +191,161 @@
             this.clock.AutoSize = true;
             this.clock.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.clock.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clock.Location = new System.Drawing.Point(350, 183);
+            this.clock.Location = new System.Drawing.Point(338, 183);
             this.clock.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.clock.Name = "clock";
-            this.clock.Size = new System.Drawing.Size(126, 26);
+            this.clock.Size = new System.Drawing.Size(138, 26);
             this.clock.TabIndex = 17;
-            this.clock.Text = "00:00:00.00";
+            this.clock.Text = "00:00:00.000";
             this.clock.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // exit_button
+            // 
+            this.exit_button.BackColor = System.Drawing.Color.Transparent;
+            this.exit_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.exit_button.Location = new System.Drawing.Point(382, 790);
+            this.exit_button.Name = "exit_button";
+            this.exit_button.Size = new System.Drawing.Size(94, 34);
+            this.exit_button.TabIndex = 18;
+            this.exit_button.Text = "Exit";
+            this.exit_button.UseVisualStyleBackColor = false;
+            this.exit_button.Click += new System.EventHandler(this.exit_button_Click);
+            // 
+            // changain_up_button
+            // 
+            this.changain_up_button.BackColor = System.Drawing.Color.Transparent;
+            this.changain_up_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.changain_up_button.Location = new System.Drawing.Point(306, 465);
+            this.changain_up_button.Name = "changain_up_button";
+            this.changain_up_button.Size = new System.Drawing.Size(69, 25);
+            this.changain_up_button.TabIndex = 19;
+            this.changain_up_button.Text = "Up";
+            this.changain_up_button.UseVisualStyleBackColor = false;
+            this.changain_up_button.Click += new System.EventHandler(this.changain_up_Click);
+            // 
+            // changain_down_button
+            // 
+            this.changain_down_button.BackColor = System.Drawing.Color.Transparent;
+            this.changain_down_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.changain_down_button.Location = new System.Drawing.Point(406, 464);
+            this.changain_down_button.Name = "changain_down_button";
+            this.changain_down_button.Size = new System.Drawing.Size(69, 25);
+            this.changain_down_button.TabIndex = 20;
+            this.changain_down_button.Text = "Down";
+            this.changain_down_button.UseVisualStyleBackColor = false;
+            this.changain_down_button.Click += new System.EventHandler(this.changain_down_Click);
+            // 
+            // changain_cntrl_label
+            // 
+            this.changain_cntrl_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.changain_cntrl_label.Location = new System.Drawing.Point(37, 465);
+            this.changain_cntrl_label.Name = "changain_cntrl_label";
+            this.changain_cntrl_label.Size = new System.Drawing.Size(234, 25);
+            this.changain_cntrl_label.TabIndex = 21;
+            this.changain_cntrl_label.Text = "Channel gain control";
+            this.changain_cntrl_label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // chansep_cntrl_label
+            // 
+            this.chansep_cntrl_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chansep_cntrl_label.Location = new System.Drawing.Point(37, 506);
+            this.chansep_cntrl_label.Name = "chansep_cntrl_label";
+            this.chansep_cntrl_label.Size = new System.Drawing.Size(246, 25);
+            this.chansep_cntrl_label.TabIndex = 24;
+            this.chansep_cntrl_label.Text = "Channel separation control";
+            this.chansep_cntrl_label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;    
+            // 
+            // chansep_down_button
+            // 
+            this.chansep_down_button.BackColor = System.Drawing.Color.Transparent;
+            this.chansep_down_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chansep_down_button.Location = new System.Drawing.Point(406, 505);
+            this.chansep_down_button.Name = "chansep_down_button";
+            this.chansep_down_button.Size = new System.Drawing.Size(69, 25);
+            this.chansep_down_button.TabIndex = 23;
+            this.chansep_down_button.Text = "Down";
+            this.chansep_down_button.UseVisualStyleBackColor = false;
+            this.chansep_down_button.Click += new System.EventHandler(this.chansep_down_Click);
+            // 
+            // chansep_up_buttom
+            // 
+            this.chansep_up_buttom.BackColor = System.Drawing.Color.Transparent;
+            this.chansep_up_buttom.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chansep_up_buttom.Location = new System.Drawing.Point(306, 506);
+            this.chansep_up_buttom.Name = "chansep_up_buttom";
+            this.chansep_up_buttom.Size = new System.Drawing.Size(69, 25);
+            this.chansep_up_buttom.TabIndex = 22;
+            this.chansep_up_buttom.Text = "Up";
+            this.chansep_up_buttom.UseVisualStyleBackColor = false;
+            this.chansep_up_buttom.Click += new System.EventHandler(this.chansep_up_Click);
+            // 
+            // rmssep_cntrl_label
+            // 
+            this.rmssep_cntrl_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rmssep_cntrl_label.Location = new System.Drawing.Point(37, 605);
+            this.rmssep_cntrl_label.Name = "rmssep_cntrl_label";
+            this.rmssep_cntrl_label.Size = new System.Drawing.Size(246, 25);
+            this.rmssep_cntrl_label.TabIndex = 30;
+            this.rmssep_cntrl_label.Text = "RMS separation control";
+            this.rmssep_cntrl_label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // rmssep_down_button
+            // 
+            this.rmssep_down_button.BackColor = System.Drawing.Color.Transparent;
+            this.rmssep_down_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rmssep_down_button.Location = new System.Drawing.Point(406, 604);
+            this.rmssep_down_button.Name = "rmssep_down_button";
+            this.rmssep_down_button.Size = new System.Drawing.Size(69, 25);
+            this.rmssep_down_button.TabIndex = 29;
+            this.rmssep_down_button.Text = "Down";
+            this.rmssep_down_button.UseVisualStyleBackColor = false;
+            this.rmssep_down_button.Click += new System.EventHandler(this.rmssep_down_Click);
+            // 
+            // rmssep_up_button
+            // 
+            this.rmssep_up_button.BackColor = System.Drawing.Color.Transparent;
+            this.rmssep_up_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rmssep_up_button.Location = new System.Drawing.Point(306, 605);
+            this.rmssep_up_button.Name = "rmssep_up_button";
+            this.rmssep_up_button.Size = new System.Drawing.Size(69, 25);
+            this.rmssep_up_button.TabIndex = 28;
+            this.rmssep_up_button.Text = "Up";
+            this.rmssep_up_button.UseVisualStyleBackColor = false;
+            this.rmssep_up_button.Click += new System.EventHandler(this.rmssep_up_Click);
+            // 
+            // rmsgain_cntrl_label
+            // 
+            this.rmsgain_cntrl_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rmsgain_cntrl_label.Location = new System.Drawing.Point(37, 564);
+            this.rmsgain_cntrl_label.Name = "rmsgain_cntrl_label";
+            this.rmsgain_cntrl_label.Size = new System.Drawing.Size(234, 25);
+            this.rmsgain_cntrl_label.TabIndex = 27;
+            this.rmsgain_cntrl_label.Text = "RMS gain control";
+            this.rmsgain_cntrl_label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // rmsgain_down_button
+            // 
+            this.rmsgain_down_button.BackColor = System.Drawing.Color.Transparent;
+            this.rmsgain_down_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rmsgain_down_button.Location = new System.Drawing.Point(406, 563);
+            this.rmsgain_down_button.Name = "rmsgain_down_button";
+            this.rmsgain_down_button.Size = new System.Drawing.Size(69, 25);
+            this.rmsgain_down_button.TabIndex = 26;
+            this.rmsgain_down_button.Text = "Down";
+            this.rmsgain_down_button.UseVisualStyleBackColor = false;
+            this.rmsgain_down_button.Click += new System.EventHandler(this.rmsgain_down_Click);
+            // 
+            // rmsgain_up_button
+            // 
+            this.rmsgain_up_button.BackColor = System.Drawing.Color.Transparent;
+            this.rmsgain_up_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rmsgain_up_button.Location = new System.Drawing.Point(306, 564);
+            this.rmsgain_up_button.Name = "rmsgain_up_button";
+            this.rmsgain_up_button.Size = new System.Drawing.Size(69, 25);
+            this.rmsgain_up_button.TabIndex = 25;
+            this.rmsgain_up_button.Text = "Up";
+            this.rmsgain_up_button.UseVisualStyleBackColor = false;
+            this.rmsgain_up_button.Click += new System.EventHandler(this.rmsgain_up_Click);
             // 
             // Form1
             // 
@@ -200,6 +353,19 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1900, 1000);
+            this.Controls.Add(this.rmssep_cntrl_label);
+            this.Controls.Add(this.rmssep_down_button);
+            this.Controls.Add(this.rmssep_up_button);
+            this.Controls.Add(this.rmsgain_cntrl_label);
+            this.Controls.Add(this.rmsgain_down_button);
+            this.Controls.Add(this.rmsgain_up_button);
+            this.Controls.Add(this.chansep_cntrl_label);
+            this.Controls.Add(this.chansep_down_button);
+            this.Controls.Add(this.chansep_up_buttom);
+            this.Controls.Add(this.changain_cntrl_label);
+            this.Controls.Add(this.changain_down_button);
+            this.Controls.Add(this.changain_up_button);
+            this.Controls.Add(this.exit_button);
             this.Controls.Add(this.clock);
             this.Controls.Add(this.clock_lab);
             this.Controls.Add(this.spectral_alarm1);
@@ -219,7 +385,7 @@
             this.Text = "Visualizing RMS of EEG";
             this.ResumeLayout(false);
             this.PerformLayout();
-          
+
         }
 
         #endregion
@@ -237,10 +403,20 @@
         private System.Windows.Forms.Label safety_spectral_lab;
         private System.Windows.Forms.Label clock_lab;
         private System.Windows.Forms.Label clock;
-
-        private System.Drawing.SolidBrush rms_alarm_brush1;
-        private System.Drawing.SolidBrush rms_alarm_brush2;
-
+        
+        private System.Windows.Forms.Button exit_button;
+        private System.Windows.Forms.Button changain_up_button;
+        private System.Windows.Forms.Button changain_down_button;
+        private System.Windows.Forms.Label changain_cntrl_label;
+        private System.Windows.Forms.Label chansep_cntrl_label;
+        private System.Windows.Forms.Button chansep_down_button;
+        private System.Windows.Forms.Button chansep_up_buttom;
+        private System.Windows.Forms.Label rmssep_cntrl_label;
+        private System.Windows.Forms.Button rmssep_down_button;
+        private System.Windows.Forms.Button rmssep_up_button;
+        private System.Windows.Forms.Label rmsgain_cntrl_label;
+        private System.Windows.Forms.Button rmsgain_down_button;
+        private System.Windows.Forms.Button rmsgain_up_button;
     }
 }
 

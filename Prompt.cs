@@ -286,17 +286,36 @@ namespace WindowsFormsApp4
             Button confirmation = new Button()
             {
                 Text = "Continue",
-                Left = 620,
+                Left = 490,
                 Width = 120,
                 Height = 30,
                 Top = 900,
                 DialogResult = DialogResult.OK,
                 Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
             };
-            confirmation.Click += (sender, e) => { prompt.Close(); };
+            confirmation.Click += (sender, e) => {
+                prompt.Close();
+            };
             prompt.Controls.Add(confirmation);
             prompt.AcceptButton = confirmation;
 
+
+            Button exitbutton = new Button()
+            {
+                Text = "Exit",
+                Left = 620,
+                Width = 120,
+                Height = 30,
+                Top = 900,
+                Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+            };
+            exitbutton.Click += (sender, e) =>
+            {
+                prompt.Close();
+                Environment.Exit(1);
+            }; 
+            prompt.Controls.Add(exitbutton);
+            prompt.CancelButton = exitbutton; 
             if (prompt.ShowDialog() == DialogResult.OK)
             {
                 for (int i_inp = 0; i_inp < number_inputs; i_inp++)
@@ -331,6 +350,7 @@ namespace WindowsFormsApp4
                     input_params.SetPropValue(prop_name, set_new_val);
                 }
             }
+
             return input_params;
         }
 

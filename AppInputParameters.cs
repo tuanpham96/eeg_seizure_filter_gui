@@ -35,9 +35,12 @@ namespace WindowsFormsApp4
         public int max_pnt_plt { get; set; }
         public double nsec_plt { get; set; }
 
-        public double[] display_gains { get; set; }
-        public string gain_str { get; set; }
-        public double display_sep { get; set; }
+        public double[] display_channel_gains { get; set; }
+        public string channel_gain_str { get; set; }
+        public double display_channel_sep { get; set; }
+
+        public double[] display_rms_gains { get; set; }
+        public double display_rms_sep { get; set; }
 
         public bool refresh_display { get; set; }
 
@@ -54,6 +57,9 @@ namespace WindowsFormsApp4
 
         public string WelcomeMessage { get; set; }
         public int nchan { get; set; }
+
+        private double d_gain = 0.1, d_sep = 0.1;
+        private double min_gain = 0.001, min_sep = 0; 
         #endregion
 
         #region Dictionaries for categorical options 
@@ -104,8 +110,8 @@ namespace WindowsFormsApp4
             { "WARNING upper bound", "warning_upperbound" },
             { "WARNING lower bound", "warning_lowerbound" },
             { "Display duration (seconds)", "nsec_plt" },
-            { "Display gains", "gain_str" },
-            { "Display separation", "display_sep" },
+            { "Display gains", "channel_gain_str" },
+            { "Display separation", "display_channel_sep" },
             { "Display refreshed", "refresh_display" },
             { "Display quality", "display_quality" },
             { "STFT Length (s)", "nsec_fft" },
@@ -144,8 +150,9 @@ namespace WindowsFormsApp4
             normal_color = Color.FromArgb(0, 255, 0);
 
             nsec_plt = 10; 
-            gain_str = "1;1;1";
-            display_sep = 5;
+            channel_gain_str = "1;1;1";
+            display_channel_sep = 5;
+            display_rms_sep = 0; 
 
             refresh_display = true;
             display_quality = Quality.High;
@@ -206,12 +213,19 @@ namespace WindowsFormsApp4
 
         public void InitializeDisplayGains()
         {
-            string[] gains_arr = gain_str.Split(';');
-            display_gains = new double[gains_arr.Length];
+            string[] gains_arr = channel_gain_str.Split(';');
+            display_channel_gains = new double[gains_arr.Length];
             for (int ig = 0; ig < gains_arr.Length; ig++)
             {
-                double.TryParse(gains_arr[ig], out display_gains[ig]);
+                double.TryParse(gains_arr[ig], out display_channel_gains[ig]);
             }
+
+            display_rms_gains = new double[nchan]; 
+            for (int ich = 0; ich < nchan; ich++)
+            {
+                display_rms_gains[ich] = 1;  
+            }
+
         }
         
         public void InitializeFFTParameters()
@@ -236,7 +250,35 @@ namespace WindowsFormsApp4
             }
         }
         #endregion
+        #region Specific Set methods during running application 
+        public void Control_Channel_Gain(double direction)
+        {
+            for (int i = 0; i < display_channel_gains.Length; i++)
+            {
+                display_channel_gains[i] += d_gain * direction;
+                display_channel_gains[i] = Math.Max(display_channel_gains[i], min_gain);
+            }
+        }
+        public void Control_Channel_Separation(double direction)
+        {
+            display_channel_sep += d_sep * direction;
+            display_channel_sep = Math.Max(display_channel_sep, min_sep);
+        }
 
+        public void Control_RMS_Gain(double direction)
+        {
+            for (int i = 0; i < display_rms_gains.Length; i++)
+            {
+                display_rms_gains[i] += d_gain * direction;
+                display_rms_gains[i] = Math.Max(display_rms_gains[i], min_gain); 
+            }
+        }
+        public void Control_RMS_Separation(double direction)
+        {
+            display_rms_sep += d_sep * direction;
+            display_rms_sep = Math.Max(display_rms_sep, min_sep);
+        }
+        #endregion
         #region Get and Set methods via reflection 
         public object GetPropValue(string propName)
         {
