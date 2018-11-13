@@ -55,15 +55,16 @@
             this.rmsgain_cntrl_label = new System.Windows.Forms.Label();
             this.rmsgain_down_button = new System.Windows.Forms.Button();
             this.rmsgain_up_button = new System.Windows.Forms.Button();
+            this.rms_alarm_plots = new LiveCharts.WinForms.CartesianChart();
             this.SuspendLayout();
             // 
             // log
             // 
-            this.log.Location = new System.Drawing.Point(47, 252);
+            this.log.Location = new System.Drawing.Point(23, 677);
             this.log.Margin = new System.Windows.Forms.Padding(2);
             this.log.Multiline = true;
             this.log.Name = "log";
-            this.log.Size = new System.Drawing.Size(429, 195);
+            this.log.Size = new System.Drawing.Size(453, 195);
             this.log.TabIndex = 4;
             // 
             // safety_rms_lab
@@ -100,7 +101,7 @@
             // 
             this.channel_plots.Location = new System.Drawing.Point(540, 20);
             this.channel_plots.Name = "channel_plots";
-            this.channel_plots.Size = new System.Drawing.Size(1300, 250);
+            this.channel_plots.Size = new System.Drawing.Size(699, 250);
             this.channel_plots.TabIndex = 8;
             this.channel_plots.Text = "channel_plots";
             // 
@@ -108,7 +109,7 @@
             // 
             this.rms_plots.Location = new System.Drawing.Point(540, 300);
             this.rms_plots.Name = "rms_plots";
-            this.rms_plots.Size = new System.Drawing.Size(1300, 250);
+            this.rms_plots.Size = new System.Drawing.Size(699, 250);
             this.rms_plots.TabIndex = 9;
             this.rms_plots.Text = "rms_plots";
             // 
@@ -116,7 +117,7 @@
             // 
             this.spectral_plots.Location = new System.Drawing.Point(540, 600);
             this.spectral_plots.Name = "spectral_plots";
-            this.spectral_plots.Size = new System.Drawing.Size(1300, 250);
+            this.spectral_plots.Size = new System.Drawing.Size(699, 250);
             this.spectral_plots.TabIndex = 10;
             this.spectral_plots.Text = "spectral_plots";
             // 
@@ -203,9 +204,9 @@
             // 
             this.exit_button.BackColor = System.Drawing.Color.Transparent;
             this.exit_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.exit_button.Location = new System.Drawing.Point(382, 790);
+            this.exit_button.Location = new System.Drawing.Point(23, 897);
             this.exit_button.Name = "exit_button";
-            this.exit_button.Size = new System.Drawing.Size(94, 34);
+            this.exit_button.Size = new System.Drawing.Size(70, 34);
             this.exit_button.TabIndex = 18;
             this.exit_button.Text = "Exit";
             this.exit_button.UseVisualStyleBackColor = false;
@@ -215,7 +216,7 @@
             // 
             this.changain_up_button.BackColor = System.Drawing.Color.Transparent;
             this.changain_up_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.changain_up_button.Location = new System.Drawing.Point(306, 465);
+            this.changain_up_button.Location = new System.Drawing.Point(281, 300);
             this.changain_up_button.Name = "changain_up_button";
             this.changain_up_button.Size = new System.Drawing.Size(69, 25);
             this.changain_up_button.TabIndex = 19;
@@ -227,7 +228,7 @@
             // 
             this.changain_down_button.BackColor = System.Drawing.Color.Transparent;
             this.changain_down_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.changain_down_button.Location = new System.Drawing.Point(406, 464);
+            this.changain_down_button.Location = new System.Drawing.Point(381, 299);
             this.changain_down_button.Name = "changain_down_button";
             this.changain_down_button.Size = new System.Drawing.Size(69, 25);
             this.changain_down_button.TabIndex = 20;
@@ -238,7 +239,7 @@
             // changain_cntrl_label
             // 
             this.changain_cntrl_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.changain_cntrl_label.Location = new System.Drawing.Point(37, 465);
+            this.changain_cntrl_label.Location = new System.Drawing.Point(12, 300);
             this.changain_cntrl_label.Name = "changain_cntrl_label";
             this.changain_cntrl_label.Size = new System.Drawing.Size(234, 25);
             this.changain_cntrl_label.TabIndex = 21;
@@ -248,18 +249,18 @@
             // chansep_cntrl_label
             // 
             this.chansep_cntrl_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chansep_cntrl_label.Location = new System.Drawing.Point(37, 506);
+            this.chansep_cntrl_label.Location = new System.Drawing.Point(12, 341);
             this.chansep_cntrl_label.Name = "chansep_cntrl_label";
             this.chansep_cntrl_label.Size = new System.Drawing.Size(246, 25);
             this.chansep_cntrl_label.TabIndex = 24;
             this.chansep_cntrl_label.Text = "Channel separation control";
-            this.chansep_cntrl_label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;    
+            this.chansep_cntrl_label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // chansep_down_button
             // 
             this.chansep_down_button.BackColor = System.Drawing.Color.Transparent;
             this.chansep_down_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chansep_down_button.Location = new System.Drawing.Point(406, 505);
+            this.chansep_down_button.Location = new System.Drawing.Point(381, 340);
             this.chansep_down_button.Name = "chansep_down_button";
             this.chansep_down_button.Size = new System.Drawing.Size(69, 25);
             this.chansep_down_button.TabIndex = 23;
@@ -271,7 +272,7 @@
             // 
             this.chansep_up_buttom.BackColor = System.Drawing.Color.Transparent;
             this.chansep_up_buttom.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chansep_up_buttom.Location = new System.Drawing.Point(306, 506);
+            this.chansep_up_buttom.Location = new System.Drawing.Point(281, 341);
             this.chansep_up_buttom.Name = "chansep_up_buttom";
             this.chansep_up_buttom.Size = new System.Drawing.Size(69, 25);
             this.chansep_up_buttom.TabIndex = 22;
@@ -282,7 +283,7 @@
             // rmssep_cntrl_label
             // 
             this.rmssep_cntrl_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rmssep_cntrl_label.Location = new System.Drawing.Point(37, 605);
+            this.rmssep_cntrl_label.Location = new System.Drawing.Point(12, 440);
             this.rmssep_cntrl_label.Name = "rmssep_cntrl_label";
             this.rmssep_cntrl_label.Size = new System.Drawing.Size(246, 25);
             this.rmssep_cntrl_label.TabIndex = 30;
@@ -293,7 +294,7 @@
             // 
             this.rmssep_down_button.BackColor = System.Drawing.Color.Transparent;
             this.rmssep_down_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rmssep_down_button.Location = new System.Drawing.Point(406, 604);
+            this.rmssep_down_button.Location = new System.Drawing.Point(381, 439);
             this.rmssep_down_button.Name = "rmssep_down_button";
             this.rmssep_down_button.Size = new System.Drawing.Size(69, 25);
             this.rmssep_down_button.TabIndex = 29;
@@ -305,7 +306,7 @@
             // 
             this.rmssep_up_button.BackColor = System.Drawing.Color.Transparent;
             this.rmssep_up_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rmssep_up_button.Location = new System.Drawing.Point(306, 605);
+            this.rmssep_up_button.Location = new System.Drawing.Point(281, 440);
             this.rmssep_up_button.Name = "rmssep_up_button";
             this.rmssep_up_button.Size = new System.Drawing.Size(69, 25);
             this.rmssep_up_button.TabIndex = 28;
@@ -316,7 +317,7 @@
             // rmsgain_cntrl_label
             // 
             this.rmsgain_cntrl_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rmsgain_cntrl_label.Location = new System.Drawing.Point(37, 564);
+            this.rmsgain_cntrl_label.Location = new System.Drawing.Point(12, 399);
             this.rmsgain_cntrl_label.Name = "rmsgain_cntrl_label";
             this.rmsgain_cntrl_label.Size = new System.Drawing.Size(234, 25);
             this.rmsgain_cntrl_label.TabIndex = 27;
@@ -327,7 +328,7 @@
             // 
             this.rmsgain_down_button.BackColor = System.Drawing.Color.Transparent;
             this.rmsgain_down_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rmsgain_down_button.Location = new System.Drawing.Point(406, 563);
+            this.rmsgain_down_button.Location = new System.Drawing.Point(381, 398);
             this.rmsgain_down_button.Name = "rmsgain_down_button";
             this.rmsgain_down_button.Size = new System.Drawing.Size(69, 25);
             this.rmsgain_down_button.TabIndex = 26;
@@ -339,7 +340,7 @@
             // 
             this.rmsgain_up_button.BackColor = System.Drawing.Color.Transparent;
             this.rmsgain_up_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rmsgain_up_button.Location = new System.Drawing.Point(306, 564);
+            this.rmsgain_up_button.Location = new System.Drawing.Point(281, 399);
             this.rmsgain_up_button.Name = "rmsgain_up_button";
             this.rmsgain_up_button.Size = new System.Drawing.Size(69, 25);
             this.rmsgain_up_button.TabIndex = 25;
@@ -347,12 +348,21 @@
             this.rmsgain_up_button.UseVisualStyleBackColor = false;
             this.rmsgain_up_button.Click += new System.EventHandler(this.rmsgain_up_Click);
             // 
+            // rms_alarm_plots
+            // 
+            this.rms_alarm_plots.Location = new System.Drawing.Point(1339, 300);
+            this.rms_alarm_plots.Name = "rms_alarm_plots";
+            this.rms_alarm_plots.Size = new System.Drawing.Size(518, 250);
+            this.rms_alarm_plots.TabIndex = 31;
+            this.rms_alarm_plots.Text = "rms_alarm_plots";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1900, 1000);
+            this.Controls.Add(this.rms_alarm_plots);
             this.Controls.Add(this.rmssep_cntrl_label);
             this.Controls.Add(this.rmssep_down_button);
             this.Controls.Add(this.rmssep_up_button);
@@ -417,6 +427,8 @@
         private System.Windows.Forms.Label rmsgain_cntrl_label;
         private System.Windows.Forms.Button rmsgain_down_button;
         private System.Windows.Forms.Button rmsgain_up_button;
+
+        private LiveCharts.WinForms.CartesianChart rms_alarm_plots;
     }
 }
 

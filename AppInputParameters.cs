@@ -23,10 +23,10 @@ namespace WindowsFormsApp4
         public string output_folder { get; set; }
         public string output_file_name { get; set; }
 
-        public double danger_upperbound { get; set; }
-        public double danger_lowerbound { get; set; }
-        public double warning_upperbound { get; set; }
-        public double warning_lowerbound { get; set; }
+        public double danger_rms_upperbound { get; set; }
+        public double danger_rms_lowerbound { get; set; }
+        public double warning_rms_upperbound { get; set; }
+        public double warning_rms_lowerbound { get; set; }
 
         public Color danger_color { get; set; }
         public Color warning_color { get; set; }
@@ -57,6 +57,11 @@ namespace WindowsFormsApp4
 
         public string WelcomeMessage { get; set; }
         public int nchan { get; set; }
+
+        public double rms_lvl_reset_sec { get; set; }
+        public double rms_lvl_max_sec { get; set; }
+        public int rms_lvl_reset_point { get; set; }
+        public int rms_lvl_max_point { get; set; }
 
         private double d_gain = 0.1, d_sep = 0.1;
         private double min_gain = 0.001, min_sep = 0; 
@@ -105,10 +110,10 @@ namespace WindowsFormsApp4
             { "Channels to display", "channels2plt" },
             { "Output folder", "output_folder"},
             { "Output file name",  "output_file_name" },
-            { "DANGER upper bound",  "danger_upperbound" },
-            { "DANGER lower bound",  "danger_lowerbound" },
-            { "WARNING upper bound", "warning_upperbound" },
-            { "WARNING lower bound", "warning_lowerbound" },
+            { "DANGER RMS upper bound",  "danger_rms_upperbound" },
+            { "DANGER RMS lower bound",  "danger_rms_lowerbound" },
+            { "WARNING RMS upper bound", "warning_rms_upperbound" },
+            { "WARNING RMS lower bound", "warning_rms_lowerbound" },
             { "Display duration (seconds)", "nsec_plt" },
             { "Display gains", "channel_gain_str" },
             { "Display separation", "display_channel_sep" },
@@ -140,10 +145,10 @@ namespace WindowsFormsApp4
             output_folder = @"C:\Users\Towle\Desktop\Tuan\general_towle\data";
             output_file_name = "testfile_TP.csv";
 
-            danger_upperbound = 1.4;
-            danger_lowerbound = 0.6;
-            warning_upperbound = 1.2;
-            warning_lowerbound = 0.8;
+            danger_rms_upperbound = 1.4;
+            danger_rms_lowerbound = 0.6;
+            warning_rms_upperbound = 1.2;
+            warning_rms_lowerbound = 0.8;
 
             danger_color = Color.FromArgb(255, 0, 0);
             warning_color = Color.FromArgb(255, 255, 0);
@@ -163,6 +168,11 @@ namespace WindowsFormsApp4
             f_bandpower_lower = 2;
             f_bandpower_upper = 8;
             stft_saving_option = false;
+
+            rms_lvl_reset_sec = 2.5;
+            rms_lvl_max_sec = 60 * 5;
+            rms_lvl_reset_point = (int) (Fs * rms_lvl_reset_sec);
+            rms_lvl_max_point = (int) (rms_lvl_max_sec / rms_lvl_reset_sec); 
         }
         #endregion
 
@@ -208,7 +218,7 @@ namespace WindowsFormsApp4
             WelcomeMessage += String.Format("\t Window = {0} points ({1:0} ms)\r\n",
                 nmax_queue_total, nmax_queue_total * 1000 / Fs);
             WelcomeMessage += String.Format("\t Warning ({2} < x < {0}, {3} > x > {1}) \r\n\t Danger (x < {2}, x > {3})\r\n",
-                        warning_lowerbound, warning_upperbound, danger_lowerbound, danger_upperbound);
+                        warning_rms_lowerbound, warning_rms_upperbound, danger_rms_lowerbound, danger_rms_upperbound);
         }
 
         public void InitializeDisplayGains()
