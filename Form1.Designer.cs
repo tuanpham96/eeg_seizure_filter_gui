@@ -56,6 +56,7 @@
             this.rmsgain_down_button = new System.Windows.Forms.Button();
             this.rmsgain_up_button = new System.Windows.Forms.Button();
             this.rms_alarm_plots = new LiveCharts.WinForms.CartesianChart();
+            this.refresh_button = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // log
@@ -112,6 +113,7 @@
             this.rms_plots.Size = new System.Drawing.Size(699, 250);
             this.rms_plots.TabIndex = 9;
             this.rms_plots.Text = "rms_plots";
+            this.rms_plots.BackColor = System.Drawing.Color.LightGray; 
             // 
             // spectral_plots
             // 
@@ -120,6 +122,7 @@
             this.spectral_plots.Size = new System.Drawing.Size(699, 250);
             this.spectral_plots.TabIndex = 10;
             this.spectral_plots.Text = "spectral_plots";
+            this.spectral_plots.BackColor = System.Drawing.Color.DimGray;
             // 
             // chan_label1
             // 
@@ -204,9 +207,9 @@
             // 
             this.exit_button.BackColor = System.Drawing.Color.Transparent;
             this.exit_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.exit_button.Location = new System.Drawing.Point(23, 897);
+            this.exit_button.Location = new System.Drawing.Point(141, 892);
             this.exit_button.Name = "exit_button";
-            this.exit_button.Size = new System.Drawing.Size(70, 34);
+            this.exit_button.Size = new System.Drawing.Size(90, 34);
             this.exit_button.TabIndex = 18;
             this.exit_button.Text = "Exit";
             this.exit_button.UseVisualStyleBackColor = false;
@@ -356,12 +359,25 @@
             this.rms_alarm_plots.TabIndex = 31;
             this.rms_alarm_plots.Text = "rms_alarm_plots";
             // 
+            // refresh_button
+            // 
+            this.refresh_button.BackColor = System.Drawing.Color.Transparent;
+            this.refresh_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.refresh_button.Location = new System.Drawing.Point(23, 892);
+            this.refresh_button.Name = "refresh_button";
+            this.refresh_button.Size = new System.Drawing.Size(90, 34);
+            this.refresh_button.TabIndex = 32;
+            this.refresh_button.Text = "Refresh";
+            this.refresh_button.UseVisualStyleBackColor = false;
+            this.refresh_button.Click += new System.EventHandler(this.refresh_button_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1900, 1000);
+            this.Controls.Add(this.refresh_button);
             this.Controls.Add(this.rms_alarm_plots);
             this.Controls.Add(this.rmssep_cntrl_label);
             this.Controls.Add(this.rmssep_down_button);
@@ -429,6 +445,7 @@
         private System.Windows.Forms.Button rmsgain_up_button;
 
         private LiveCharts.WinForms.CartesianChart rms_alarm_plots;
+        private System.Windows.Forms.Button refresh_button;
     }
 }
 

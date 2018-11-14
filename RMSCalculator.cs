@@ -25,9 +25,15 @@ namespace WindowsFormsApp4
             Reset_Level_Tally();
         }
 
-        public void ParseCurrentValue(string s)
+        public bool ParseCurrentValue(string s)
         {
-            double.TryParse(s, out this.current_val);
+            bool parse_success = double.TryParse(s, out this.current_val);
+            if (!parse_success)
+            {
+                Console.WriteLine("Could not parse {0} as a double", s); 
+                //throw new System.ArgumentException("Could not parse as a double");
+            }
+            return parse_success;
         }
 
         public void CalculateRMS(int count) {

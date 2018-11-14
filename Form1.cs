@@ -162,7 +162,12 @@ namespace WindowsFormsApp4
             string[] legends = {"Ch " + app_inp_prm.chan_idx2plt[0],
                                 "Ch " + app_inp_prm.chan_idx2plt[1],
                                 "Ch " + app_inp_prm.chan_idx2plt[0] + " - Ch " + app_inp_prm.chan_idx2plt[1]};
-
+            System.Windows.Media.SolidColorBrush[] ch_brushes =
+            {
+                 System.Windows.Media.Brushes.Navy,
+                 System.Windows.Media.Brushes.DarkBlue,
+                 System.Windows.Media.Brushes.Violet
+            };
             for (int idx_obs = 0; idx_obs < 3; idx_obs++)
             {
                 ChannelSeries[idx_obs] = new GearedValues<ObservablePoint>();
@@ -174,7 +179,8 @@ namespace WindowsFormsApp4
                     PointGeometry = DefaultGeometries.None,
                     LineSmoothness = 0,
                     Fill = System.Windows.Media.Brushes.Transparent,
-                    Title = legends[idx_obs]
+                    Title = legends[idx_obs],
+                    Stroke = ch_brushes[idx_obs]
                 });
             }
 
@@ -193,7 +199,8 @@ namespace WindowsFormsApp4
                     PointGeometry = DefaultGeometries.None,
                     LineSmoothness = 0,
                     Fill = System.Windows.Media.Brushes.Transparent,
-                    Title = legends[ichan] + " RMS"
+                    Title = legends[ichan] + " RMS",
+                    Stroke = ch_brushes[ichan]
                 });
 
                 STFTSeries[ichan] = new GearedValues<ObservablePoint>();
@@ -205,16 +212,19 @@ namespace WindowsFormsApp4
                     PointGeometry = DefaultGeometries.None,
                     LineSmoothness = 0,
                     Fill = System.Windows.Media.Brushes.Transparent,
-                    Title = legends[ichan] + " STFT"
+                    Title = legends[ichan] + " STFT",
+                    Stroke = ch_brushes[ichan]
                 });
             }
 
             int n_lvls = 3;
-            System.Windows.Media.SolidColorBrush[] brushes = {
-                            System.Windows.Media.Brushes.Green,
-                            System.Windows.Media.Brushes.Orange,
-                            System.Windows.Media.Brushes.Red};
-            string[] alarm_lvl_str = { "Normal", "Warning", "Red" }; 
+            System.Windows.Media.SolidColorBrush[] brushes =
+            {
+                System.Windows.Media.Brushes.Green,
+                System.Windows.Media.Brushes.Orange,
+                System.Windows.Media.Brushes.Red
+            };
+            string[] alarm_lvl_str = { "Normal", "Warning", "Danger" }; 
             RMSAlarmSeries = new GearedValues<ObservablePoint>[n_lvls];
             for (int i = 0; i < n_lvls; i++)
             {
@@ -232,12 +242,11 @@ namespace WindowsFormsApp4
                     Title = alarm_lvl_str[i]
                 });
             }
-
-            channel_plots.Text = "Channel bro";
-            MaximizePlotPerformance(ref channel_plots);
-            MaximizePlotPerformance(ref rms_plots);
-            MaximizePlotPerformance(ref spectral_plots);
-            MaximizePlotPerformance(ref rms_alarm_plots);
+            
+            MaximizePlotPerformance(ref channel_plots, new Axes_Label("Time (s)", "Voltage"));
+            MaximizePlotPerformance(ref rms_plots, new Axes_Label("Time (s)", "RMS"));
+            MaximizePlotPerformance(ref spectral_plots, new Axes_Label("Time (s)", "FFT"));
+            MaximizePlotPerformance(ref rms_alarm_plots, new Axes_Label("Time (s)", "# of alarms"));
             /*
             channel_plots.DisableAnimations = true; // for performance 
             channel_plots.Hoverable = false;
@@ -259,8 +268,32 @@ namespace WindowsFormsApp4
             */
         }
 
-        private void MaximizePlotPerformance(ref LiveCharts.WinForms.CartesianChart cart_chart)
+        private struct Axes_Label
         {
+            public string xlabel, ylabel;
+            public Axes_Label(string x, string y)
+            {
+                xlabel = x;
+                ylabel = y;
+            }
+        }
+        private void MaximizePlotPerformance(ref LiveCharts.WinForms.CartesianChart cart_chart, Axes_Label axes_Label)
+        {
+            cart_chart.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            cart_chart.AxisX.Add(new Axis
+            {
+                Separator = new Separator {  StrokeThickness = 0, },
+                FontSize = 15F, 
+                FontFamily = new System.Windows.Media.FontFamily("Arial"),                
+                Title = axes_Label.xlabel
+            });
+            cart_chart.AxisY.Add(new Axis
+            {
+                Separator = new Separator { StrokeThickness = 0 },
+                FontSize = 15F,
+                FontFamily = new System.Windows.Media.FontFamily("Arial"),
+                Title = axes_Label.ylabel
+            });
             cart_chart.DisableAnimations = true;
             cart_chart.Hoverable = false;
             cart_chart.DataTooltip = null;
@@ -343,7 +376,7 @@ namespace WindowsFormsApp4
             }
             if (ChannelSeries[0].Count > 200)
             {
-                channel_plots.AxisX[0].Title = "Time (seconds)"; 
+                //channel_plots.AxisX[0].Title = "Time (seconds)"; 
             }
         }
 
@@ -364,7 +397,7 @@ namespace WindowsFormsApp4
 
             if (ChannelSeries[0].Count > 200)
             {
-                channel_plots.AxisX[0].Title = "Time (seconds)";
+                //channel_plots.AxisX[0].Title = "Time (seconds)";
                 channel_plots.AxisX[0].MinValue = min_bound;
                 channel_plots.AxisX[0].MaxValue = max_bound;
             }
@@ -384,7 +417,7 @@ namespace WindowsFormsApp4
             }
             if (RMSSeries[0].Count > 200)
             {
-                rms_plots.AxisX[0].Title = "Time (seconds)";
+                //rms_plots.AxisX[0].Title = "Time (seconds)";
             }
         }
 
@@ -405,7 +438,7 @@ namespace WindowsFormsApp4
 
             if (RMSSeries[0].Count > 200)
             {
-                rms_plots.AxisX[0].Title = "Time (seconds)";
+                //rms_plots.AxisX[0].Title = "Time (seconds)";
                 rms_plots.AxisX[0].MinValue = min_bound;
                 rms_plots.AxisX[0].MaxValue = max_bound;
             }
@@ -425,7 +458,7 @@ namespace WindowsFormsApp4
 
             if (STFTSeries[0].Count > 10)
             {
-                spectral_plots.AxisX[0].Title = "Time (seconds)";
+                //spectral_plots.AxisX[0].Title = "Time (seconds)";
                 spectral_plots.AxisX[0].MinValue = min_bound;
                 spectral_plots.AxisX[0].MaxValue = max_bound;
             }
@@ -449,7 +482,7 @@ namespace WindowsFormsApp4
                 }
                 STFTSeries[ichan].AddRange(stft_new);
             }
-            spectral_plots.AxisX[0].Title = "Frequency (Hz)";
+            //spectral_plots.AxisX[0].Title = "Frequency (Hz)";
             spectral_plots.AxisX[0].MinValue = 0;
             spectral_plots.AxisX[0].MaxValue = 40;
         }
@@ -543,7 +576,7 @@ namespace WindowsFormsApp4
             {
                 if (series[i].Count >= max_pnt_plt)
                 {
-                    series[i].Clear();
+                    series[i].RemoveAt(0); 
                 }
                 series[i].Add(new ObservablePoint(t, values[i]));
             }
@@ -598,7 +631,12 @@ namespace WindowsFormsApp4
                             double t = ((double)count) / this.app_inp_prm.Fs;
                             for (int ich = 0; ich < nchan; ich++)
                             {
-                                RMSCalcs[ich].ParseCurrentValue(current_data_chunk[ix + chan_idx[ich] * app_inp_prm.nsamp_per_block]);
+                                bool parse_success = RMSCalcs[ich].ParseCurrentValue(current_data_chunk[ix + chan_idx[ich] * app_inp_prm.nsamp_per_block]);
+                                if (!parse_success)
+                                {
+                                    Console.WriteLine(data);
+                                    Environment.Exit(1); 
+                                }
                             }
 
                             double[] viz = {    RMSCalcs[0].current_val,
@@ -659,30 +697,22 @@ namespace WindowsFormsApp4
                                         lvl_arrs[ilvl] += RMSCalcs[ich].rms_levels[ilvl]; 
                                     }
                                 }
-                                /* rms_alarm_plots.BeginInvoke(new Action<
-                                            LiveCharts.WinForms.CartesianChart,
-                                            GearedValues<ObservablePoint>[],
-                                            double,
-                                            double[],
-                                            double,
-                                            double,
-                                            double>(UpdateRefreshablePlot), 
-                                                rms_alarm_plots, 
-                                                RMSAlarmSeries, 
-                                                t, 
-                                                lvl_arrs,
-                                                app_inp_prm.rms_lvl_max_sec, 
-                                                app_inp_prm.rms_lvl_reset_point, 
-                                                2); */
-
-                                UpdateRefreshablePlot(
+                                /*UpdateRefreshablePlot(
                                                 rms_alarm_plots,
                                                 RMSAlarmSeries,
                                                 t,
                                                 lvl_arrs,
                                                 app_inp_prm.rms_lvl_max_sec,
-                                                app_inp_prm.rms_lvl_reset_point,
-                                                2); 
+                                                app_inp_prm.rms_lvl_max_point,
+                                                2);
+                                     */           
+                                UpdateContinuosPlot(
+                                                rms_alarm_plots,
+                                                RMSAlarmSeries,
+                                                t,
+                                                lvl_arrs,
+                                                app_inp_prm.rms_lvl_max_point,
+                                                2);
                                 for (int ich = 0; ich < nchan; ich++)
                                 {
                                     RMSCalcs[ich].Reset_Level_Tally(); 
@@ -706,7 +736,7 @@ namespace WindowsFormsApp4
             }
             catch (Exception e)
             {                
-                log.BeginInvoke(new Action(() =>
+                log.Invoke(new Action(() =>
                 {
                     log.Text += "Error..... " + e.StackTrace;
                 }));
@@ -720,6 +750,12 @@ namespace WindowsFormsApp4
         {
             Application.Exit();
             Environment.Exit(1); 
+        }
+
+        private void refresh_button_Click(object sender, EventArgs e)
+        {
+            this.Load += Form1_Load;
+            return; 
         }
 
         #region Channel gain and separation control for display 
