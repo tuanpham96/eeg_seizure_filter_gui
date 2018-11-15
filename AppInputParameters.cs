@@ -169,7 +169,7 @@ namespace WindowsFormsApp4
             f_bandpower_upper = 8;
             stft_saving_option = false;
 
-            rms_lvl_reset_sec = 5;
+            rms_lvl_reset_sec = 2;
             rms_lvl_max_sec = 60 * 10;
             rms_lvl_reset_point = (int) (Fs * rms_lvl_reset_sec);
             rms_lvl_max_point = (int) (rms_lvl_max_sec / rms_lvl_reset_sec); 

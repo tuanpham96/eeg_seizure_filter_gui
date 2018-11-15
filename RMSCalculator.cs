@@ -28,11 +28,6 @@ namespace WindowsFormsApp4
         public bool ParseCurrentValue(string s)
         {
             bool parse_success = double.TryParse(s, out this.current_val);
-            if (!parse_success)
-            {
-                Console.WriteLine("Could not parse {0} as a double", s); 
-                //throw new System.ArgumentException("Could not parse as a double");
-            }
             return parse_success;
         }
 
@@ -62,9 +57,15 @@ namespace WindowsFormsApp4
             if (lvl < n_lvls) { rms_levels[lvl]++; }
             else { throw new System.ArgumentOutOfRangeException(string.Format("`lvl` = {0} is not a valid level, " +
                     "needs to be < `n_lvl` = {1}", lvl, n_lvls));
+            }        }
+
+        public void Cumulative_From_Lower_Level()
+        {
+            for (int i = 0; i < (n_lvls - 1); i++)
+            {
+                rms_levels[i + 1] += rms_levels[i];
             }
         }
-
         public void Reset_Level_Tally()
         {
             this.rms_levels = new int[n_lvls];

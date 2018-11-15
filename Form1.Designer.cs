@@ -102,27 +102,25 @@
             // 
             this.channel_plots.Location = new System.Drawing.Point(540, 20);
             this.channel_plots.Name = "channel_plots";
-            this.channel_plots.Size = new System.Drawing.Size(699, 250);
+            this.channel_plots.Size = new System.Drawing.Size(1326, 208);
             this.channel_plots.TabIndex = 8;
             this.channel_plots.Text = "channel_plots";
             // 
             // rms_plots
             // 
-            this.rms_plots.Location = new System.Drawing.Point(540, 300);
+            this.rms_plots.Location = new System.Drawing.Point(540, 234);
             this.rms_plots.Name = "rms_plots";
-            this.rms_plots.Size = new System.Drawing.Size(699, 250);
+            this.rms_plots.Size = new System.Drawing.Size(1326, 208);
             this.rms_plots.TabIndex = 9;
             this.rms_plots.Text = "rms_plots";
-            this.rms_plots.BackColor = System.Drawing.Color.LightGray; 
             // 
             // spectral_plots
             // 
-            this.spectral_plots.Location = new System.Drawing.Point(540, 600);
+            this.spectral_plots.Location = new System.Drawing.Point(1403, 622);
             this.spectral_plots.Name = "spectral_plots";
-            this.spectral_plots.Size = new System.Drawing.Size(699, 250);
+            this.spectral_plots.Size = new System.Drawing.Size(437, 250);
             this.spectral_plots.TabIndex = 10;
             this.spectral_plots.Text = "spectral_plots";
-            this.spectral_plots.BackColor = System.Drawing.Color.DimGray;
             // 
             // chan_label1
             // 
@@ -353,7 +351,7 @@
             // 
             // rms_alarm_plots
             // 
-            this.rms_alarm_plots.Location = new System.Drawing.Point(1339, 300);
+            this.rms_alarm_plots.Location = new System.Drawing.Point(607, 622);
             this.rms_alarm_plots.Name = "rms_alarm_plots";
             this.rms_alarm_plots.Size = new System.Drawing.Size(518, 250);
             this.rms_alarm_plots.TabIndex = 31;
