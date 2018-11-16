@@ -55,6 +55,11 @@ namespace WindowsFormsApp4
         public double f_bandpower_upper { get; set; }
         public bool stft_saving_option { get; set; }
 
+        public double danger_lbp_upperbound { get; set; }
+        public double danger_lbp_lowerbound { get; set; }
+        public double warning_lbp_upperbound { get; set; }
+        public double warning_lbp_lowerbound { get; set; }
+
         public string WelcomeMessage { get; set; }
         public int nchan { get; set; }
 
@@ -168,6 +173,12 @@ namespace WindowsFormsApp4
             f_bandpower_lower = 2;
             f_bandpower_upper = 8;
             stft_saving_option = false;
+
+            danger_lbp_upperbound = 6E-7;
+            danger_lbp_lowerbound = -1.0;
+            warning_lbp_upperbound = 4.5E-7;
+            warning_lbp_lowerbound = 0.0; 
+
 
             rms_lvl_reset_sec = 2;
             rms_lvl_max_sec = 60 * 10;

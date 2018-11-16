@@ -349,7 +349,7 @@ namespace WindowsFormsApp4
                 FontFamily = new System.Windows.Media.FontFamily(font_fam),
                 Foreground = axes_color,
                 Title = axes_label.ylabel,
-               LabelFormatter = value => string.Format("{0:0.0e+0}",value),
+                // LabelFormatter = value => string.Format("{0:0.0e+0}",value),
                 IsMerged = y_axis_merged,                
             });
 
@@ -379,6 +379,7 @@ namespace WindowsFormsApp4
                 FontSize = 0.5F,
                 Foreground = System.Windows.Media.Brushes.Transparent
             });
+
             cart_chart.DisableAnimations = true;
             cart_chart.Hoverable = false;
             cart_chart.DataTooltip = null;
@@ -399,6 +400,25 @@ namespace WindowsFormsApp4
                 level_res = 2;
             }
             else if (value < app_inp_prm.warning_rms_lowerbound | value > app_inp_prm.warning_rms_upperbound)
+            {
+                color_res = app_inp_prm.warning_color;
+                level_res = 1;
+            }
+            else
+            {
+                color_res = app_inp_prm.normal_color;
+                level_res = 0;
+            }
+        }
+
+        private void ReturnLBPLevel(double value, out Color color_res, out int level_res)
+        {
+            if (value < app_inp_prm.danger_lbp_lowerbound | value > app_inp_prm.danger_lbp_upperbound)
+            {
+                color_res = app_inp_prm.danger_color;
+                level_res = 2;
+            }
+            else if (value < app_inp_prm.warning_lbp_lowerbound | value > app_inp_prm.warning_lbp_upperbound)
             {
                 color_res = app_inp_prm.warning_color;
                 level_res = 1;
@@ -431,11 +451,11 @@ namespace WindowsFormsApp4
             lbl.Text = s;
         }
 
-        private void UpdatePanelColor(Panel pnl, Color c, double t)
+        private void UpdatePanelColor(Panel pnl, Color c)
         {
             if (InvokeRequired)
             {
-                pnl.BeginInvoke(new Action<Panel, Color, double>(UpdatePanelColor), new object[] { pnl, c, t });
+                pnl.BeginInvoke(new Action<Panel, Color>(UpdatePanelColor), new object[] { pnl, c });
                 return;
             }
             pnl.Refresh();
@@ -609,14 +629,14 @@ namespace WindowsFormsApp4
             }
 
             int n_values = series.Length;
-            
+          
             for (int i = 0; i < n_values; i++)
             {
                 if (series[i].Count >= max_pnt_plt)
                 {
                     series[i].Clear();
                 }
-                series[i].Add(new ObservablePoint(t, values[i] * display_gains[i] - display_sep * i));
+                series[i].Add(new ObservablePoint(t, values[i] * display_gains[i] - display_sep * i)); 
             }
 
 
@@ -675,7 +695,8 @@ namespace WindowsFormsApp4
                 int[] chan_idx = { app_inp_prm.chan_idx2plt[0], app_inp_prm.chan_idx2plt[1] };
                 int nchan = app_inp_prm.nchan;
 
-                Panel[] panels = { rms_alarm1, rms_alarm2 };
+                Panel[] rms_alarm_panels = { rms_alarm1, rms_alarm2 };
+                Panel[] lbp_alarm_panels = { lbp_alarm1, lbp_alarm2 };
 
                 int stream_read;
                 int count = 0;
@@ -683,7 +704,7 @@ namespace WindowsFormsApp4
 
 
                 string csvFilePath = this.app_inp_prm.output_file_name;
-                File.WriteAllText(csvFilePath, "Data_1;RMS_1;Level_1;Data_2;RMS_2;Level_2\n");
+                File.WriteAllText(csvFilePath, "Data_1;RMS_1;RMSLevel_1;Data_2;RMS_2;RMSLevel_2\n");
                 while ((stream_read = stream.Read(bytes, 0, bytes.Length)) != 0)
                 {
                     string data_with_lines = System.Text.Encoding.ASCII.GetString(bytes, 0, stream_read);
@@ -752,8 +773,8 @@ namespace WindowsFormsApp4
 
                                 TimeSpan tsp = TimeSpan.FromSeconds(t);
 
-                                Color[] color_level_arr = new Color[nchan];
-                                int[] level_idx_arr = new int[nchan];
+                                Color[] rms_lvl_colors = new Color[nchan];
+                                int[] rms_lvls = new int[nchan];
                                 double[] current_rms_arr = new double[nchan], current_val_arr = new double[nchan];
 
                                 for (int ich = 0; ich < nchan; ich++)
@@ -761,10 +782,10 @@ namespace WindowsFormsApp4
                                     RMSCalcs[ich].CalculateRMS(count);
                                     current_rms_arr[ich] = RMSCalcs[ich].current_rms;
                                     current_val_arr[ich] = RMSCalcs[ich].current_val;
-                                    ReturnRMSLevel(current_rms_arr[ich], out color_level_arr[ich], out level_idx_arr[ich]);
-                                    UpdatePanelColor(panels[ich], color_level_arr[ich], t);
+                                    ReturnRMSLevel(current_rms_arr[ich], out rms_lvl_colors[ich], out rms_lvls[ich]);
+                                    UpdatePanelColor(rms_alarm_panels[ich], rms_lvl_colors[ich]);
 
-                                    RMSCalcs[ich].Tally_Levels(level_idx_arr[ich]);
+                                    RMSCalcs[ich].Tally_Levels(rms_lvls[ich]);
                                 }
 
                                 if (app_inp_prm.refresh_display)
@@ -792,21 +813,26 @@ namespace WindowsFormsApp4
                                 {
                                     STFTCalcs[ich].CalculateFFT(t, RMSCalcs[ich].current_val);
                                 }
+
                                 if (STFTCalcs[0].ready2plt)
                                 {
                                     double[] viz_bp = new double[nchan];
                                     double[] pseudo_gains = new double[nchan];
-                                    double pseudo_sep = 0; 
+                                    double pseudo_sep = 0;
+
+                                    Color[] lbp_lvl_colors = new Color[nchan];
+                                    int[] lbp_lvls = new int[nchan];
+
                                     for (int ich = 0; ich < nchan; ich++) {
                                         STFTCalcs[ich].CalculatePSD();
                                         viz_bp[ich] = STFTCalcs[ich].band_power;
-                                        pseudo_gains[ich] = 1.0; 
+                                        pseudo_gains[ich] = 1.0;
+
+                                        ReturnLBPLevel(viz_bp[ich], out lbp_lvl_colors[ich], out lbp_lvls[ich]);
+                                        UpdatePanelColor(lbp_alarm_panels[ich], lbp_lvl_colors[ich]);
                                     }
                                     spectral_plots.BeginInvoke(new Action(UpdateSTFTPlot));
-
-                                    //spectral_plots.BeginInvoke(new Action<double, double[]>(UpdateBandPowerPlot), t, viz_bp);
-
-
+                                    
                                     UpdateTimeSeriesPlot(
                                         true, 
                                         limbandpow_plots,
@@ -860,8 +886,8 @@ namespace WindowsFormsApp4
                                 UpdateLabel(clock, tsp.ToString(@"hh\:mm\:ss\:fff"));
 
                                 string nextLine = string.Format("{0};{1};{2};{3};{4};{5}\n",
-                                    current_val_arr[0], current_rms_arr[0], level_idx_arr[0],
-                                    current_val_arr[1], current_rms_arr[1], level_idx_arr[1]);
+                                    current_val_arr[0], current_rms_arr[0], rms_lvls[0],
+                                    current_val_arr[1], current_rms_arr[1], rms_lvls[1]);
                                 File.AppendAllText(csvFilePath, nextLine);
 
                                 count++;

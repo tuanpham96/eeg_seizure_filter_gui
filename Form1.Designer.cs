@@ -37,8 +37,8 @@
             this.spectral_plots = new LiveCharts.WinForms.CartesianChart();
             this.chan_label1 = new System.Windows.Forms.Label();
             this.chan_label2 = new System.Windows.Forms.Label();
-            this.spectral_alarm1 = new System.Windows.Forms.Panel();
-            this.spectral_alarm2 = new System.Windows.Forms.Panel();
+            this.lbp_alarm1 = new System.Windows.Forms.Panel();
+            this.lbp_alarm2 = new System.Windows.Forms.Panel();
             this.safety_spectral_lab = new System.Windows.Forms.Label();
             this.clock_lab = new System.Windows.Forms.Label();
             this.clock = new System.Windows.Forms.Label();
@@ -66,11 +66,11 @@
             // 
             // log
             // 
-            this.log.Location = new System.Drawing.Point(23, 677);
+            this.log.Location = new System.Drawing.Point(11, 421);
             this.log.Margin = new System.Windows.Forms.Padding(2);
             this.log.Multiline = true;
             this.log.Name = "log";
-            this.log.Size = new System.Drawing.Size(453, 195);
+            this.log.Size = new System.Drawing.Size(431, 162);
             this.log.TabIndex = 4;
             // 
             // safety_rms_lab
@@ -78,7 +78,7 @@
             this.safety_rms_lab.AutoSize = true;
             this.safety_rms_lab.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.safety_rms_lab.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.safety_rms_lab.Location = new System.Drawing.Point(18, 83);
+            this.safety_rms_lab.Location = new System.Drawing.Point(18, 53);
             this.safety_rms_lab.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.safety_rms_lab.Name = "safety_rms_lab";
             this.safety_rms_lab.Size = new System.Drawing.Size(125, 26);
@@ -88,7 +88,7 @@
             // rms_alarm1
             // 
             this.rms_alarm1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))));
-            this.rms_alarm1.Location = new System.Drawing.Point(198, 83);
+            this.rms_alarm1.Location = new System.Drawing.Point(198, 53);
             this.rms_alarm1.Margin = new System.Windows.Forms.Padding(2);
             this.rms_alarm1.Name = "rms_alarm1";
             this.rms_alarm1.Size = new System.Drawing.Size(101, 31);
@@ -97,7 +97,7 @@
             // rms_alarm2
             // 
             this.rms_alarm2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))));
-            this.rms_alarm2.Location = new System.Drawing.Point(347, 83);
+            this.rms_alarm2.Location = new System.Drawing.Point(347, 53);
             this.rms_alarm2.Margin = new System.Windows.Forms.Padding(2);
             this.rms_alarm2.Name = "rms_alarm2";
             this.rms_alarm2.Size = new System.Drawing.Size(101, 31);
@@ -121,7 +121,7 @@
             // 
             // spectral_plots
             // 
-            this.spectral_plots.Location = new System.Drawing.Point(1128, 622);
+            this.spectral_plots.Location = new System.Drawing.Point(1127, 622);
             this.spectral_plots.Name = "spectral_plots";
             this.spectral_plots.Size = new System.Drawing.Size(748, 304);
             this.spectral_plots.TabIndex = 10;
@@ -132,7 +132,7 @@
             this.chan_label1.AutoSize = true;
             this.chan_label1.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.chan_label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chan_label1.Location = new System.Drawing.Point(200, 37);
+            this.chan_label1.Location = new System.Drawing.Point(200, 7);
             this.chan_label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.chan_label1.Name = "chan_label1";
             this.chan_label1.Size = new System.Drawing.Size(99, 24);
@@ -144,37 +144,37 @@
             this.chan_label2.AutoSize = true;
             this.chan_label2.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.chan_label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chan_label2.Location = new System.Drawing.Point(350, 37);
+            this.chan_label2.Location = new System.Drawing.Point(350, 7);
             this.chan_label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.chan_label2.Name = "chan_label2";
             this.chan_label2.Size = new System.Drawing.Size(98, 24);
             this.chan_label2.TabIndex = 12;
             this.chan_label2.Text = "Channel B";
             // 
-            // spectral_alarm1
+            // lbp_alarm1
             // 
-            this.spectral_alarm1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))));
-            this.spectral_alarm1.Location = new System.Drawing.Point(198, 134);
-            this.spectral_alarm1.Margin = new System.Windows.Forms.Padding(2);
-            this.spectral_alarm1.Name = "spectral_alarm1";
-            this.spectral_alarm1.Size = new System.Drawing.Size(101, 31);
-            this.spectral_alarm1.TabIndex = 15;
+            this.lbp_alarm1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))));
+            this.lbp_alarm1.Location = new System.Drawing.Point(198, 104);
+            this.lbp_alarm1.Margin = new System.Windows.Forms.Padding(2);
+            this.lbp_alarm1.Name = "lbp_alarm1";
+            this.lbp_alarm1.Size = new System.Drawing.Size(101, 31);
+            this.lbp_alarm1.TabIndex = 15;
             // 
-            // spectral_alarm2
+            // lbp_alarm2
             // 
-            this.spectral_alarm2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))));
-            this.spectral_alarm2.Location = new System.Drawing.Point(347, 134);
-            this.spectral_alarm2.Margin = new System.Windows.Forms.Padding(2);
-            this.spectral_alarm2.Name = "spectral_alarm2";
-            this.spectral_alarm2.Size = new System.Drawing.Size(101, 31);
-            this.spectral_alarm2.TabIndex = 14;
+            this.lbp_alarm2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(255)))), ((int)(((byte)(0)))));
+            this.lbp_alarm2.Location = new System.Drawing.Point(347, 104);
+            this.lbp_alarm2.Margin = new System.Windows.Forms.Padding(2);
+            this.lbp_alarm2.Name = "lbp_alarm2";
+            this.lbp_alarm2.Size = new System.Drawing.Size(101, 31);
+            this.lbp_alarm2.TabIndex = 14;
             // 
             // safety_spectral_lab
             // 
             this.safety_spectral_lab.AutoSize = true;
             this.safety_spectral_lab.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.safety_spectral_lab.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.safety_spectral_lab.Location = new System.Drawing.Point(18, 134);
+            this.safety_spectral_lab.Location = new System.Drawing.Point(18, 104);
             this.safety_spectral_lab.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.safety_spectral_lab.Name = "safety_spectral_lab";
             this.safety_spectral_lab.Size = new System.Drawing.Size(156, 26);
@@ -186,7 +186,7 @@
             this.clock_lab.AutoSize = true;
             this.clock_lab.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.clock_lab.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clock_lab.Location = new System.Drawing.Point(18, 183);
+            this.clock_lab.Location = new System.Drawing.Point(18, 153);
             this.clock_lab.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.clock_lab.Name = "clock_lab";
             this.clock_lab.Size = new System.Drawing.Size(67, 26);
@@ -198,7 +198,7 @@
             this.clock.AutoSize = true;
             this.clock.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.clock.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clock.Location = new System.Drawing.Point(310, 183);
+            this.clock.Location = new System.Drawing.Point(310, 153);
             this.clock.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.clock.Name = "clock";
             this.clock.Size = new System.Drawing.Size(138, 26);
@@ -210,7 +210,7 @@
             // 
             this.exit_button.BackColor = System.Drawing.Color.Transparent;
             this.exit_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.exit_button.Location = new System.Drawing.Point(141, 892);
+            this.exit_button.Location = new System.Drawing.Point(140, 934);
             this.exit_button.Name = "exit_button";
             this.exit_button.Size = new System.Drawing.Size(90, 34);
             this.exit_button.TabIndex = 18;
@@ -222,7 +222,7 @@
             // 
             this.changain_up_button.BackColor = System.Drawing.Color.Transparent;
             this.changain_up_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.changain_up_button.Location = new System.Drawing.Point(282, 300);
+            this.changain_up_button.Location = new System.Drawing.Point(282, 235);
             this.changain_up_button.Name = "changain_up_button";
             this.changain_up_button.Size = new System.Drawing.Size(69, 25);
             this.changain_up_button.TabIndex = 19;
@@ -234,7 +234,7 @@
             // 
             this.changain_down_button.BackColor = System.Drawing.Color.Transparent;
             this.changain_down_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.changain_down_button.Location = new System.Drawing.Point(373, 299);
+            this.changain_down_button.Location = new System.Drawing.Point(373, 234);
             this.changain_down_button.Name = "changain_down_button";
             this.changain_down_button.Size = new System.Drawing.Size(69, 25);
             this.changain_down_button.TabIndex = 20;
@@ -245,7 +245,7 @@
             // changain_cntrl_label
             // 
             this.changain_cntrl_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.changain_cntrl_label.Location = new System.Drawing.Point(12, 300);
+            this.changain_cntrl_label.Location = new System.Drawing.Point(12, 235);
             this.changain_cntrl_label.Name = "changain_cntrl_label";
             this.changain_cntrl_label.Size = new System.Drawing.Size(162, 25);
             this.changain_cntrl_label.TabIndex = 21;
@@ -255,7 +255,7 @@
             // chansep_cntrl_label
             // 
             this.chansep_cntrl_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chansep_cntrl_label.Location = new System.Drawing.Point(12, 341);
+            this.chansep_cntrl_label.Location = new System.Drawing.Point(12, 276);
             this.chansep_cntrl_label.Name = "chansep_cntrl_label";
             this.chansep_cntrl_label.Size = new System.Drawing.Size(174, 25);
             this.chansep_cntrl_label.TabIndex = 24;
@@ -266,7 +266,7 @@
             // 
             this.chansep_down_button.BackColor = System.Drawing.Color.Transparent;
             this.chansep_down_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chansep_down_button.Location = new System.Drawing.Point(373, 340);
+            this.chansep_down_button.Location = new System.Drawing.Point(373, 275);
             this.chansep_down_button.Name = "chansep_down_button";
             this.chansep_down_button.Size = new System.Drawing.Size(69, 25);
             this.chansep_down_button.TabIndex = 23;
@@ -278,7 +278,7 @@
             // 
             this.chansep_up_buttom.BackColor = System.Drawing.Color.Transparent;
             this.chansep_up_buttom.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chansep_up_buttom.Location = new System.Drawing.Point(282, 341);
+            this.chansep_up_buttom.Location = new System.Drawing.Point(282, 276);
             this.chansep_up_buttom.Name = "chansep_up_buttom";
             this.chansep_up_buttom.Size = new System.Drawing.Size(69, 25);
             this.chansep_up_buttom.TabIndex = 22;
@@ -289,7 +289,7 @@
             // rmssep_cntrl_label
             // 
             this.rmssep_cntrl_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rmssep_cntrl_label.Location = new System.Drawing.Point(12, 440);
+            this.rmssep_cntrl_label.Location = new System.Drawing.Point(12, 375);
             this.rmssep_cntrl_label.Name = "rmssep_cntrl_label";
             this.rmssep_cntrl_label.Size = new System.Drawing.Size(174, 25);
             this.rmssep_cntrl_label.TabIndex = 30;
@@ -300,7 +300,7 @@
             // 
             this.rmssep_down_button.BackColor = System.Drawing.Color.Transparent;
             this.rmssep_down_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rmssep_down_button.Location = new System.Drawing.Point(373, 439);
+            this.rmssep_down_button.Location = new System.Drawing.Point(373, 374);
             this.rmssep_down_button.Name = "rmssep_down_button";
             this.rmssep_down_button.Size = new System.Drawing.Size(69, 25);
             this.rmssep_down_button.TabIndex = 29;
@@ -312,7 +312,7 @@
             // 
             this.rmssep_up_button.BackColor = System.Drawing.Color.Transparent;
             this.rmssep_up_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rmssep_up_button.Location = new System.Drawing.Point(282, 440);
+            this.rmssep_up_button.Location = new System.Drawing.Point(282, 375);
             this.rmssep_up_button.Name = "rmssep_up_button";
             this.rmssep_up_button.Size = new System.Drawing.Size(69, 25);
             this.rmssep_up_button.TabIndex = 28;
@@ -323,7 +323,7 @@
             // rmsgain_cntrl_label
             // 
             this.rmsgain_cntrl_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rmsgain_cntrl_label.Location = new System.Drawing.Point(12, 399);
+            this.rmsgain_cntrl_label.Location = new System.Drawing.Point(12, 334);
             this.rmsgain_cntrl_label.Name = "rmsgain_cntrl_label";
             this.rmsgain_cntrl_label.Size = new System.Drawing.Size(162, 25);
             this.rmsgain_cntrl_label.TabIndex = 27;
@@ -334,7 +334,7 @@
             // 
             this.rmsgain_down_button.BackColor = System.Drawing.Color.Transparent;
             this.rmsgain_down_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rmsgain_down_button.Location = new System.Drawing.Point(373, 398);
+            this.rmsgain_down_button.Location = new System.Drawing.Point(373, 333);
             this.rmsgain_down_button.Name = "rmsgain_down_button";
             this.rmsgain_down_button.Size = new System.Drawing.Size(69, 25);
             this.rmsgain_down_button.TabIndex = 26;
@@ -346,7 +346,7 @@
             // 
             this.rmsgain_up_button.BackColor = System.Drawing.Color.Transparent;
             this.rmsgain_up_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rmsgain_up_button.Location = new System.Drawing.Point(282, 399);
+            this.rmsgain_up_button.Location = new System.Drawing.Point(282, 334);
             this.rmsgain_up_button.Name = "rmsgain_up_button";
             this.rmsgain_up_button.Size = new System.Drawing.Size(69, 25);
             this.rmsgain_up_button.TabIndex = 25;
@@ -356,9 +356,9 @@
             // 
             // rms_alarm_plots
             // 
-            this.rms_alarm_plots.Location = new System.Drawing.Point(496, 622);
+            this.rms_alarm_plots.Location = new System.Drawing.Point(667, 622);
             this.rms_alarm_plots.Name = "rms_alarm_plots";
-            this.rms_alarm_plots.Size = new System.Drawing.Size(518, 250);
+            this.rms_alarm_plots.Size = new System.Drawing.Size(437, 304);
             this.rms_alarm_plots.TabIndex = 31;
             this.rms_alarm_plots.Text = "rms_alarm_plots";
             // 
@@ -366,7 +366,7 @@
             // 
             this.refresh_button.BackColor = System.Drawing.Color.Transparent;
             this.refresh_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.refresh_button.Location = new System.Drawing.Point(23, 892);
+            this.refresh_button.Location = new System.Drawing.Point(22, 934);
             this.refresh_button.Name = "refresh_button";
             this.refresh_button.Size = new System.Drawing.Size(90, 34);
             this.refresh_button.TabIndex = 32;
@@ -378,7 +378,7 @@
             // 
             this.changain_val.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.changain_val.ForeColor = System.Drawing.Color.Gray;
-            this.changain_val.Location = new System.Drawing.Point(162, 300);
+            this.changain_val.Location = new System.Drawing.Point(162, 235);
             this.changain_val.Name = "changain_val";
             this.changain_val.Size = new System.Drawing.Size(106, 25);
             this.changain_val.TabIndex = 33;
@@ -389,7 +389,7 @@
             // 
             this.chansep_val.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chansep_val.ForeColor = System.Drawing.Color.Gray;
-            this.chansep_val.Location = new System.Drawing.Point(208, 341);
+            this.chansep_val.Location = new System.Drawing.Point(208, 276);
             this.chansep_val.Name = "chansep_val";
             this.chansep_val.Size = new System.Drawing.Size(60, 25);
             this.chansep_val.TabIndex = 34;
@@ -400,7 +400,7 @@
             // 
             this.rmsgain_val.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rmsgain_val.ForeColor = System.Drawing.Color.Gray;
-            this.rmsgain_val.Location = new System.Drawing.Point(162, 399);
+            this.rmsgain_val.Location = new System.Drawing.Point(162, 334);
             this.rmsgain_val.Name = "rmsgain_val";
             this.rmsgain_val.Size = new System.Drawing.Size(106, 25);
             this.rmsgain_val.TabIndex = 35;
@@ -411,7 +411,7 @@
             // 
             this.rmssep_val.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rmssep_val.ForeColor = System.Drawing.Color.Gray;
-            this.rmssep_val.Location = new System.Drawing.Point(208, 440);
+            this.rmssep_val.Location = new System.Drawing.Point(208, 375);
             this.rmssep_val.Name = "rmssep_val";
             this.rmssep_val.Size = new System.Drawing.Size(60, 25);
             this.rmssep_val.TabIndex = 36;
@@ -454,8 +454,8 @@
             this.Controls.Add(this.exit_button);
             this.Controls.Add(this.clock);
             this.Controls.Add(this.clock_lab);
-            this.Controls.Add(this.spectral_alarm1);
-            this.Controls.Add(this.spectral_alarm2);
+            this.Controls.Add(this.lbp_alarm1);
+            this.Controls.Add(this.lbp_alarm2);
             this.Controls.Add(this.safety_spectral_lab);
             this.Controls.Add(this.chan_label2);
             this.Controls.Add(this.chan_label1);
@@ -484,8 +484,8 @@
         private LiveCharts.WinForms.CartesianChart spectral_plots;
         private System.Windows.Forms.Label chan_label1;
         private System.Windows.Forms.Label chan_label2;
-        private System.Windows.Forms.Panel spectral_alarm1;
-        private System.Windows.Forms.Panel spectral_alarm2;
+        private System.Windows.Forms.Panel lbp_alarm1;
+        private System.Windows.Forms.Panel lbp_alarm2;
         private System.Windows.Forms.Label safety_spectral_lab;
         private System.Windows.Forms.Label clock_lab;
         private System.Windows.Forms.Label clock;
