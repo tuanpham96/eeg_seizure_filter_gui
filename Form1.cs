@@ -12,6 +12,7 @@ using LiveCharts.Configurations;
 using LiveCharts.Defaults;
 using LiveCharts.Geared;
 using System.Linq;
+using System.Collections.Generic;
 
 /** SEIZURE FILTER EEG PROGRAM
  * Started by Dominic DiCarlo September 2018
@@ -270,13 +271,13 @@ namespace WindowsFormsApp4
                 });
             }
 
-            MaximizePlotPerformance(ref channel_plots, new Axes_Label("Time (s)", "Voltage"));
-            MaximizePlotPerformance(ref rms_plots, new Axes_Label("Time (s)", "RMS"));
+            MaximizePlotPerformance(ref channel_plots, new Axes_Label("Time (s)", "Voltage"), null, false, true);
+            MaximizePlotPerformance(ref rms_plots, new Axes_Label("Time (s)", "RMS"), null, false, true);
             MaximizePlotPerformance(ref spectral_plots,
                 new Axes_Label("Time (s)", "FFT"),
                 new Axes_Limit(new double[] { 0, 40 }, new double[] { 0, double.PositiveInfinity }));
             MaximizePlotPerformance(ref limbandpow_plots, 
-                new Axes_Label("Time (s)", string.Format("Band power {0} - {1} Hz", app_inp_prm.f_bandpower_lower, app_inp_prm.f_bandpower_upper)));
+                new Axes_Label("Time (s)", string.Format("Band power {0} - {1} Hz", app_inp_prm.f_bandpower_lower, app_inp_prm.f_bandpower_upper)), null, false, true);
             MaximizePlotPerformance(ref rms_alarm_plots, new Axes_Label("Time (s)", "# of alarms"));
 
         }
@@ -319,9 +320,12 @@ namespace WindowsFormsApp4
 
             }
         }
+
         private void MaximizePlotPerformance(   ref LiveCharts.WinForms.CartesianChart cart_chart, 
                                                 Axes_Label axes_label, 
-                                                Axes_Limit axes_limit = null)
+                                                Axes_Limit axes_limit = null,
+                                                bool x_axis_merged = false, 
+                                                bool y_axis_merged = false)
         {
             string font_fam = "Microsoft Sans Serif";
             var axes_color = System.Windows.Media.Brushes.Black;
@@ -330,21 +334,23 @@ namespace WindowsFormsApp4
             
             cart_chart.AxisX.Add(new Axis
             {
-                Separator = new Separator { StrokeThickness = 0 },
+                Separator = new Separator { StrokeThickness = 1, Stroke = axes_color, IsEnabled = false},
                 FontSize = 15F,
                 FontFamily = new System.Windows.Media.FontFamily(font_fam),
                 Foreground = axes_color,
-                Title = axes_label.xlabel,                
+                Title = axes_label.xlabel,          
+                IsMerged = x_axis_merged
             });
 
             cart_chart.AxisY.Add(new Axis
             {
-                Separator = new Separator { StrokeThickness = 0 },
+                Separator = new Separator { StrokeThickness = 1, Stroke = axes_color, IsEnabled = false },
                 FontSize = 15F,
                 FontFamily = new System.Windows.Media.FontFamily(font_fam),
                 Foreground = axes_color,
                 Title = axes_label.ylabel,
-                LabelFormatter = value => string.Format("{0:0.0e+0}",value)
+               LabelFormatter = value => string.Format("{0:0.0e+0}",value),
+                IsMerged = y_axis_merged,                
             });
 
             if (axes_limit != null)
@@ -356,13 +362,13 @@ namespace WindowsFormsApp4
                 if (!double.IsInfinity(axes_limit.yhigh)) { cart_chart.AxisY[0].MaxValue = axes_limit.yhigh; }
             }
 
-            // pseudo axes, basically a 'hack' because couldn't set color of grids and axes separately
+            // pseudo axes to display the axes more easily 
             cart_chart.AxisX.Add(new Axis
             {
                 Separator = new Separator { StrokeThickness = 0.5, Step = 1, Stroke = axes_color },
                 MinValue = 0,
                 MaxValue = 0.5,
-                FontSize = 0.1F,
+                FontSize = 0.5F,
                 Foreground = System.Windows.Media.Brushes.Transparent
             });
             cart_chart.AxisY.Add(new Axis
@@ -370,13 +376,13 @@ namespace WindowsFormsApp4
                 Separator = new Separator { StrokeThickness = 0.5, Step = 1, Stroke = axes_color },
                 MinValue = 0,
                 MaxValue = 0.5,
-                FontSize = 0.1F,
+                FontSize = 0.5F,
                 Foreground = System.Windows.Media.Brushes.Transparent
             });
             cart_chart.DisableAnimations = true;
             cart_chart.Hoverable = false;
             cart_chart.DataTooltip = null;
-            cart_chart.LegendLocation = LegendLocation.Right;
+            cart_chart.LegendLocation = LegendLocation.Bottom;
             cart_chart.Invalidate();
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -452,6 +458,8 @@ namespace WindowsFormsApp4
 
         #region Update functions for the plots
 
+        #region Possibly obsolete
+
         private void RefreshableAxisLimits(double t, out double min_bound, out double max_bound)
         {
             double maxsec = this.app_inp_prm.max_sec_plt;
@@ -497,7 +505,6 @@ namespace WindowsFormsApp4
                 channel_plots.AxisX[0].MinValue = min_bound;
                 channel_plots.AxisX[0].MaxValue = max_bound;
             }
-
         }
 
         private void UpdateRMSSeriesPlot(double t, double[] values)
@@ -540,6 +547,7 @@ namespace WindowsFormsApp4
             }
 
         }
+        
         private void UpdateBandPowerPlot(double t, double[] values)
         {
             for (int i = 0; i < app_inp_prm.nchan; i++)
@@ -557,6 +565,66 @@ namespace WindowsFormsApp4
                 //spectral_plots.AxisX[0].Title = "Time (seconds)";
                 spectral_plots.AxisX[0].MinValue = min_bound;
                 spectral_plots.AxisX[0].MaxValue = max_bound;
+            }
+
+        }
+        #endregion
+
+        private void UpdateTimeSeriesPlot(  bool refreshable, 
+                                            LiveCharts.WinForms.CartesianChart cart_chart,
+                                            GearedValues<ObservablePoint>[] series,
+                                            double t,
+                                            double[] values,
+                                            double[] display_gains, 
+                                            double display_sep,
+                                            double max_sec_plt,
+                                            double max_pnt_plt,
+                                            double min_pnt_upd)
+        {
+            if (InvokeRequired)
+            {
+                cart_chart.BeginInvoke(new Action<
+                                            bool,
+                                            LiveCharts.WinForms.CartesianChart,
+                                            GearedValues<ObservablePoint>[],
+                                            double,
+                                            double[],
+                                            double[],
+                                            double,
+                                            double,
+                                            double,
+                                            double>(UpdateTimeSeriesPlot),
+                                                new object[] {
+                                                    refreshable,
+                                                    cart_chart,
+                                                    series,
+                                                    t,
+                                                    values,
+                                                    display_gains,
+                                                    display_sep,
+                                                    max_sec_plt,
+                                                    max_pnt_plt,
+                                                    min_pnt_upd});
+                return;
+            }
+
+            int n_values = series.Length;
+            
+            for (int i = 0; i < n_values; i++)
+            {
+                if (series[i].Count >= max_pnt_plt)
+                {
+                    series[i].Clear();
+                }
+                series[i].Add(new ObservablePoint(t, values[i] * display_gains[i] - display_sep * i));
+            }
+
+
+            if (refreshable)// (series[0].Count > min_pnt_upd)
+            {
+                RefreshableAxisLimits(t, max_sec_plt, out double min_bound, out double max_bound);
+                cart_chart.AxisX[0].MinValue = min_bound;
+                cart_chart.AxisX[0].MaxValue = max_bound;
             }
 
         }
@@ -585,101 +653,7 @@ namespace WindowsFormsApp4
             min_bound = (Math.Floor(t / max_sec_plt) * max_sec_plt);
             max_bound = (Math.Floor(t / max_sec_plt) + 1) * max_sec_plt;
         }
-
-        private void UpdateRefreshablePlot(LiveCharts.WinForms.CartesianChart cart_chart,
-                                            GearedValues<ObservablePoint>[] series,
-                                            double t,
-                                            double[] values,
-                                            double max_sec_plt,
-                                            double max_pnt_plt,
-                                            double min_pnt_upd)
-        {
-            if (InvokeRequired)
-            {
-                cart_chart.BeginInvoke(new Action<
-                                            LiveCharts.WinForms.CartesianChart,
-                                            GearedValues<ObservablePoint>[],
-                                            double,
-                                            double[],
-                                            double,
-                                            double,
-                                            double>(UpdateRefreshablePlot),
-                                                new object[] {
-                                                    cart_chart,
-                                                    series,
-                                                    t,
-                                                    values,
-                                                    max_sec_plt,
-                                                    max_pnt_plt,
-                                                    min_pnt_upd});
-                return;
-            }
-
-            int n_values = series.Length;
-
-            for (int i = 0; i < n_values; i++)
-            {
-                if (series[i].Count >= max_pnt_plt)
-                {
-                    series[i].Clear();
-                }
-                series[i].Add(new ObservablePoint(t, values[i]));
-            }
-
-            RefreshableAxisLimits(t, max_sec_plt, out double min_bound, out double max_bound);
-
-            if (series[0].Count > min_pnt_upd)
-            {
-                cart_chart.AxisX[0].Title = "Time (seconds)";
-                cart_chart.AxisX[0].MinValue = min_bound;
-                cart_chart.AxisX[0].MaxValue = max_bound;
-            }
-
-        }
-
-        private void UpdateContinuosPlot(LiveCharts.WinForms.CartesianChart cart_chart,
-                                    GearedValues<ObservablePoint>[] series,
-                                    double t,
-                                    double[] values,
-                                    double max_pnt_plt,
-                                    double min_pnt_upd)
-        {
-            if (InvokeRequired)
-            {
-                cart_chart.BeginInvoke(new Action<
-                                            LiveCharts.WinForms.CartesianChart,
-                                            GearedValues<ObservablePoint>[],
-                                            double,
-                                            double[],
-                                            double,
-                                            double>(UpdateContinuosPlot),
-                                                new object[] {
-                                                    cart_chart,
-                                                    series,
-                                                    t,
-                                                    values,
-                                                    max_pnt_plt,
-                                                    min_pnt_upd});
-                return;
-            }
-
-            int n_values = series.Length;
-
-            for (int i = 0; i < n_values; i++)
-            {
-                if (series[i].Count >= max_pnt_plt)
-                {
-                    series[i].RemoveAt(0);
-                }
-                series[i].Add(new ObservablePoint(t, values[i]));
-            }
-
-            if (series[0].Count > min_pnt_upd)
-            {
-                cart_chart.AxisX[0].Title = "Time (seconds)";
-            }
-
-        }
+        
         #endregion
 
         private double[] Full_Deep_Copy(double[] source)
@@ -758,7 +732,18 @@ namespace WindowsFormsApp4
 
                                 if (app_inp_prm.refresh_display)
                                 {
-                                    channel_plots.BeginInvoke(new Action<int, double, double[]>(UpdateChannelSeriesPlot), count, t, viz);
+                                    //channel_plots.BeginInvoke(new Action<int, double, double[]>(UpdateChannelSeriesPlot), count, t, viz);
+                                    UpdateTimeSeriesPlot(
+                                        true,
+                                        channel_plots,
+                                        ChannelSeries,
+                                        t,
+                                        viz,
+                                        app_inp_prm.display_channel_gains,
+                                        app_inp_prm.display_channel_sep,
+                                        app_inp_prm.max_sec_plt,
+                                        app_inp_prm.max_pnt_plt,
+                                        2);
                                 }
                                 else
                                 {
@@ -784,11 +769,14 @@ namespace WindowsFormsApp4
 
                                 if (app_inp_prm.refresh_display)
                                 {
-                                    UpdateRefreshablePlot(
+                                    UpdateTimeSeriesPlot(
+                                        true, 
                                         rms_plots,
                                         RMSSeries,
                                         t,
                                         current_rms_arr,
+                                        app_inp_prm.display_rms_gains,
+                                        app_inp_prm.display_rms_sep,
                                         app_inp_prm.max_sec_plt,
                                         app_inp_prm.max_pnt_plt,
                                         2);
@@ -807,16 +795,26 @@ namespace WindowsFormsApp4
                                 if (STFTCalcs[0].ready2plt)
                                 {
                                     double[] viz_bp = new double[nchan];
-                                    for (int ich = 0; ich < nchan; ich++) { STFTCalcs[ich].CalculatePSD(); viz_bp[ich] = STFTCalcs[ich].band_power; }
+                                    double[] pseudo_gains = new double[nchan];
+                                    double pseudo_sep = 0; 
+                                    for (int ich = 0; ich < nchan; ich++) {
+                                        STFTCalcs[ich].CalculatePSD();
+                                        viz_bp[ich] = STFTCalcs[ich].band_power;
+                                        pseudo_gains[ich] = 1.0; 
+                                    }
                                     spectral_plots.BeginInvoke(new Action(UpdateSTFTPlot));
 
                                     //spectral_plots.BeginInvoke(new Action<double, double[]>(UpdateBandPowerPlot), t, viz_bp);
 
-                                    UpdateRefreshablePlot(
+
+                                    UpdateTimeSeriesPlot(
+                                        true, 
                                         limbandpow_plots,
                                         LBPSeries,
                                         t,
                                         viz_bp,
+                                        pseudo_gains,
+                                        pseudo_sep, 
                                         app_inp_prm.max_sec_plt,
                                         app_inp_prm.max_pnt_plt,
                                         2);
@@ -827,29 +825,29 @@ namespace WindowsFormsApp4
                                 {
                                     int n_lvls = RMSCalcs[0].n_lvls;
                                     double[] lvl_arrs = new double[n_lvls];
-                                    for (int ich = 0; ich < nchan; ich++) { RMSCalcs[ich].Cumulative_From_Lower_Level(); }
+                                    double[] pseudo_gains = new double[n_lvls];
+                                    double pseudo_sep = 0;
+                                    for (int ich = 0; ich < nchan; ich++) {
+                                        RMSCalcs[ich].Cumulative_From_Lower_Level();
+                                    }
                                     for (int ilvl = 0; ilvl < n_lvls; ilvl++)
                                     {
+                                        pseudo_gains[ilvl] = 1.0;
                                         lvl_arrs[ilvl] = 0;
                                         for (int ich = 0; ich < nchan; ich++)
                                         {
                                             lvl_arrs[ilvl] += RMSCalcs[ich].rms_levels[ilvl];
                                         }
                                     }
-                                    /*UpdateRefreshablePlot(
+                                    UpdateTimeSeriesPlot(
+                                                    false, 
                                                     rms_alarm_plots,
                                                     RMSAlarmSeries,
                                                     t,
                                                     lvl_arrs,
-                                                    app_inp_prm.rms_lvl_max_sec,
-                                                    app_inp_prm.rms_lvl_max_point,
-                                                    2);
-                                         */
-                                    UpdateContinuosPlot(
-                                                    rms_alarm_plots,
-                                                    RMSAlarmSeries,
-                                                    t,
-                                                    lvl_arrs,
+                                                    pseudo_gains,
+                                                    pseudo_sep,
+                                                    app_inp_prm.rms_lvl_max_sec, 
                                                     app_inp_prm.rms_lvl_max_point,
                                                     2);
                                     for (int ich = 0; ich < nchan; ich++)
