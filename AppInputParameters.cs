@@ -33,7 +33,7 @@ namespace WindowsFormsApp4
         public Color normal_color { get; set; }
 
         public int max_pnt_plt { get; set; }
-        public double nsec_plt { get; set; }
+        public double max_sec_plt { get; set; }
 
         public double[] display_channel_gains { get; set; }
         public string channel_gain_str { get; set; }
@@ -64,7 +64,7 @@ namespace WindowsFormsApp4
         public int rms_lvl_max_point { get; set; }
 
         private double d_gain = 0.1, d_sep = 0.1;
-        private double min_gain = 0.001, min_sep = 0; 
+        private double min_gain = 0.01, min_sep = 0; 
         #endregion
 
         #region Dictionaries for categorical options 
@@ -114,7 +114,7 @@ namespace WindowsFormsApp4
             { "DANGER RMS lower bound",  "danger_rms_lowerbound" },
             { "WARNING RMS upper bound", "warning_rms_upperbound" },
             { "WARNING RMS lower bound", "warning_rms_lowerbound" },
-            { "Display duration (seconds)", "nsec_plt" },
+            { "Display duration (seconds)", "max_sec_plt" },
             { "Display gains", "channel_gain_str" },
             { "Display separation", "display_channel_sep" },
             { "Display refreshed", "refresh_display" },
@@ -154,7 +154,7 @@ namespace WindowsFormsApp4
             warning_color = Color.FromArgb(255, 255, 0);
             normal_color = Color.FromArgb(0, 255, 0);
 
-            nsec_plt = 10; 
+            max_sec_plt = 10; 
             channel_gain_str = "1;1;1";
             display_channel_sep = 5;
             display_rms_sep = 0; 
@@ -186,7 +186,7 @@ namespace WindowsFormsApp4
             InitializeRMSMessage(); 
             output_file_name = Path.Combine(output_folder, output_file_name);
 
-            max_pnt_plt = (int)(Fs * nsec_plt);
+            max_pnt_plt = (int)(Fs * max_sec_plt);
 
             InitializeDisplayGains();
 
