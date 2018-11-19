@@ -22,14 +22,15 @@ namespace WindowsFormsApp4
 
         public string output_folder { get; set; }
         public string output_file_name { get; set; }
-        public double danger_rms_upperbound { get; set; }
-        public double danger_rms_lowerbound { get; set; }
-        public double warning_rms_upperbound { get; set; }
-        public double warning_rms_lowerbound { get; set; }
 
         public Color danger_color { get; set; }
         public Color warning_color { get; set; }
         public Color normal_color { get; set; }
+
+        public double danger_rms_upperbound { get; set; }
+        public double danger_rms_lowerbound { get; set; }
+        public double warning_rms_upperbound { get; set; }
+        public double warning_rms_lowerbound { get; set; }
 
         public int max_pnt_plt { get; set; }
         public double max_sec_plt { get; set; }
@@ -67,6 +68,11 @@ namespace WindowsFormsApp4
         public double rms_lvl_max_sec { get; set; }
         public int rms_lvl_reset_point { get; set; }
         public int rms_lvl_max_point { get; set; }
+
+        public double lbp_lvl_reset_sec { get; set; }
+        public double lbp_lvl_max_sec { get; set; }
+        public int lbp_lvl_reset_point { get; set; }
+        public int lbp_lvl_max_point { get; set; }
 
         public bool alarm_rate_plt_stack { get; set; }
         private double d_gain = 0.1, d_sep = 0.1;
@@ -154,15 +160,22 @@ namespace WindowsFormsApp4
             save_every = (int) (30 * 60 * Fs); // 30 mins 
             output_folder = @"C:\Users\Towle\Desktop\Tuan\general_towle\data";
             output_file_name = "testfile_TP.csv";
-             
+
+            /*
+            danger_color = Color.FromArgb(255, 0, 0);
+            warning_color = Color.FromArgb(255, 255, 0);
+            normal_color = Color.FromArgb(0, 255, 0);
+            */
+
+
+            normal_color = BrushToColor(System.Windows.Media.Brushes.Green);
+            warning_color = BrushToColor(System.Windows.Media.Brushes.Gold);
+            danger_color = BrushToColor(System.Windows.Media.Brushes.Red);
+
             danger_rms_upperbound = 1.4;
             danger_rms_lowerbound = 0.6;
             warning_rms_upperbound = 1.2;
             warning_rms_lowerbound = 0.8;
-
-            danger_color = Color.FromArgb(255, 0, 0);
-            warning_color = Color.FromArgb(255, 255, 0);
-            normal_color = Color.FromArgb(0, 255, 0);
 
             max_sec_plt = 10; 
             channel_gain_str = "1;1;1";
@@ -188,9 +201,16 @@ namespace WindowsFormsApp4
             alarm_rate_plt_stack = false; 
 
             rms_lvl_reset_sec = 2;
-            rms_lvl_max_sec = 60 * 1;
+            rms_lvl_max_sec = 60 * 10;
             rms_lvl_reset_point = (int) (Fs * rms_lvl_reset_sec);
-            rms_lvl_max_point = (int) (rms_lvl_max_sec / rms_lvl_reset_sec); 
+            rms_lvl_max_point = (int) (rms_lvl_max_sec / rms_lvl_reset_sec);
+
+
+
+            lbp_lvl_reset_sec = 10;
+            lbp_lvl_max_sec = 60 * 10;
+            lbp_lvl_reset_point = (int)(Fs * lbp_lvl_reset_sec);
+            lbp_lvl_max_point = (int)(lbp_lvl_max_sec / lbp_lvl_reset_sec);
         }
         #endregion
 
@@ -276,6 +296,11 @@ namespace WindowsFormsApp4
                 Console.WriteLine(warning_stft_save);
                 WelcomeMessage += "\t " + warning_stft_save + "\r\n"; 
             }
+        }
+
+        public static System.Drawing.Color BrushToColor(System.Windows.Media.SolidColorBrush br)
+        {
+            return Color.FromArgb(br.Color.A, br.Color.R, br.Color.G, br.Color.B); 
         }
         #endregion
         #region Specific Set methods during running application 

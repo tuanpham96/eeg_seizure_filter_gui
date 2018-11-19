@@ -169,10 +169,16 @@ namespace WindowsFormsApp4
             string[] legends = {"Ch " + app_inp_prm.chan_idx2plt[0],
                                 "Ch " + app_inp_prm.chan_idx2plt[1],
                                 "Ch " + app_inp_prm.chan_idx2plt[0] + " - Ch " + app_inp_prm.chan_idx2plt[1]};
+            System.Windows.Media.DoubleCollection[] dashed_style =
+            {
+                new System.Windows.Media.DoubleCollection(new double[] { 1,0 }),
+                new System.Windows.Media.DoubleCollection(new double[] { 5,2 }),
+                new System.Windows.Media.DoubleCollection(new double[] { 1,0 })
+            };
             System.Windows.Media.SolidColorBrush[] ch_brushes =
             {
                  System.Windows.Media.Brushes.Black,
-                 System.Windows.Media.Brushes.Blue,
+                 System.Windows.Media.Brushes.Gray,
                  System.Windows.Media.Brushes.Red
             };
             for (int idx_obs = 0; idx_obs < 3; idx_obs++)
@@ -204,12 +210,12 @@ namespace WindowsFormsApp4
                 {
                     Values = RMSSeries[ichan],
                     StrokeThickness = 2,
-                    PointGeometry = DefaultGeometries.Diamond,                    
+                    PointGeometry = DefaultGeometries.None,
                     LineSmoothness = 0,
-                    //Fill = System.Windows.Media.Brushes.LightGray,
-                    Fill = new System.Windows.Media.SolidColorBrush { Color = System.Windows.Media.Color.FromArgb(50, 100, 100, 100) },
+                    Fill = new System.Windows.Media.SolidColorBrush { Color = System.Windows.Media.Color.FromArgb(50, 128, 89, 123) },
                     Title = legends[ichan] + " RMS",                    
-                    Stroke = ch_brushes[ichan]
+                    Stroke = ch_brushes[ichan],
+                    StrokeDashArray = dashed_style[ichan]
                 });
 
                 STFTSeries[ichan] = new GearedValues<ObservablePoint>();
@@ -221,9 +227,9 @@ namespace WindowsFormsApp4
                     PointGeometry = DefaultGeometries.None,
                     LineSmoothness = 0,
                     Fill = System.Windows.Media.Brushes.Transparent,
-                    //Fill = new System.Windows.Media.SolidColorBrush { Color = System.Windows.Media.Color.FromArgb(50, 100, 200, 100) },
                     Title = legends[ichan] + " STFT",
-                    Stroke = ch_brushes[ichan]
+                    Stroke = ch_brushes[ichan],
+                    StrokeDashArray = dashed_style[ichan]
                 });
 
                 LBPSeries[ichan] = new GearedValues<ObservablePoint>();
@@ -232,12 +238,14 @@ namespace WindowsFormsApp4
                 {
                     Values = LBPSeries[ichan],
                     StrokeThickness = 2,
-                    PointGeometry = DefaultGeometries.None,
+                    PointGeometry = DefaultGeometries.Circle,
+                    PointGeometrySize = 0,
+                    PointForeground = ch_brushes[ichan], 
                     LineSmoothness = 0,
-                    //Fill = System.Windows.Media.Brushes.Transparent,
-                    Fill = new System.Windows.Media.SolidColorBrush { Color = System.Windows.Media.Color.FromArgb(50, 100, 100, 200) },
+                    Fill = new System.Windows.Media.SolidColorBrush { Color = System.Windows.Media.Color.FromArgb(50, 100, 120, 200) },
                     Title = legends[ichan] + " BP",
-                    Stroke = ch_brushes[ichan]
+                    Stroke = ch_brushes[ichan],
+                    StrokeDashArray = dashed_style[ichan]
                 });
             }
 
@@ -262,7 +270,7 @@ namespace WindowsFormsApp4
                 i_sign_cond = 1;
                 i_incr = -1;
 
-                stroke_thickness = 1;
+                stroke_thickness = 1.50;
                 alarm_rate_opacity = 0.9;
                 point_geom = DefaultGeometries.None;
             } else
@@ -376,9 +384,10 @@ namespace WindowsFormsApp4
                                                 bool y_axis_merged = false)
         {
             string font_fam = "Microsoft Sans Serif";
-            var axes_color = System.Windows.Media.Brushes.Black;
+            var axes_color = System.Windows.Media.Brushes.Gray;
             cart_chart.Font = new Font(font_fam, 12F);
-            
+            cart_chart.ForeColor = AppInputParameters.BrushToColor(axes_color); 
+
             cart_chart.AxisX.Add(new Axis
             {
                 Separator = new Separator { StrokeThickness = 1, Stroke = axes_color, IsEnabled = false},
@@ -430,7 +439,7 @@ namespace WindowsFormsApp4
             cart_chart.DisableAnimations = true;
             cart_chart.Hoverable = false;
             cart_chart.DataTooltip = null;
-            cart_chart.LegendLocation = LegendLocation.Right;
+            cart_chart.LegendLocation = LegendLocation.Bottom; 
             cart_chart.Invalidate();
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -524,119 +533,6 @@ namespace WindowsFormsApp4
         #endregion
 
         #region Update functions for the plots
-
-        #region Possibly obsolete
-
-        private void RefreshableAxisLimits(double t, out double min_bound, out double max_bound)
-        {
-            double maxsec = this.app_inp_prm.max_sec_plt;
-            min_bound = (Math.Floor(t / maxsec) * maxsec);
-            max_bound = (Math.Floor(t / maxsec) + 1) * maxsec;
-        }
-
-        private void UpdateChannelSeriesPlot(double t, double[] values)
-        {
-            for (int i_obs = 0; i_obs < values.Length; i_obs++)
-            {
-                ChannelSeries[i_obs].Add(new ObservablePoint(t,
-                    values[i_obs] * app_inp_prm.display_channel_gains[i_obs] - app_inp_prm.display_channel_sep * (i_obs)));
-                if (ChannelSeries[i_obs].Count > app_inp_prm.max_pnt_plt)
-                {
-                    ChannelSeries[i_obs].RemoveAt(0);
-                }
-            }
-            if (ChannelSeries[0].Count > 200)
-            {
-                //channel_plots.AxisX[0].Title = "Time (seconds)"; 
-            }
-        }
-
-        private void UpdateChannelSeriesPlot(int count, double t, double[] values)
-        {
-            double yval;
-            for (int i_obs = 0; i_obs < values.Length; i_obs++)
-            {
-                yval = values[i_obs] * app_inp_prm.display_channel_gains[i_obs] - app_inp_prm.display_channel_sep * (i_obs);
-                if (ChannelSeries[i_obs].Count == app_inp_prm.max_pnt_plt)
-                {
-                    ChannelSeries[i_obs].Clear();
-                }
-                ChannelSeries[i_obs].Add(new ObservablePoint(t, yval));
-            }
-
-            RefreshableAxisLimits(t, out double min_bound, out double max_bound);
-
-            if (ChannelSeries[0].Count > 200)
-            {
-                //channel_plots.AxisX[0].Title = "Time (seconds)";
-                channel_plots.AxisX[0].MinValue = min_bound;
-                channel_plots.AxisX[0].MaxValue = max_bound;
-            }
-        }
-
-        private void UpdateRMSSeriesPlot(double t, double[] values)
-        {
-            for (int i_obs = 0; i_obs < values.Length; i_obs++)
-            {
-                RMSSeries[i_obs].Add(new ObservablePoint(t,
-                     values[i_obs] * app_inp_prm.display_rms_gains[i_obs] - app_inp_prm.display_rms_sep * (i_obs)));
-                if (RMSSeries[i_obs].Count > app_inp_prm.max_pnt_plt)
-                {
-                    RMSSeries[i_obs].RemoveAt(0);
-                }
-            }
-            if (RMSSeries[0].Count > 200)
-            {
-                //rms_plots.AxisX[0].Title = "Time (seconds)";
-            }
-        }
-
-        private void UpdateRMSSeriesPlot(int count, double t, double[] values)
-        {
-            double yval;
-            for (int i_obs = 0; i_obs < values.Length; i_obs++)
-            {
-                yval = values[i_obs] * app_inp_prm.display_rms_gains[i_obs] - app_inp_prm.display_rms_sep * (i_obs);
-                if (RMSSeries[i_obs].Count == app_inp_prm.max_pnt_plt)
-                {
-                    RMSSeries[i_obs].Clear();
-                }
-                RMSSeries[i_obs].Add(new ObservablePoint(t, yval));
-            }
-
-            RefreshableAxisLimits(t, out double min_bound, out double max_bound);
-
-            if (RMSSeries[0].Count > 200)
-            {
-                //rms_plots.AxisX[0].Title = "Time (seconds)";
-                rms_plots.AxisX[0].MinValue = min_bound;
-                rms_plots.AxisX[0].MaxValue = max_bound;
-            }
-
-        }
-        
-        private void UpdateBandPowerPlot(double t, double[] values)
-        {
-            for (int i = 0; i < app_inp_prm.nchan; i++)
-            {
-                if (STFTSeries[i].Count >= app_inp_prm.max_pnt_plt)
-                {
-                    STFTSeries[i].Clear();
-                }
-                STFTSeries[i].Add(new ObservablePoint(t, values[i]));
-            }
-            RefreshableAxisLimits(t, out double min_bound, out double max_bound);
-
-            if (STFTSeries[0].Count > 10)
-            {
-                //spectral_plots.AxisX[0].Title = "Time (seconds)";
-                spectral_plots.AxisX[0].MinValue = min_bound;
-                spectral_plots.AxisX[0].MaxValue = max_bound;
-            }
-
-        }
-        #endregion
-
         private void UpdateTimeSeriesPlot(  bool refreshable, 
                                             LiveCharts.WinForms.CartesianChart cart_chart,
                                             GearedValues<ObservablePoint>[] series,
@@ -645,8 +541,7 @@ namespace WindowsFormsApp4
                                             double[] display_gains, 
                                             double display_sep,
                                             double max_sec_plt,
-                                            double max_pnt_plt,
-                                            double min_pnt_upd)
+                                            double max_pnt_plt)
         {
             if (InvokeRequired)
             {
@@ -659,7 +554,6 @@ namespace WindowsFormsApp4
                                             double[],
                                             double,
                                             double,
-                                            double,
                                             double>(UpdateTimeSeriesPlot),
                                                 new object[] {
                                                     refreshable,
@@ -670,8 +564,8 @@ namespace WindowsFormsApp4
                                                     display_gains,
                                                     display_sep,
                                                     max_sec_plt,
-                                                    max_pnt_plt,
-                                                    min_pnt_upd});
+                                                    max_pnt_plt
+                                                    });
                 return;
             }
 
@@ -799,25 +693,17 @@ namespace WindowsFormsApp4
                                                 RMSCalcs[1].current_val,
                                                 RMSCalcs[0].current_val - RMSCalcs[1].current_val };
 
-                                if (app_inp_prm.refresh_display)
-                                {
-                                    //channel_plots.BeginInvoke(new Action<int, double, double[]>(UpdateChannelSeriesPlot), count, t, viz);
-                                    UpdateTimeSeriesPlot(
-                                        true,
-                                        channel_plots,
-                                        ChannelSeries,
-                                        t,
-                                        viz,
-                                        app_inp_prm.display_channel_gains,
-                                        app_inp_prm.display_channel_sep,
-                                        app_inp_prm.max_sec_plt,
-                                        app_inp_prm.max_pnt_plt,
-                                        2);
-                                }
-                                else
-                                {
-                                    channel_plots.BeginInvoke(new Action<double, double[]>(UpdateChannelSeriesPlot), t, viz);
-                                }
+                                UpdateTimeSeriesPlot(
+                                    app_inp_prm.refresh_display,
+                                    channel_plots,
+                                    ChannelSeries,
+                                    t,
+                                    viz,
+                                    app_inp_prm.display_channel_gains,
+                                    app_inp_prm.display_channel_sep,
+                                    app_inp_prm.max_sec_plt,
+                                    app_inp_prm.max_pnt_plt);
+
 
                                 TimeSpan tsp = TimeSpan.FromSeconds(t);
 
@@ -836,26 +722,17 @@ namespace WindowsFormsApp4
                                     RMSCalcs[ich].Tally_Levels(rms_lvls[ich]);
                                 }
 
-                                if (app_inp_prm.refresh_display)
-                                {
-                                    UpdateTimeSeriesPlot(
-                                        true, 
-                                        rms_plots,
-                                        RMSSeries,
-                                        t,
-                                        current_rms_arr,
-                                        app_inp_prm.display_rms_gains,
-                                        app_inp_prm.display_rms_sep,
-                                        app_inp_prm.max_sec_plt,
-                                        app_inp_prm.max_pnt_plt,
-                                        2);
-                                        
-                                    //rms_plots.BeginInvoke(new Action<int, double, double[]>(UpdateRMSSeriesPlot), count, t, current_rms_arr);
-                                }
-                                else
-                                {
-                                    rms_plots.BeginInvoke(new Action<double, double[]>(UpdateRMSSeriesPlot), t, current_rms_arr);
-                                }
+                                UpdateTimeSeriesPlot(
+                                    app_inp_prm.refresh_display,
+                                    rms_plots,
+                                    RMSSeries,
+                                    t,
+                                    current_rms_arr,
+                                    app_inp_prm.display_rms_gains,
+                                    app_inp_prm.display_rms_sep,
+                                    app_inp_prm.max_sec_plt,
+                                    app_inp_prm.max_pnt_plt);
+
 
                                 for (int ich = 0; ich < nchan; ich++)
                                 {
@@ -878,11 +755,14 @@ namespace WindowsFormsApp4
 
                                         ReturnLBPLevel(viz_bp[ich], out lbp_lvl_colors[ich], out lbp_lvls[ich]);
                                         UpdatePanelColor(lbp_alarm_panels[ich], lbp_lvl_colors[ich]);
+
+                                        STFTCalcs[ich].Tally_Levels(lbp_lvls[ich]); 
                                     }
+
                                     spectral_plots.BeginInvoke(new Action(UpdateSTFTPlot));
                                     
                                     UpdateTimeSeriesPlot(
-                                        true, 
+                                        app_inp_prm.refresh_display, 
                                         limbandpow_plots,
                                         LBPSeries,
                                         t,
@@ -890,8 +770,7 @@ namespace WindowsFormsApp4
                                         pseudo_gains,
                                         pseudo_sep, 
                                         app_inp_prm.max_sec_plt,
-                                        app_inp_prm.max_pnt_plt,
-                                        2);
+                                        app_inp_prm.max_pnt_plt);
 
                                 }
 
@@ -899,7 +778,6 @@ namespace WindowsFormsApp4
                                 {
                                     int n_lvls = RMSCalcs[0].n_lvls;
                                     double[] rms_lvl_arrs = new double[n_lvls];
-                                    double[] lbp_lvl_arrs = new double[n_lvls];
                                     double[] pseudo_gains = new double[n_lvls];
                                     double pseudo_sep = 0;
 
@@ -908,18 +786,15 @@ namespace WindowsFormsApp4
                                         for (int ich = 0; ich < nchan; ich++)
                                         {
                                             RMSCalcs[ich].Cumulative_From_Lower_Level();
-                                            STFTCalcs[ich].Cumulative_From_Lower_Level();
                                         }
                                     }
                                     for (int ilvl = 0; ilvl < n_lvls; ilvl++)
                                     {
                                         pseudo_gains[ilvl] = 1.0;
                                         rms_lvl_arrs[ilvl] = 0;
-                                        lbp_lvl_arrs[ilvl] = 0; 
                                         for (int ich = 0; ich < nchan; ich++)
                                         {
                                             rms_lvl_arrs[ilvl] += RMSCalcs[ich].rms_levels[ilvl];
-                                            lbp_lvl_arrs[ilvl] += STFTCalcs[ich].lbp_levels[ilvl];
                                         }
                                     }
                                     UpdateTimeSeriesPlot(
@@ -931,27 +806,57 @@ namespace WindowsFormsApp4
                                                     pseudo_gains,
                                                     pseudo_sep,
                                                     app_inp_prm.rms_lvl_max_sec, 
-                                                    app_inp_prm.rms_lvl_max_point,
-                                                    2);
-                                    UpdateTimeSeriesPlot(
-                                                    false, 
-                                                    lbp_alarm_plots,
-                                                    RMSAlarmSeries,
-                                                    t,
-                                                    rms_lvl_arrs,
-                                                    pseudo_gains,
-                                                    pseudo_sep,
-                                                    app_inp_prm.rms_lvl_max_sec, 
-                                                    app_inp_prm.rms_lvl_max_point,
-                                                    2);
+                                                    app_inp_prm.rms_lvl_max_point);
+                                 
                                     for (int ich = 0; ich < nchan; ich++)
                                     {
                                         RMSCalcs[ich].Reset_Level_Tally();
-                                        STFTCalcs[ich].Reset_Level_Tally(); 
                                     }
 
 
                                 }
+
+                                if (count % app_inp_prm.lbp_lvl_reset_point == 0 && count > 0)
+                                {
+                                    int n_lvls = STFTCalcs[0].n_lvls;
+                                    double[] lbp_lvl_arrs = new double[n_lvls];
+                                    double[] pseudo_gains = new double[n_lvls];
+                                    double pseudo_sep = 0;
+
+                                    if (app_inp_prm.alarm_rate_plt_stack)
+                                    {
+                                        for (int ich = 0; ich < nchan; ich++)
+                                        {
+                                            STFTCalcs[ich].Cumulative_From_Lower_Level();
+                                        }
+                                    }
+                                    for (int ilvl = 0; ilvl < n_lvls; ilvl++)
+                                    {
+                                        pseudo_gains[ilvl] = 1.0;
+                                        lbp_lvl_arrs[ilvl] = 0;
+                                        for (int ich = 0; ich < nchan; ich++)
+                                        {
+                                            lbp_lvl_arrs[ilvl] += STFTCalcs[ich].lbp_levels[ilvl];
+                                        }
+                                    }
+                                    UpdateTimeSeriesPlot(
+                                                    false,
+                                                    lbp_alarm_plots,
+                                                    LBPAlarmSeries,
+                                                    t,
+                                                    lbp_lvl_arrs,
+                                                    pseudo_gains,
+                                                    pseudo_sep,
+                                                    app_inp_prm.lbp_lvl_max_sec,
+                                                    app_inp_prm.lbp_lvl_max_point);
+                                    for (int ich = 0; ich < nchan; ich++)
+                                    {
+                                        STFTCalcs[ich].Reset_Level_Tally();
+                                    }
+
+
+                                }
+
                                 UpdateLabel(clock, tsp.ToString(@"hh\:mm\:ss\:fff"));
 
                                 string nextLine = string.Format("{0};{1};{2};{3};{4};{5}\n",

@@ -63,6 +63,7 @@
             this.limbandpow_plots = new LiveCharts.WinForms.CartesianChart();
             this.app_title = new System.Windows.Forms.Label();
             this.lbp_alarm_plots = new LiveCharts.WinForms.CartesianChart();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // log
@@ -187,7 +188,7 @@
             this.clock_lab.AutoSize = true;
             this.clock_lab.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.clock_lab.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clock_lab.Location = new System.Drawing.Point(720, 24);
+            this.clock_lab.Location = new System.Drawing.Point(719, 28);
             this.clock_lab.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.clock_lab.Name = "clock_lab";
             this.clock_lab.Size = new System.Drawing.Size(159, 26);
@@ -199,7 +200,7 @@
             this.clock.AutoSize = true;
             this.clock.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.clock.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clock.Location = new System.Drawing.Point(896, 24);
+            this.clock.Location = new System.Drawing.Point(895, 28);
             this.clock.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.clock.Name = "clock";
             this.clock.Size = new System.Drawing.Size(138, 26);
@@ -357,6 +358,7 @@
             // 
             // rms_alarm_plots
             // 
+            this.rms_alarm_plots.BackColor = System.Drawing.Color.Transparent;
             this.rms_alarm_plots.Location = new System.Drawing.Point(16, 338);
             this.rms_alarm_plots.Name = "rms_alarm_plots";
             this.rms_alarm_plots.Size = new System.Drawing.Size(481, 304);
@@ -427,11 +429,24 @@
             // 
             // lbp_alarm_plots
             // 
+            this.lbp_alarm_plots.BackColor = System.Drawing.Color.Transparent;
             this.lbp_alarm_plots.Location = new System.Drawing.Point(553, 338);
             this.lbp_alarm_plots.Name = "lbp_alarm_plots";
             this.lbp_alarm_plots.Size = new System.Drawing.Size(481, 304);
             this.lbp_alarm_plots.TabIndex = 39;
             this.lbp_alarm_plots.Text = "lbp_alarm_plots";
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Font = new System.Drawing.Font("Arial", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(111, 277);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(287, 58);
+            this.label1.TabIndex = 40;
+            this.label1.Text = "RMS Alarm Rates";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label1.UseMnemonic = false;
             // 
             // Form1
             // 
@@ -439,6 +454,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1053, 1889);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.lbp_alarm_plots);
             this.Controls.Add(this.app_title);
             this.Controls.Add(this.limbandpow_plots);
@@ -521,6 +537,7 @@
         private LiveCharts.WinForms.CartesianChart limbandpow_plots;
         private System.Windows.Forms.Label app_title;
         private LiveCharts.WinForms.CartesianChart lbp_alarm_plots;
+        private System.Windows.Forms.Label label1;
     }
 }
 
