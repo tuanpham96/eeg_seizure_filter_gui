@@ -22,7 +22,6 @@ namespace WindowsFormsApp4
 
         public string output_folder { get; set; }
         public string output_file_name { get; set; }
-
         public double danger_rms_upperbound { get; set; }
         public double danger_rms_lowerbound { get; set; }
         public double warning_rms_upperbound { get; set; }
@@ -53,6 +52,7 @@ namespace WindowsFormsApp4
         public WindowType window_type { get; set; }
         public double f_bandpower_lower { get; set; }
         public double f_bandpower_upper { get; set; }
+        public bool scaling_psd { get; set; }
         public bool stft_saving_option { get; set; }
 
         public double danger_lbp_upperbound { get; set; }
@@ -68,8 +68,12 @@ namespace WindowsFormsApp4
         public int rms_lvl_reset_point { get; set; }
         public int rms_lvl_max_point { get; set; }
 
+        public bool alarm_rate_plt_stack { get; set; }
         private double d_gain = 0.1, d_sep = 0.1;
-        private double min_gain = 0.01, min_sep = 0; 
+        private double min_gain = 0.01, min_sep = 0;
+
+        public int current_file_count { get; set; }
+        public int save_every { get; set; }
         #endregion
 
         #region Dictionaries for categorical options 
@@ -147,9 +151,10 @@ namespace WindowsFormsApp4
 
             channels2plt = "0;1";
 
+            save_every = (int) (30 * 60 * Fs); // 30 mins 
             output_folder = @"C:\Users\Towle\Desktop\Tuan\general_towle\data";
             output_file_name = "testfile_TP.csv";
-
+             
             danger_rms_upperbound = 1.4;
             danger_rms_lowerbound = 0.6;
             warning_rms_upperbound = 1.2;
@@ -173,15 +178,17 @@ namespace WindowsFormsApp4
             f_bandpower_lower = 2;
             f_bandpower_upper = 8;
             stft_saving_option = false;
+            scaling_psd = true; 
 
             danger_lbp_upperbound = 6E-7;
             danger_lbp_lowerbound = -1.0;
             warning_lbp_upperbound = 4.5E-7;
-            warning_lbp_lowerbound = 0.0; 
+            warning_lbp_lowerbound = 0.0;
 
+            alarm_rate_plt_stack = false; 
 
             rms_lvl_reset_sec = 2;
-            rms_lvl_max_sec = 60 * 10;
+            rms_lvl_max_sec = 60 * 1;
             rms_lvl_reset_point = (int) (Fs * rms_lvl_reset_sec);
             rms_lvl_max_point = (int) (rms_lvl_max_sec / rms_lvl_reset_sec); 
         }

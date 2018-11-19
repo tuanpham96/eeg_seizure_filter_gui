@@ -27,6 +27,8 @@ namespace WindowsFormsApp4
         public bool ready2plt;
         public double[] bandpower_freqrange;
 
+        public int n_lvls;
+        public int[] lbp_levels;
         #endregion
 
         #region Window functions
@@ -48,7 +50,9 @@ namespace WindowsFormsApp4
         #endregion
 
         #region Constructor
-        public STFTCalculator(double Fs, int n_epoch, int n_skip, double[] BPFR, WindowType win_type = WindowType.Rectangle, string file_prefix = "", bool saving_option = false)
+        public STFTCalculator(double Fs, int n_epoch, int n_skip, int n_lvls, double[] BPFR, 
+                            WindowType win_type = WindowType.Rectangle, bool scaling_psd = true, 
+                            string file_prefix = "", bool saving_option = false)
         {
             Rate = Fs;
             this.n_epoch = n_epoch; 
@@ -65,7 +69,10 @@ namespace WindowsFormsApp4
             Configure_Frequency_Range(BPFR); 
             
             GenerateFrequencyVector();
-            GenerateWindow(win_type);
+            GenerateWindow(win_type, scaling_psd);
+
+            this.n_lvls = n_lvls;
+            Reset_Level_Tally();
 
             this.saving_option = saving_option;
             Configure_Saving_Options(file_prefix);
@@ -96,7 +103,7 @@ namespace WindowsFormsApp4
             }
         }
 
-        private void GenerateWindow(WindowType win_type)
+        private void GenerateWindow(WindowType win_type, bool scaling_psd)
         {
             string win_name = win_type.ToString();
             WindowFunctions wf = new WindowFunctions();
@@ -111,6 +118,11 @@ namespace WindowsFormsApp4
             }
 
             psd_scale = 1 / (psd_scale * Rate);
+
+            if (!scaling_psd)
+            {
+                psd_scale = 1.0;
+            }
         }
 
         private void GenerateFrequencyVector()
@@ -158,12 +170,35 @@ namespace WindowsFormsApp4
         }
         #endregion
 
+        #region Level Tally Methods
+        public void Tally_Levels(int lvl)
+        {
+            if (lvl < n_lvls) { lbp_levels[lvl]++; }
+            else
+            {
+                throw new System.ArgumentOutOfRangeException(string.Format("`lvl` = {0} is not a valid level, " +
+                 "needs to be < `n_lvl` = {1}", lvl, n_lvls));
+            }
+        }
+
+        public void Cumulative_From_Lower_Level()
+        {
+            for (int i = 0; i < (n_lvls - 1); i++)
+            {
+                lbp_levels[i + 1] += lbp_levels[i];
+            }
+        }
+        public void Reset_Level_Tally()
+        {
+            this.lbp_levels = new int[n_lvls];
+            for (int i = 0; i < n_lvls; i++) { lbp_levels[i] = 0; }
+        }
+        #endregion
         #region Calculations
         public void CalculatePSD()
         {
             psd = new double[n_valid];
-            band_power = 0; 
-
+            band_power = 0;
             for (int i = 0; i < n_valid; i++)
             {
                 psd[i] = psd_scale * mag_freq[i] * mag_freq[i];

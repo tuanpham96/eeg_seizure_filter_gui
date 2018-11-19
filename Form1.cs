@@ -115,7 +115,9 @@ namespace WindowsFormsApp4
         public GearedValues<ObservablePoint>[] ChannelSeries { get; set; }
         public GearedValues<ObservablePoint>[] STFTSeries { get; set; }
         public GearedValues<ObservablePoint>[] LBPSeries { get; set; }
+
         public GearedValues<ObservablePoint>[] RMSAlarmSeries { get; set; }
+        public GearedValues<ObservablePoint>[] LBPAlarmSeries { get; set; }
 
         public Form1()
         {
@@ -147,8 +149,10 @@ namespace WindowsFormsApp4
                     app_inp_prm.Fs,
                     app_inp_prm.n_epoch,
                     app_inp_prm.n_skip,
+                    n_lvls,
                     new double[] { app_inp_prm.f_bandpower_lower, app_inp_prm.f_bandpower_upper },
                     STFTCalculator.WindowType.Hamming,
+                    app_inp_prm.scaling_psd,
                     app_inp_prm.output_file_name,
                     app_inp_prm.stft_saving_option);
             }
@@ -167,9 +171,9 @@ namespace WindowsFormsApp4
                                 "Ch " + app_inp_prm.chan_idx2plt[0] + " - Ch " + app_inp_prm.chan_idx2plt[1]};
             System.Windows.Media.SolidColorBrush[] ch_brushes =
             {
-                 System.Windows.Media.Brushes.Red,
                  System.Windows.Media.Brushes.Black,
-                 System.Windows.Media.Brushes.Gray
+                 System.Windows.Media.Brushes.Blue,
+                 System.Windows.Media.Brushes.Red
             };
             for (int idx_obs = 0; idx_obs < 3; idx_obs++)
             {
@@ -216,8 +220,8 @@ namespace WindowsFormsApp4
                     StrokeThickness = 2,
                     PointGeometry = DefaultGeometries.None,
                     LineSmoothness = 0,
-                    //Fill = System.Windows.Media.Brushes.Transparent,
-                    Fill = new System.Windows.Media.SolidColorBrush { Color = System.Windows.Media.Color.FromArgb(50, 100, 200, 100) },
+                    Fill = System.Windows.Media.Brushes.Transparent,
+                    //Fill = new System.Windows.Media.SolidColorBrush { Color = System.Windows.Media.Color.FromArgb(50, 100, 200, 100) },
                     Title = legends[ichan] + " STFT",
                     Stroke = ch_brushes[ichan]
                 });
@@ -241,44 +245,88 @@ namespace WindowsFormsApp4
             System.Windows.Media.SolidColorBrush[] brushes =
             {
                 System.Windows.Media.Brushes.Green,
-                System.Windows.Media.Brushes.Yellow,
+                System.Windows.Media.Brushes.Gold,
                 System.Windows.Media.Brushes.Red
             };
             string[] alarm_lvl_str = { "Normal", "Warning", "Danger" };
             RMSAlarmSeries = new GearedValues<ObservablePoint>[n_lvls];
-            //for (int i = 0; i < n_lvls; i++)
-            for (int i = n_lvls-1; i >= 0; i--)            
+            LBPAlarmSeries = new GearedValues<ObservablePoint>[n_lvls];
+            int i_start, i_bound, i_incr, i_sign_cond;
+            double stroke_thickness, alarm_rate_opacity;
+            System.Windows.Media.Geometry point_geom; 
+            if (app_inp_prm.alarm_rate_plt_stack)
+            {            
+                //for (int i = n_lvls-1; i >= 0; i--)   
+                i_start = n_lvls - 1;
+                i_bound = -1;
+                i_sign_cond = 1;
+                i_incr = -1;
+
+                stroke_thickness = 1;
+                alarm_rate_opacity = 0.9;
+                point_geom = DefaultGeometries.None;
+            } else
+            {            
+                //for (int i = 0; i < n_lvls; i++)
+                i_start = 0;
+                i_bound = n_lvls;
+                i_sign_cond = -1; 
+                i_incr = +1;
+
+                stroke_thickness = 4.0; 
+                alarm_rate_opacity = 0.0;
+                point_geom = DefaultGeometries.Circle;
+            }
+            for (int i = i_start; i.CompareTo(i_bound) == i_sign_cond; i += i_incr)          
             {
                 RMSAlarmSeries[i] = new GearedValues<ObservablePoint>();
                 RMSAlarmSeries[i].Quality = app_inp_prm.display_quality;
-                SolidBrush sb = new SolidBrush(app_inp_prm.danger_color);
                 rms_alarm_plots.Series.Add(new GLineSeries
                 {
                     Values = RMSAlarmSeries[i],
-                    StrokeThickness = 2,
-                    PointGeometry = DefaultGeometries.None,
-                   // PointForeground = brushes[i],
-                    PointGeometrySize = 10,
+                    StrokeThickness = stroke_thickness,
+                    PointGeometry = point_geom,
+                    PointForeground = brushes[i],
+                    PointGeometrySize = 15,
                     LineSmoothness = 0,
-                    //Fill = System.Windows.Media.Brushes.Transparent,
                     Fill = new System.Windows.Media.SolidColorBrush
                     {
-                        Opacity = 0.9,
-                        Color = brushes[i].Color //System.Windows.Media.Brushes.LightGray.Color
+                        Opacity = alarm_rate_opacity,
+                        Color = brushes[i].Color 
                     },
                     Stroke = brushes[i],
-                    Title = alarm_lvl_str[i]
+                    Title = "RMS " + alarm_lvl_str[i]
+                });
+
+                LBPAlarmSeries[i] = new GearedValues<ObservablePoint>();
+                LBPAlarmSeries[i].Quality = app_inp_prm.display_quality;
+                lbp_alarm_plots.Series.Add(new GLineSeries
+                {
+                    Values = LBPAlarmSeries[i],
+                    StrokeThickness = stroke_thickness,
+                    PointGeometry = point_geom,
+                    PointForeground = brushes[i],
+                    PointGeometrySize = 15,
+                    LineSmoothness = 0,
+                    Fill = new System.Windows.Media.SolidColorBrush
+                    {
+                        Opacity = alarm_rate_opacity,
+                        Color = brushes[i].Color
+                    },
+                    Stroke = brushes[i],
+                    Title = "Spectral " + alarm_lvl_str[i]
                 });
             }
 
-            MaximizePlotPerformance(ref channel_plots, new Axes_Label("Time (s)", "Voltage"), null, false, true);
-            MaximizePlotPerformance(ref rms_plots, new Axes_Label("Time (s)", "RMS"), null, false, true);
+            MaximizePlotPerformance(ref channel_plots, new Axes_Label("Time (s)", "Voltage (uV)"), null, false, true);
+            MaximizePlotPerformance(ref rms_plots, new Axes_Label("Time (s)", "RMS (uV)"), null, false, true);
             MaximizePlotPerformance(ref spectral_plots,
-                new Axes_Label("Time (s)", "FFT"),
+                new Axes_Label("Frequency (Hz)", "FFT"),
                 new Axes_Limit(new double[] { 0, 40 }, new double[] { 0, double.PositiveInfinity }));
             MaximizePlotPerformance(ref limbandpow_plots, 
                 new Axes_Label("Time (s)", string.Format("Band power {0} - {1} Hz", app_inp_prm.f_bandpower_lower, app_inp_prm.f_bandpower_upper)), null, false, true);
-            MaximizePlotPerformance(ref rms_alarm_plots, new Axes_Label("Time (s)", "# of alarms"));
+            MaximizePlotPerformance(ref rms_alarm_plots, new Axes_Label("Time (s)", "# of RMS alarms"));
+            MaximizePlotPerformance(ref lbp_alarm_plots, new Axes_Label("Time (s)", "# of Spectral alarms"));
 
         }
 
@@ -329,13 +377,12 @@ namespace WindowsFormsApp4
         {
             string font_fam = "Microsoft Sans Serif";
             var axes_color = System.Windows.Media.Brushes.Black;
-            cart_chart.Font = new Font(font_fam, 10F);
-
+            cart_chart.Font = new Font(font_fam, 12F);
             
             cart_chart.AxisX.Add(new Axis
             {
                 Separator = new Separator { StrokeThickness = 1, Stroke = axes_color, IsEnabled = false},
-                FontSize = 15F,
+                FontSize = 20F,
                 FontFamily = new System.Windows.Media.FontFamily(font_fam),
                 Foreground = axes_color,
                 Title = axes_label.xlabel,          
@@ -345,7 +392,7 @@ namespace WindowsFormsApp4
             cart_chart.AxisY.Add(new Axis
             {
                 Separator = new Separator { StrokeThickness = 1, Stroke = axes_color, IsEnabled = false },
-                FontSize = 15F,
+                FontSize = 20F,
                 FontFamily = new System.Windows.Media.FontFamily(font_fam),
                 Foreground = axes_color,
                 Title = axes_label.ylabel,
@@ -383,7 +430,7 @@ namespace WindowsFormsApp4
             cart_chart.DisableAnimations = true;
             cart_chart.Hoverable = false;
             cart_chart.DataTooltip = null;
-            cart_chart.LegendLocation = LegendLocation.Bottom;
+            cart_chart.LegendLocation = LegendLocation.Right;
             cart_chart.Invalidate();
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -468,9 +515,9 @@ namespace WindowsFormsApp4
             UpdateLabel(chan_label1, "Channel " + app_inp_prm.chan_idx2plt[0]);
             UpdateLabel(chan_label2, "Channel " + app_inp_prm.chan_idx2plt[1]);
 
-            UpdateLabel(changain_val, string.Join(",", app_inp_prm.display_channel_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
+            UpdateLabel(changain_val, string.Join("; ", app_inp_prm.display_channel_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
             UpdateLabel(chansep_val, string.Format("{0:0.00}", app_inp_prm.display_channel_sep));
-            UpdateLabel(rmsgain_val, string.Join(",", app_inp_prm.display_rms_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
+            UpdateLabel(rmsgain_val, string.Join("; ", app_inp_prm.display_rms_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
             UpdateLabel(rmssep_val, string.Format("{0:0.00}", app_inp_prm.display_rms_sep));
 
         }
@@ -634,7 +681,8 @@ namespace WindowsFormsApp4
             {
                 if (series[i].Count >= max_pnt_plt)
                 {
-                    series[i].Clear();
+                    if (refreshable) { series[i].Clear(); }
+                    else { series[i].RemoveAt(0); }
                 }
                 series[i].Add(new ObservablePoint(t, values[i] * display_gains[i] - display_sep * i)); 
             }
@@ -850,19 +898,28 @@ namespace WindowsFormsApp4
                                 if (count % app_inp_prm.rms_lvl_reset_point == 0 && count > 0)
                                 {
                                     int n_lvls = RMSCalcs[0].n_lvls;
-                                    double[] lvl_arrs = new double[n_lvls];
+                                    double[] rms_lvl_arrs = new double[n_lvls];
+                                    double[] lbp_lvl_arrs = new double[n_lvls];
                                     double[] pseudo_gains = new double[n_lvls];
                                     double pseudo_sep = 0;
-                                    for (int ich = 0; ich < nchan; ich++) {
-                                        RMSCalcs[ich].Cumulative_From_Lower_Level();
+
+                                    if (app_inp_prm.alarm_rate_plt_stack)
+                                    {
+                                        for (int ich = 0; ich < nchan; ich++)
+                                        {
+                                            RMSCalcs[ich].Cumulative_From_Lower_Level();
+                                            STFTCalcs[ich].Cumulative_From_Lower_Level();
+                                        }
                                     }
                                     for (int ilvl = 0; ilvl < n_lvls; ilvl++)
                                     {
                                         pseudo_gains[ilvl] = 1.0;
-                                        lvl_arrs[ilvl] = 0;
+                                        rms_lvl_arrs[ilvl] = 0;
+                                        lbp_lvl_arrs[ilvl] = 0; 
                                         for (int ich = 0; ich < nchan; ich++)
                                         {
-                                            lvl_arrs[ilvl] += RMSCalcs[ich].rms_levels[ilvl];
+                                            rms_lvl_arrs[ilvl] += RMSCalcs[ich].rms_levels[ilvl];
+                                            lbp_lvl_arrs[ilvl] += STFTCalcs[ich].lbp_levels[ilvl];
                                         }
                                     }
                                     UpdateTimeSeriesPlot(
@@ -870,7 +927,18 @@ namespace WindowsFormsApp4
                                                     rms_alarm_plots,
                                                     RMSAlarmSeries,
                                                     t,
-                                                    lvl_arrs,
+                                                    rms_lvl_arrs,
+                                                    pseudo_gains,
+                                                    pseudo_sep,
+                                                    app_inp_prm.rms_lvl_max_sec, 
+                                                    app_inp_prm.rms_lvl_max_point,
+                                                    2);
+                                    UpdateTimeSeriesPlot(
+                                                    false, 
+                                                    lbp_alarm_plots,
+                                                    RMSAlarmSeries,
+                                                    t,
+                                                    rms_lvl_arrs,
                                                     pseudo_gains,
                                                     pseudo_sep,
                                                     app_inp_prm.rms_lvl_max_sec, 
@@ -879,6 +947,7 @@ namespace WindowsFormsApp4
                                     for (int ich = 0; ich < nchan; ich++)
                                     {
                                         RMSCalcs[ich].Reset_Level_Tally();
+                                        STFTCalcs[ich].Reset_Level_Tally(); 
                                     }
 
 
@@ -927,14 +996,14 @@ namespace WindowsFormsApp4
         private void changain_up_Click(object sender, EventArgs e)
         {
             app_inp_prm.Control_Channel_Gain(1);
-            UpdateLabel(changain_val, string.Join(",", app_inp_prm.display_channel_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
+            UpdateLabel(changain_val, string.Join("; ", app_inp_prm.display_channel_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
         }
 
 
         private void changain_down_Click(object sender, EventArgs e)
         {
             app_inp_prm.Control_Channel_Gain(-1);
-            UpdateLabel(changain_val, string.Join(",", app_inp_prm.display_channel_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
+            UpdateLabel(changain_val, string.Join("; ", app_inp_prm.display_channel_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
         }
 
 
@@ -954,13 +1023,13 @@ namespace WindowsFormsApp4
         private void rmsgain_up_Click(object sender, EventArgs e)
         {
             app_inp_prm.Control_RMS_Gain(1);
-            UpdateLabel(rmsgain_val, string.Join(",", app_inp_prm.display_rms_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
+            UpdateLabel(rmsgain_val, string.Join("; ", app_inp_prm.display_rms_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
         }
 
         private void rmsgain_down_Click(object sender, EventArgs e)
         {
             app_inp_prm.Control_RMS_Gain(-1);
-            UpdateLabel(rmsgain_val, string.Join(",", app_inp_prm.display_rms_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
+            UpdateLabel(rmsgain_val, string.Join("; ", app_inp_prm.display_rms_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
         }
 
         private void rmssep_up_Click(object sender, EventArgs e)
@@ -978,5 +1047,9 @@ namespace WindowsFormsApp4
 
         #endregion
 
+        private void Form1_Load_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }
