@@ -167,7 +167,6 @@ namespace WindowsFormsApp4
             normal_color = Color.FromArgb(0, 255, 0);
             */
 
-
             normal_color = BrushToColor(System.Windows.Media.Brushes.Green);
             warning_color = BrushToColor(System.Windows.Media.Brushes.Gold);
             danger_color = BrushToColor(System.Windows.Media.Brushes.Red);
@@ -204,7 +203,6 @@ namespace WindowsFormsApp4
             rms_lvl_max_sec = 60 * 10;
             rms_lvl_reset_point = (int) (Fs * rms_lvl_reset_sec);
             rms_lvl_max_point = (int) (rms_lvl_max_sec / rms_lvl_reset_sec);
-
 
 
             lbp_lvl_reset_sec = 10;

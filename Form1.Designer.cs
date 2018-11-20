@@ -64,6 +64,11 @@
             this.app_title = new System.Windows.Forms.Label();
             this.lbp_alarm_plots = new LiveCharts.WinForms.CartesianChart();
             this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // log
@@ -107,7 +112,7 @@
             // 
             // channel_plots
             // 
-            this.channel_plots.Location = new System.Drawing.Point(16, 702);
+            this.channel_plots.Location = new System.Drawing.Point(16, 689);
             this.channel_plots.Name = "channel_plots";
             this.channel_plots.Size = new System.Drawing.Size(1004, 203);
             this.channel_plots.TabIndex = 8;
@@ -115,7 +120,7 @@
             // 
             // rms_plots
             // 
-            this.rms_plots.Location = new System.Drawing.Point(16, 916);
+            this.rms_plots.Location = new System.Drawing.Point(16, 935);
             this.rms_plots.Name = "rms_plots";
             this.rms_plots.Size = new System.Drawing.Size(1004, 203);
             this.rms_plots.TabIndex = 9;
@@ -123,7 +128,7 @@
             // 
             // spectral_plots
             // 
-            this.spectral_plots.Location = new System.Drawing.Point(146, 1410);
+            this.spectral_plots.Location = new System.Drawing.Point(146, 1441);
             this.spectral_plots.Name = "spectral_plots";
             this.spectral_plots.Size = new System.Drawing.Size(874, 168);
             this.spectral_plots.TabIndex = 10;
@@ -411,7 +416,7 @@
             // 
             // limbandpow_plots
             // 
-            this.limbandpow_plots.Location = new System.Drawing.Point(16, 1131);
+            this.limbandpow_plots.Location = new System.Drawing.Point(16, 1184);
             this.limbandpow_plots.Name = "limbandpow_plots";
             this.limbandpow_plots.Size = new System.Drawing.Size(1004, 203);
             this.limbandpow_plots.TabIndex = 37;
@@ -448,12 +453,81 @@
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.label1.UseMnemonic = false;
             // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Font = new System.Drawing.Font("Arial", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(648, 277);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(287, 58);
+            this.label2.TabIndex = 41;
+            this.label2.Text = "Spectral Alarm Rates";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label2.UseMnemonic = false;
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Font = new System.Drawing.Font("Arial Narrow", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label3.Location = new System.Drawing.Point(39, 647);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(178, 39);
+            this.label3.TabIndex = 42;
+            this.label3.Text = "EEG plots";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label3.UseMnemonic = false;
+            // 
+            // label4
+            // 
+            this.label4.BackColor = System.Drawing.Color.Transparent;
+            this.label4.Font = new System.Drawing.Font("Arial Narrow", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label4.Location = new System.Drawing.Point(35, 894);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(178, 39);
+            this.label4.TabIndex = 43;
+            this.label4.Text = "RMS plots";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label4.UseMnemonic = false;
+            // 
+            // label5
+            // 
+            this.label5.BackColor = System.Drawing.Color.Transparent;
+            this.label5.Font = new System.Drawing.Font("Arial Narrow", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label5.Location = new System.Drawing.Point(39, 1140);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(178, 39);
+            this.label5.TabIndex = 44;
+            this.label5.Text = "Bandpower plots";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label5.UseMnemonic = false;
+            // 
+            // label6
+            // 
+            this.label6.BackColor = System.Drawing.Color.Transparent;
+            this.label6.Font = new System.Drawing.Font("Arial Narrow", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label6.Location = new System.Drawing.Point(172, 1399);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(178, 39);
+            this.label6.TabIndex = 45;
+            this.label6.Text = "Spectral plots";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label6.UseMnemonic = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1053, 1889);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lbp_alarm_plots);
             this.Controls.Add(this.app_title);
@@ -538,6 +612,11 @@
         private System.Windows.Forms.Label app_title;
         private LiveCharts.WinForms.CartesianChart lbp_alarm_plots;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
     }
 }
 
