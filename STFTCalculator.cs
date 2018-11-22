@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using NAudio.Wave;
-using NAudio.CoreAudioApi;
 using System.IO;
 using System.Reflection;
 
@@ -236,7 +234,7 @@ namespace WindowsFormsApp4
             double[] fft = new double[(int)(data.Length/2)];
             System.Numerics.Complex[] fftComplex = new System.Numerics.Complex[data.Length];
             for (int i = 0; i < data.Length; i++)
-                fftComplex[i] = new System.Numerics.Complex(data[i] * window[i], 0.0);
+                fftComplex[i] = new System.Numerics.Complex(data[i] * window[i], 0.0); // multipled by the window functions 
             Accord.Math.FourierTransform.FFT(fftComplex, Accord.Math.FourierTransform.Direction.Forward);
             for (int i = 0; i < fft.Length; i++)
                 fft[i] = fftComplex[i].Magnitude;

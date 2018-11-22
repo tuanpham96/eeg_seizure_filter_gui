@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 namespace WindowsFormsApp4
 {
 
@@ -25,6 +24,8 @@ namespace WindowsFormsApp4
         {
             fontname = "Arial";
             input_params = new AppInputParameters();
+           Testing(text, caption); 
+
             Result = ShowDialog(text, caption);
         }
         private AppInputParameters ShowDialog(string title, string caption)
@@ -354,6 +355,120 @@ namespace WindowsFormsApp4
             return input_params;
         }
 
+        public string Testing(string title, string caption)
+        {
+            prompt = new Form()
+            {
+                Width = 900,
+                Height = 1000,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = caption,
+                StartPosition = FormStartPosition.CenterParent,
+                TopMost = true
+            };
+          
+           Label promptTitle = new Label()
+            {
+                Left = 100,
+                Top = 20,
+                Width = 600,
+                Text = title,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new System.Drawing.Font(fontname, 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+            };
+            prompt.Controls.Add(promptTitle);
+
+            TabControl tabcntl = new TabControl()
+            {
+                Location = new Point(50, 50),
+                Size = new Size(800, 500),                 
+                Text = "My Control Tabs"
+            };
+
+            int number_tabs = input_params.OptionSections.Count;
+            TabPage[] tabpages = new TabPage[number_tabs];
+            for (int i = 0; i < number_tabs; i++)
+            {
+                string section_name = input_params.OptionSections.Keys.ElementAt(i);
+                Dictionary<string, AppInputParameters.PropertypAndFormType> section_options = input_params.OptionSections[section_name];
+                tabpages[i] = new TabPage()
+                {
+                    Location = new Point(50, 50),
+                    Size = new Size(700, 500),
+                    Name = section_name,
+                    Text = section_name
+                };
+
+                int number_options = section_options.Count;
+
+                TextBox[] textboxes = new TextBox[number_options];
+                Label[] labels = new Label[number_options];
+
+                int top_label = 70, left_label = 10, width_label = 300;
+                int top_box = 70, left_box = 320, width_box = 420;
+                int spacing = 32;
+
+                string prop_alias, prop_name, prop_val;
+                for (int j = 0; j < number_options; j++)
+                {
+                    prop_name = section_options.Keys.ElementAt(j);
+                    prop_alias = section_options[prop_name].prop_alias;
+                    prop_val = input_params.GetPropValue(prop_name).ToString();
+
+                    labels[j] = new Label()
+                    {
+                        Left = left_label,
+                        Top = top_label,
+                        Text = prop_alias,
+                        Width = width_label,
+                        TextAlign = ContentAlignment.MiddleRight,
+                        Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+                    };
+                    tabpages[i].Controls.Add(labels[j]);
+                    top_label += spacing;
+
+                    textboxes[j] = new TextBox()
+                    {
+                        Left = left_box,
+                        Top = top_box,
+                        Width = width_box,
+                        Text = prop_val,
+                        Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+                    };
+                    tabpages[i].Controls.Add(textboxes[j]);
+                    top_box += spacing;
+
+                }
+                tabcntl.Controls.Add(tabpages[i]);
+            }
+
+            prompt.Controls.Add(tabcntl);
+
+
+            Button confirmation = new Button()
+            {
+                Text = "Continue",
+                Left = 490,
+                Width = 120,
+                Height = 30,
+                Top = 900,
+                DialogResult = DialogResult.OK,
+                Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+            };
+            confirmation.Click += (sender, e) => {
+                prompt.Close();
+            };
+            prompt.Controls.Add(confirmation);
+            prompt.AcceptButton = confirmation;
+
+            string success = "No Sucess here"; 
+            if (prompt.ShowDialog() == DialogResult.OK)
+            {
+                success = "Success here"; 
+            }
+
+            return success;
+        }
         public void Dispose()
         {
             prompt.Dispose();

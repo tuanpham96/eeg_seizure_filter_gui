@@ -188,12 +188,12 @@ namespace WindowsFormsApp4
                 channel_plots.Series.Add(new GLineSeries
                 {
                     Values = ChannelSeries[idx_obs],
-                    StrokeThickness = 2,
                     PointGeometry = DefaultGeometries.None,
                     LineSmoothness = 0,
+                    StrokeThickness = 2,
                     Fill = System.Windows.Media.Brushes.Transparent,
-                    Title = legends[idx_obs],
-                    Stroke = ch_brushes[idx_obs]
+                    Stroke = ch_brushes[idx_obs],
+                    Title = legends[idx_obs] + " \t"
                 });
             }
 
@@ -238,9 +238,7 @@ namespace WindowsFormsApp4
                 {
                     Values = LBPSeries[ichan],
                     StrokeThickness = 2,
-                    PointGeometry = DefaultGeometries.Circle,
-                    PointGeometrySize = 0,
-                    PointForeground = ch_brushes[ichan], 
+                    PointGeometry = DefaultGeometries.None,
                     LineSmoothness = 0,
                     Fill = new System.Windows.Media.SolidColorBrush { Color = System.Windows.Media.Color.FromArgb(50, 100, 120, 200) },
                     Title = legends[ichan] + " BP",
@@ -261,10 +259,10 @@ namespace WindowsFormsApp4
             LBPAlarmSeries = new GearedValues<ObservablePoint>[n_lvls];
             int i_start, i_bound, i_incr, i_sign_cond;
             double stroke_thickness, alarm_rate_opacity;
-            System.Windows.Media.Geometry point_geom; 
+            System.Windows.Media.Geometry point_geom = DefaultGeometries.None; 
             if (app_inp_prm.alarm_rate_plt_stack)
             {            
-                //for (int i = n_lvls-1; i >= 0; i--)   
+                // equilvalent to `for (int i = n_lvls-1; i >= 0; i--)`   
                 i_start = n_lvls - 1;
                 i_bound = -1;
                 i_sign_cond = 1;
@@ -272,18 +270,16 @@ namespace WindowsFormsApp4
 
                 stroke_thickness = 1.50;
                 alarm_rate_opacity = 0.9;
-                point_geom = DefaultGeometries.None;
             } else
-            {            
-                //for (int i = 0; i < n_lvls; i++)
+            {
+                // equilvalent to `for (int i = 0; i < n_lvls; i++)`
                 i_start = 0;
                 i_bound = n_lvls;
                 i_sign_cond = -1; 
                 i_incr = +1;
 
-                stroke_thickness = 4.0; 
+                stroke_thickness = 4.5; 
                 alarm_rate_opacity = 0.0;
-                point_geom = DefaultGeometries.Circle;
             }
             for (int i = i_start; i.CompareTo(i_bound) == i_sign_cond; i += i_incr)          
             {
@@ -295,15 +291,14 @@ namespace WindowsFormsApp4
                     StrokeThickness = stroke_thickness,
                     PointGeometry = point_geom,
                     PointForeground = brushes[i],
-                    PointGeometrySize = 15,
-                    LineSmoothness = 0,
+                    LineSmoothness = 1,
                     Fill = new System.Windows.Media.SolidColorBrush
                     {
                         Opacity = alarm_rate_opacity,
                         Color = brushes[i].Color 
                     },
                     Stroke = brushes[i],
-                    Title = "RMS " + alarm_lvl_str[i]
+                    Title = alarm_lvl_str[i]
                 });
 
                 LBPAlarmSeries[i] = new GearedValues<ObservablePoint>();
@@ -314,27 +309,26 @@ namespace WindowsFormsApp4
                     StrokeThickness = stroke_thickness,
                     PointGeometry = point_geom,
                     PointForeground = brushes[i],
-                    PointGeometrySize = 15,
-                    LineSmoothness = 0,
+                    LineSmoothness = 1,
                     Fill = new System.Windows.Media.SolidColorBrush
                     {
                         Opacity = alarm_rate_opacity,
                         Color = brushes[i].Color
                     },
                     Stroke = brushes[i],
-                    Title = "Spectral " + alarm_lvl_str[i]
+                    Title = "\n" + alarm_lvl_str[i] + "\n" // to space the legend out a bit 
                 });
             }
 
-            MaximizePlotPerformance(ref channel_plots, new Axes_Label("Time (s)", "Voltage (uV)"), null, false, true);
-            MaximizePlotPerformance(ref rms_plots, new Axes_Label("Time (s)", "RMS (uV)"), null, false, true);
+            MaximizePlotPerformance(ref channel_plots, new Axes_Label("Time (s)", "Voltage (uV)"), null, false, true, LegendLocation.Top);
+            MaximizePlotPerformance(ref rms_plots, new Axes_Label("Time (s)", "RMS (uV)"), null, false, true, LegendLocation.None);
             MaximizePlotPerformance(ref spectral_plots,
                 new Axes_Label("Frequency (Hz)", "FFT"),
-                new Axes_Limit(new double[] { 0, 40 }, new double[] { 0, double.PositiveInfinity }));
+                new Axes_Limit(new double[] { -0.1, 40 }, new double[] { -0.01, double.PositiveInfinity }));
             MaximizePlotPerformance(ref limbandpow_plots, 
                 new Axes_Label("Time (s)", string.Format("Band power {0} - {1} Hz", app_inp_prm.f_bandpower_lower, app_inp_prm.f_bandpower_upper)), null, false, true);
             MaximizePlotPerformance(ref rms_alarm_plots, new Axes_Label("Time (s)", "# of RMS alarms"));
-            MaximizePlotPerformance(ref lbp_alarm_plots, new Axes_Label("Time (s)", "# of Spectral alarms"));
+            MaximizePlotPerformance(ref lbp_alarm_plots, new Axes_Label("Time (s)", "# of Spectral alarms"), null, false, false, LegendLocation.Left);
 
         }
 
@@ -381,7 +375,8 @@ namespace WindowsFormsApp4
                                                 Axes_Label axes_label, 
                                                 Axes_Limit axes_limit = null,
                                                 bool x_axis_merged = false, 
-                                                bool y_axis_merged = false)
+                                                bool y_axis_merged = false,
+                                                LegendLocation lgnd_loc = LegendLocation.None)
         {
             string font_fam = "Microsoft Sans Serif";
             var axes_color = System.Windows.Media.Brushes.Gray;
@@ -405,8 +400,8 @@ namespace WindowsFormsApp4
                 FontFamily = new System.Windows.Media.FontFamily(font_fam),
                 Foreground = axes_color,
                 Title = axes_label.ylabel,
-                // LabelFormatter = value => string.Format("{0:0.0e+0}",value),
-                IsMerged = y_axis_merged,                
+                IsMerged = y_axis_merged,  
+                
             });
 
             if (axes_limit != null)
@@ -439,8 +434,9 @@ namespace WindowsFormsApp4
             cart_chart.DisableAnimations = true;
             cart_chart.Hoverable = false;
             cart_chart.DataTooltip = null;
-            cart_chart.LegendLocation = LegendLocation.Bottom; 
+            cart_chart.LegendLocation = lgnd_loc;
             cart_chart.Invalidate();
+
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -521,8 +517,11 @@ namespace WindowsFormsApp4
         private void UpdateInitialization(string connection_success)
         {
             UpdateTextBox(log, connection_success + "\r\n" + app_inp_prm.WelcomeMessage);
-            UpdateLabel(chan_label1, "Channel " + app_inp_prm.chan_idx2plt[0]);
-            UpdateLabel(chan_label2, "Channel " + app_inp_prm.chan_idx2plt[1]);
+
+            UpdateLabel(chan_label1_rms_alarm, "Channel " + app_inp_prm.chan_idx2plt[0]);
+            UpdateLabel(chan_label2_rms_alarm, "Channel " + app_inp_prm.chan_idx2plt[1]);
+            UpdateLabel(chan_label1_spectral_alarm, "Channel " + app_inp_prm.chan_idx2plt[0]);
+            UpdateLabel(chan_label2_spectral_alarm, "Channel " + app_inp_prm.chan_idx2plt[1]);
 
             UpdateLabel(changain_val, string.Join("; ", app_inp_prm.display_channel_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
             UpdateLabel(chansep_val, string.Format("{0:0.00}", app_inp_prm.display_channel_sep));
@@ -582,7 +581,7 @@ namespace WindowsFormsApp4
             }
 
 
-            if (refreshable)// (series[0].Count > min_pnt_upd)
+            if (refreshable)
             {
                 RefreshableAxisLimits(t, max_sec_plt, out double min_bound, out double max_bound);
                 cart_chart.AxisX[0].MinValue = min_bound;
@@ -872,7 +871,6 @@ namespace WindowsFormsApp4
                 client.Close();
 
             }
-            //}
             catch (Exception e)
             {
                 log.Invoke(new Action(() =>
@@ -952,9 +950,5 @@ namespace WindowsFormsApp4
 
         #endregion
 
-        private void Form1_Load_1(object sender, EventArgs e)
-        {
-
-        }
     }
 }

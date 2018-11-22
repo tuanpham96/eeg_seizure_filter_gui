@@ -141,6 +141,44 @@ namespace WindowsFormsApp4
             { "Bandpower upper bound (Hz)", "f_bandpower_upper" },
             { "STFT saving options", "stft_saving_option" }
         };
+
+        public struct PropertypAndFormType
+        {
+            public string prop_alias;
+            public Form_Type form_type;
+            public string dict_name; // for radiobutton option of the form type; will refer to the AppInputParameters parameter 
+            public enum Form_Type { Textbox, Radiobutton };
+            public PropertypAndFormType(string _prop_alias_, Form_Type _form_type_ = Form_Type.Textbox, string _dict_name_ = null)
+            {
+                prop_alias = _prop_alias_;
+                form_type = _form_type_;
+                dict_name = _dict_name_;
+            }
+        }
+
+        public Dictionary<string, Dictionary<string, PropertypAndFormType>> OptionSections = new Dictionary<string, Dictionary<string, PropertypAndFormType>>
+        {
+            { "Input and Output",       new Dictionary<string, PropertypAndFormType>{
+                { "hostname",           new PropertypAndFormType("Host name") },
+                { "port",               new PropertypAndFormType("Port") },
+                { "Fs",                 new PropertypAndFormType("Sample frequency (Hz)") },
+                { "nsamp_per_block",    new PropertypAndFormType("Number of samples / channel / epoch") },
+                { "output_folder",      new PropertypAndFormType("Output folder") },
+                { "output_file_name",   new PropertypAndFormType("Output folder") }
+            }},
+            { "Channel and RMS plot",   new Dictionary<string, PropertypAndFormType>{
+                { "channels2plt",       new PropertypAndFormType("Channels to display") },
+                { "nmax_queue_total",   new PropertypAndFormType("RMS window (#points)") },
+            }},
+            { "Spectral Plotting",      new Dictionary<string, PropertypAndFormType> {
+                { "nsec_fft",           new PropertypAndFormType("STFT Length (s)") },
+                { "per_overlap",        new PropertypAndFormType("STFT Overlap (%)") },
+                //{ "window_type",        new PropertypAndFormType("STFT Window", PropertypAndFormType.Form_Type.Radiobutton, "wintype_dict") },
+                { "f_bandpower_lower",  new PropertypAndFormType("Bandpower lower bound (Hz)") },
+                { "f_bandpower_upper",  new PropertypAndFormType("Bandpower upper bound (Hz)") },
+                //{ "stft_saving_option", new PropertypAndFormType("STFT saving options", PropertypAndFormType.Form_Type.Radiobutton, "stft_saving_options") },
+            }}    
+        };
         #endregion 
 
         /* !!! Need to check for conditions of Channel_Idx and Gains_Arr
@@ -209,6 +247,7 @@ namespace WindowsFormsApp4
             lbp_lvl_max_sec = 60 * 10;
             lbp_lvl_reset_point = (int)(Fs * lbp_lvl_reset_sec);
             lbp_lvl_max_point = (int)(lbp_lvl_max_sec / lbp_lvl_reset_sec);
+
         }
         #endregion
 
