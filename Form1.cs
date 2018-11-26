@@ -324,7 +324,7 @@ namespace WindowsFormsApp4
             MaximizePlotPerformance(ref rms_plots, new Axes_Label("Time (s)", "RMS (uV)"), null, false, true, LegendLocation.None);
             MaximizePlotPerformance(ref spectral_plots,
                 new Axes_Label("Frequency (Hz)", "FFT"),
-                new Axes_Limit(new double[] { -0.1, 40 }, new double[] { -0.01, double.PositiveInfinity }));
+                new Axes_Limit(new double[] { -0.1, 30 }, new double[] { 0, double.PositiveInfinity }));
             MaximizePlotPerformance(ref limbandpow_plots, 
                 new Axes_Label("Time (s)", string.Format("Band power {0} - {1} Hz", app_inp_prm.f_bandpower_lower, app_inp_prm.f_bandpower_upper)), null, false, true);
             MaximizePlotPerformance(ref rms_alarm_plots, new Axes_Label("Time (s)", "# of RMS alarms"));
@@ -651,6 +651,8 @@ namespace WindowsFormsApp4
                     string data_with_lines = System.Text.Encoding.ASCII.GetString(bytes, 0, stream_read);
                     string[] lines = data_with_lines.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
                     lines = lines.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                    lines = lines.Where(x => !x[0].Equals(',')).ToArray();
+                    lines = lines.Where(x => x.Split(',').Length == app_inp_prm.chunk_len).ToArray();
                     if (lines.Length == 0) { continue; }
                     if (lines.Length > 0)
                     {
@@ -659,7 +661,6 @@ namespace WindowsFormsApp4
                         {
                             start_iline = 0;
                             end_iline = 1;
-
                         }
                         else
                         {

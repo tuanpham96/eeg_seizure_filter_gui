@@ -63,6 +63,8 @@ namespace WindowsFormsApp4
 
         public string WelcomeMessage { get; set; }
         public int nchan { get; set; }
+        public int total_nchan { get; set; }
+        public int chunk_len { get; set; }
 
         public double rms_lvl_reset_sec { get; set; }
         public double rms_lvl_max_sec { get; set; }
@@ -75,7 +77,7 @@ namespace WindowsFormsApp4
         public int lbp_lvl_max_point { get; set; }
 
         public bool alarm_rate_plt_stack { get; set; }
-        private double d_gain = 0.1, d_sep = 0.1;
+        private double d_gain = 0.1, d_sep = 25;
         private double min_gain = 0.01, min_sep = 0;
 
         public int current_file_count { get; set; }
@@ -120,6 +122,7 @@ namespace WindowsFormsApp4
             { "Host name", "hostname" },
             { "Port", "port" },
             { "Sample frequency (Hz)", "Fs" },
+            { "Total number of channels", "total_nchan" },
             { "RMS window (#points)", "nmax_queue_total" },
             { "Number of samples / channel / epoch", "nsamp_per_block" },
             { "Channels to display", "channels2plt" },
@@ -192,7 +195,8 @@ namespace WindowsFormsApp4
             Fs = 512.0;
             nmax_queue_total = 64;
             nsamp_per_block = 4;
-
+            total_nchan = 4;
+            chunk_len = nsamp_per_block * total_nchan;
             channels2plt = "0;1";
 
             save_every = (int) (30 * 60 * Fs); // 30 mins 

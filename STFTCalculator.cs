@@ -212,7 +212,8 @@ namespace WindowsFormsApp4
             if (current_count == n_epoch)
             {
                 mag_freq = new double[n_valid];
-                mag_freq = FFT(data_array);
+                double[] normz_dat_arr = normalize_data(data_array); 
+                mag_freq = FFT(normz_dat_arr);
                 ready2plt = true;
                 if (saving_option) { WriteToFile(string.Format("t = {0:0.00}", t), mag_freq); }
                 ShiftArray();
@@ -226,6 +227,24 @@ namespace WindowsFormsApp4
             }
         }
         
+        public double[] normalize_data(double[] data)
+        {
+            int len_dat = data.Length;
+            double mean = data.Average();
+            double stddev = 0; 
+            for (int i = 0; i < len_dat; i++)
+            {
+                stddev += (data[i] - mean) * (data[i] - mean);
+            }
+            stddev = Math.Sqrt(stddev / len_dat);
+            double[] normz_dat = new double[len_dat];
+            for (int i = 0; i < len_dat; i++)
+            {
+                normz_dat[i] = (data[i] - mean) / stddev; 
+            }
+
+            return normz_dat;
+        }
         /*  Adapted from: 
          *  https://github.com/swharden/Csharp-Data-Visualization/blob/master/projects/18-09-19_microphone_FFT_revisited/ScottPlotMicrophoneFFT/ScottPlotMicrophoneFFT/Form1.cs
          */   
