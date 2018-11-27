@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -24,7 +26,7 @@ namespace WindowsFormsApp4
         {
             fontname = "Arial";
             input_params = new AppInputParameters();
-           Testing(text, caption); 
+            Testing(text, caption); 
 
             Result = ShowDialog(text, caption);
         }
@@ -357,10 +359,15 @@ namespace WindowsFormsApp4
 
         public string Testing(string title, string caption)
         {
+            Font lbl_font = new Font(fontname, 10F, FontStyle.Bold, GraphicsUnit.Point);
+            Font box_font = new Font(fontname, 10F, FontStyle.Regular, GraphicsUnit.Point);
+            Font rdb_font = new Font(fontname, 8F, FontStyle.Regular, GraphicsUnit.Point);
+            Font tab_font = new Font(fontname, 11F, FontStyle.Regular, GraphicsUnit.Point);
+            Font ttl_font = new Font(fontname, 20F, FontStyle.Bold, GraphicsUnit.Point);
             prompt = new Form()
             {
                 Width = 900,
-                Height = 1000,
+                Height = 700,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 Text = caption,
                 StartPosition = FormStartPosition.CenterParent,
@@ -369,41 +376,64 @@ namespace WindowsFormsApp4
           
            Label promptTitle = new Label()
             {
-                Left = 100,
+                Left = 50,
                 Top = 20,
                 Width = 600,
                 Text = title,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Font = new System.Drawing.Font(fontname, 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+                Height = 50,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Font = ttl_font
             };
             prompt.Controls.Add(promptTitle);
 
             TabControl tabcntl = new TabControl()
             {
-                Location = new Point(50, 50),
-                Size = new Size(800, 500),                 
-                Text = "My Control Tabs"
+                Location = new Point(50, 80),
+                Size = new Size(800, 500),     
+                Font = tab_font
             };
+              
+            bool IsTextbox(AppInputParameters.PropertypAndFormType.Form_Type _form_type)
+            {
+                return _form_type.CompareTo(AppInputParameters.PropertypAndFormType.Form_Type.Textbox) == 0;
+            }
 
+            Dictionary<string, string> radio_choice_results = new Dictionary<string, string>();
+            void Radiobutton_Change_Handler(object sender, EventArgs e, string rd_key)
+            {
+                RadioButton rb = sender as RadioButton;
+                if (rb == null) { MessageBox.Show("Sender is not a RadioButton"); return; }
+                if (rb.Checked) { radio_choice_results[rd_key] = rb.Text; }
+            }
+            
             int number_tabs = input_params.OptionSections.Count;
             TabPage[] tabpages = new TabPage[number_tabs];
             for (int i = 0; i < number_tabs; i++)
             {
                 string section_name = input_params.OptionSections.Keys.ElementAt(i);
                 Dictionary<string, AppInputParameters.PropertypAndFormType> section_options = input_params.OptionSections[section_name];
+                
                 tabpages[i] = new TabPage()
                 {
                     Location = new Point(50, 50),
                     Size = new Size(700, 500),
-                    Name = section_name,
-                    Text = section_name
+                    Text = section_name,     
                 };
 
                 int number_options = section_options.Count;
+                int num_boxes = section_options.Where(x =>
+                    IsTextbox(x.Value.form_type))
+                    .ToArray().Length;
+                int num_radios = number_options - num_boxes;
+                Console.WriteLine("Section {0} has {1} boxes and {2} radios", section_name, num_boxes, num_radios);
 
-                TextBox[] textboxes = new TextBox[number_options];
+
                 Label[] labels = new Label[number_options];
-
+                TextBox[] textboxes = new TextBox[num_boxes];
+                Panel[] radio_groups = new Panel[num_radios];
+                List<RadioButton[]> radios = new List<RadioButton[]>();
+                int cur_box_cnt = 0, cur_rad_cnt = 0;
+                
                 int top_label = 70, left_label = 10, width_label = 300;
                 int top_box = 70, left_box = 320, width_box = 420;
                 int spacing = 32;
@@ -422,20 +452,72 @@ namespace WindowsFormsApp4
                         Text = prop_alias,
                         Width = width_label,
                         TextAlign = ContentAlignment.MiddleRight,
-                        Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+                        Font = lbl_font
                     };
                     tabpages[i].Controls.Add(labels[j]);
                     top_label += spacing;
 
-                    textboxes[j] = new TextBox()
+                    if (IsTextbox(section_options[prop_name].form_type))
                     {
-                        Left = left_box,
-                        Top = top_box,
-                        Width = width_box,
-                        Text = prop_val,
-                        Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-                    };
-                    tabpages[i].Controls.Add(textboxes[j]);
+                        textboxes[cur_box_cnt] = new TextBox()
+                        {
+                            Left = left_box,
+                            Top = top_box,
+                            Width = width_box,
+                            Text = prop_val,
+                            Font = box_font
+                        };
+                        tabpages[i].Controls.Add(textboxes[cur_box_cnt]);
+                        cur_box_cnt++;
+                    } else // Radio groups 
+                    {
+                        radio_choice_results.Add(prop_name, ""); 
+                        radio_groups[cur_rad_cnt] = new Panel()
+                        {
+                            Location = new Point(left_box, top_box - 10),
+                            Size = new Size(width_box, spacing + 5),
+                            BorderStyle = BorderStyle.None
+                        };
+
+                        string dict_name = section_options[prop_name].dict_name;
+                        /* Source 
+                         * https://stackoverflow.com/questions/10206557/c-sharp-cast-dictionarystring-anytype-to-dictionarystring-object-involvin
+                         */
+                        IDictionary _dict_ = (IDictionary)input_params.GetPropValue(dict_name);
+                        Dictionary<string, object> dict =
+                            _dict_.Cast<dynamic>()
+                            .ToDictionary(entry => (string)entry.Key, entry => entry.Value);
+
+                        
+                        radios.Add(new RadioButton[dict.Count]);
+
+                        int default_idx = -1;
+                        for (int i_rdbtr = 0; i_rdbtr < dict.Count; i_rdbtr++)
+                        {
+                            var i_key = dict.Keys.ElementAt(i_rdbtr).ToString();
+                            radios[cur_rad_cnt][i_rdbtr] = new RadioButton()
+                            {
+                                Location = new Point(20 + 100 * i_rdbtr, 5),
+                                Size = new Size(100, spacing),
+                                Font = rdb_font,
+                                Text = i_key
+                            };
+                            radios[cur_rad_cnt][i_rdbtr].CheckedChanged += new EventHandler((sender, e) => { Radiobutton_Change_Handler(sender, e, prop_name); });
+
+                            radio_groups[cur_rad_cnt].Controls.Add(radios[cur_rad_cnt][i_rdbtr]);
+
+                            if (string.Compare(prop_val.ToString(), dict[i_key].ToString()) == 0)
+                            {
+                                default_idx = i_rdbtr;
+                            }
+                        }
+                        radios[cur_rad_cnt][default_idx].Checked = true;
+
+                        tabpages[i].Controls.Add(radio_groups[cur_rad_cnt]);
+                        cur_rad_cnt++;
+
+                    }
+
                     top_box += spacing;
 
                 }
@@ -451,7 +533,7 @@ namespace WindowsFormsApp4
                 Left = 490,
                 Width = 120,
                 Height = 30,
-                Top = 900,
+                Top = 600,
                 DialogResult = DialogResult.OK,
                 Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
             };
@@ -461,10 +543,27 @@ namespace WindowsFormsApp4
             prompt.Controls.Add(confirmation);
             prompt.AcceptButton = confirmation;
 
-            string success = "No Sucess here"; 
+            Button exitbutton = new Button()
+            {
+                Text = "Exit",
+                Left = 620,
+                Width = 120,
+                Height = 30,
+                Top = 600,
+                Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+            };
+            exitbutton.Click += (sender, e) =>
+            {
+                prompt.Close();
+                Environment.Exit(1);
+            };
+            prompt.Controls.Add(exitbutton);
+            prompt.CancelButton = exitbutton;
+
+            string success = ""; 
             if (prompt.ShowDialog() == DialogResult.OK)
             {
-                success = "Success here"; 
+                success = "success bro";
             }
 
             return success;

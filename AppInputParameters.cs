@@ -11,40 +11,45 @@ namespace WindowsFormsApp4
     public class AppInputParameters
     {
         #region Input parameters 
+        public string WelcomeMessage { get; set; }
+
         public string hostname { get; set; }
         public int port { get; set; }
 
         public double Fs { get; set; }
-        public int nmax_queue_total { get; set; }
         public int nsamp_per_block { get; set; }
         public int[] chan_idx2plt { get; set; }
         public string channels2plt { get; set; }
 
+        public int nchan { get; set; }  // to plot 
+        public int total_nchan { get; set; }
+        public int chunk_len { get; set; }
+
         public string output_folder { get; set; }
         public string output_file_name { get; set; }
+
+        public double max_sec_plt { get; set; }
+        public int nmax_queue_total { get; set; }
+        public bool refresh_display { get; set; }
+        public Quality display_quality { get; set; }
 
         public Color danger_color { get; set; }
         public Color warning_color { get; set; }
         public Color normal_color { get; set; }
 
-        public double danger_rms_upperbound { get; set; }
-        public double danger_rms_lowerbound { get; set; }
-        public double warning_rms_upperbound { get; set; }
-        public double warning_rms_lowerbound { get; set; }
-
-        public int max_pnt_plt { get; set; }
-        public double max_sec_plt { get; set; }
-
         public double[] display_channel_gains { get; set; }
         public string channel_gain_str { get; set; }
         public double display_channel_sep { get; set; }
 
+        public int max_pnt_plt { get; set; }
+        public string rms_gain_str { get; set; }
         public double[] display_rms_gains { get; set; }
         public double display_rms_sep { get; set; }
 
-        public bool refresh_display { get; set; }
-
-        public Quality display_quality { get; set; }
+        public double danger_rms_upperbound { get; set; }
+        public double danger_rms_lowerbound { get; set; }
+        public double warning_rms_upperbound { get; set; }
+        public double warning_rms_lowerbound { get; set; }
 
         public double nsec_fft { get; set; }
         public double per_overlap { get; set; }
@@ -61,11 +66,6 @@ namespace WindowsFormsApp4
         public double warning_lbp_upperbound { get; set; }
         public double warning_lbp_lowerbound { get; set; }
 
-        public string WelcomeMessage { get; set; }
-        public int nchan { get; set; }
-        public int total_nchan { get; set; }
-        public int chunk_len { get; set; }
-
         public double rms_lvl_reset_sec { get; set; }
         public double rms_lvl_max_sec { get; set; }
         public int rms_lvl_reset_point { get; set; }
@@ -77,7 +77,9 @@ namespace WindowsFormsApp4
         public int lbp_lvl_max_point { get; set; }
 
         public bool alarm_rate_plt_stack { get; set; }
-        private double d_gain = 0.1, d_sep = 25;
+
+        public double d_gain { get; set; }
+        public double d_sep { get; set; }
         private double min_gain = 0.01, min_sep = 0;
 
         public int current_file_count { get; set; }
@@ -85,35 +87,60 @@ namespace WindowsFormsApp4
         #endregion
 
         #region Dictionaries for categorical options 
-        public Dictionary<string, bool> display_refresh_options = new Dictionary<string, bool>
+        public Dictionary<string, bool> display_refresh_options { get; set; }
+
+        public Dictionary<string, Quality> gear_quality_dict { get; set; }
+
+        public Dictionary<string, WindowType> wintype_dict { get; set; }
+
+        public Dictionary<string, bool> stft_saving_options { get; set; }
+
+        public Dictionary<string, bool> scaling_psd_options { get; set; }
+
+        public Dictionary<string, bool> alarm_plot_options { get; set; }
+
+        public void InitializeDictionaries()
         {
-            { "Refreshable", true },
-            { "Continuous", false }
-        };
+            display_refresh_options = new Dictionary<string, bool>
+            {
+                { "Refreshable", true },
+                { "Continuous", false }
+            };
 
-        public Dictionary<string, Quality> gear_quality_dict = new Dictionary<string, Quality>
-        {
-            { "Low", Quality.Low },
-            { "Medium", Quality.Medium },
-            { "High", Quality.High },
-            { "Highest", Quality.Highest }
-        };
+            gear_quality_dict = new Dictionary<string, Quality>
+            {
+                { "Low", Quality.Low },
+                { "Medium", Quality.Medium },
+                { "High", Quality.High },
+                { "Highest", Quality.Highest }
+            };
 
-        public Dictionary<string, WindowType> wintype_dict = new Dictionary<string, STFTCalculator.WindowType>
-        {
-            { "Hanning", WindowType.Hanning },
-            { "Hamming", WindowType.Hamming },
-            { "Triangular", WindowType.Triangle },
-            { "No window",  WindowType.Rectangle },
-        };
+            wintype_dict = new Dictionary<string, WindowType>
+            {
+                { "Hanning", WindowType.Hanning },
+                { "Hamming", WindowType.Hamming },
+                { "Triangular", WindowType.Triangle },
+                { "No window",  WindowType.Rectangle },
+            };
 
+            stft_saving_options = new Dictionary<string, bool>
+            {
+                { "Yes", true },
+                { "No", false }
+            };
 
-        public Dictionary<string, bool> stft_saving_options = new Dictionary<string, bool>
-        {
-            { "Yes", true },
-            { "No", false }
-        };
+            scaling_psd_options = new Dictionary<string, bool>
+            {
+                { "Yes", true },
+                { "No", false }
+            };
 
+            alarm_plot_options = new Dictionary<string, bool>
+            {
+                { "Stacked Series", true },
+                { "Line Series", false }
+            };
+        }
         #endregion
 
         #region Dictionary for parameters to querry 
@@ -165,30 +192,61 @@ namespace WindowsFormsApp4
                 { "hostname",           new PropertypAndFormType("Host name") },
                 { "port",               new PropertypAndFormType("Port") },
                 { "Fs",                 new PropertypAndFormType("Sample frequency (Hz)") },
+                { "total_nchan",        new PropertypAndFormType("Total number of channels") },
                 { "nsamp_per_block",    new PropertypAndFormType("Number of samples / channel / epoch") },
                 { "output_folder",      new PropertypAndFormType("Output folder") },
                 { "output_file_name",   new PropertypAndFormType("Output folder") }
             }},
-            { "Channel and RMS plot",   new Dictionary<string, PropertypAndFormType>{
-                { "channels2plt",       new PropertypAndFormType("Channels to display") },
-                { "nmax_queue_total",   new PropertypAndFormType("RMS window (#points)") },
+            { "General plot options",   new Dictionary<string, PropertypAndFormType> {
+                { "channels2plt",       new PropertypAndFormType("Channels to display (choose only 2), separated by ;") },
+                { "max_sec_plt",        new PropertypAndFormType("Display duration (seconds) [TimeSeries]") },
+                { "refresh_display",    new PropertypAndFormType("Refresh display?", PropertypAndFormType.Form_Type.Radiobutton, "display_refresh_options") },
+                { "display_quality",    new PropertypAndFormType("Display quality (affect performance)", PropertypAndFormType.Form_Type.Radiobutton, "gear_quality_dict") },
+                { "d_gain",             new PropertypAndFormType("Display GAIN change step") },
+                { "d_sep",              new PropertypAndFormType("Display SEPARATION change step") }
             }},
-            { "Spectral Plotting",      new Dictionary<string, PropertypAndFormType> {
-                { "nsec_fft",           new PropertypAndFormType("STFT Length (s)") },
-                { "per_overlap",        new PropertypAndFormType("STFT Overlap (%)") },
-                //{ "window_type",        new PropertypAndFormType("STFT Window", PropertypAndFormType.Form_Type.Radiobutton, "wintype_dict") },
-                { "f_bandpower_lower",  new PropertypAndFormType("Bandpower lower bound (Hz)") },
-                { "f_bandpower_upper",  new PropertypAndFormType("Bandpower upper bound (Hz)") },
-                //{ "stft_saving_option", new PropertypAndFormType("STFT saving options", PropertypAndFormType.Form_Type.Radiobutton, "stft_saving_options") },
-            }}    
-        };
+            { "Channel & RMS Plot",         new Dictionary<string, PropertypAndFormType> {
+                { "channel_gain_str",       new PropertypAndFormType("Channel display gains `ch0;ch1;ch0-ch1`") },
+                { "display_channel_sep",    new PropertypAndFormType("Channel display separation") },
+                { "rms_gain_str",           new PropertypAndFormType("RMS display gains `ch0;ch1`") },
+                { "display_rms_sep",        new PropertypAndFormType("RMS display separation") },
+                { "nmax_queue_total",       new PropertypAndFormType("RMS window (#points)") },
+                { "danger_rms_upperbound",  new PropertypAndFormType("DANGER RMS upper bound") },
+                { "danger_rms_lowerbound",  new PropertypAndFormType("DANGER RMS lower bound") },
+                { "warning_rms_upperbound", new PropertypAndFormType("WARNING RMS upper bound") },
+                { "warning_rms_lowerbound", new PropertypAndFormType("WARNING RMS lower bound") }
+            }},
+            { "Spectral Plot",              new Dictionary<string, PropertypAndFormType> {
+                { "nsec_fft",               new PropertypAndFormType("STFT Length (s)") },
+                { "per_overlap",            new PropertypAndFormType("STFT Overlap (%)") },
+                { "window_type",            new PropertypAndFormType("STFT Window", PropertypAndFormType.Form_Type.Radiobutton, "wintype_dict") },
+                { "f_bandpower_lower",      new PropertypAndFormType("Bandpower lower bound (Hz)") },
+                { "f_bandpower_upper",      new PropertypAndFormType("Bandpower upper bound (Hz)") },
+                { "stft_saving_option",     new PropertypAndFormType("STFT saving options", PropertypAndFormType.Form_Type.Radiobutton, "stft_saving_options") },
+                { "scaling_psd",            new PropertypAndFormType("Scale PSD options",  PropertypAndFormType.Form_Type.Radiobutton, "stft_saving_options") },
+                { "danger_lbp_upperbound",  new PropertypAndFormType("DANGER Band power upper bound") },
+                { "danger_lbp_lowerbound",  new PropertypAndFormType("DANGER Band power lower bound") },
+                { "warning_lbp_upperbound", new PropertypAndFormType("WARNING Band power upper bound") },
+                { "warning_lbp_lowerbound", new PropertypAndFormType("WARNING Band power upper bound") }
+            }},
+            { "Alarm Tally Plot",           new Dictionary<string, PropertypAndFormType> {
+                { "alarm_rate_plt_stack",   new PropertypAndFormType("Alarm rate plot options",  PropertypAndFormType.Form_Type.Radiobutton, "alarm_plot_options") },
+                { "rms_lvl_reset_sec",      new PropertypAndFormType("Tally RMS Alarm every (s)") },
+                { "rms_lvl_max_sec",        new PropertypAndFormType("Display length of RMS Alarm tally (s)") },
+                { "lbp_lvl_reset_sec",      new PropertypAndFormType("Tally Spectral Alarm every (s)") },
+                { "lbp_lvl_max_sec",        new PropertypAndFormType("Display length of Spectral Alarm tally (s)") },
+            }}
+                   
+
+    };
         #endregion 
 
         /* !!! Need to check for conditions of Channel_Idx and Gains_Arr
          */
         #region Constructor with default values 
         public AppInputParameters()
-        {            
+        {
+            InitializeDictionaries(); 
             hostname = "127.0.0.1";
             port = 1234;
 
@@ -221,7 +279,11 @@ namespace WindowsFormsApp4
             max_sec_plt = 10; 
             channel_gain_str = "1;1;1";
             display_channel_sep = 5;
-            display_rms_sep = 0; 
+            rms_gain_str = "1;1"; 
+            display_rms_sep = 0;
+
+            d_gain = 0.1;
+            d_sep = 25;
 
             refresh_display = true;
             display_quality = Quality.High;
@@ -302,17 +364,22 @@ namespace WindowsFormsApp4
 
         public void InitializeDisplayGains()
         {
-            string[] gains_arr = channel_gain_str.Split(';');
-            display_channel_gains = new double[gains_arr.Length];
-            for (int ig = 0; ig < gains_arr.Length; ig++)
+            string[] gains_arr_ch = channel_gain_str.Split(';');
+            display_channel_gains = new double[gains_arr_ch.Length];
+            for (int ig = 0; ig < gains_arr_ch.Length; ig++)
             {
-                double.TryParse(gains_arr[ig], out display_channel_gains[ig]);
+                double.TryParse(gains_arr_ch[ig], out display_channel_gains[ig]);
             }
 
-            display_rms_gains = new double[nchan]; 
-            for (int ich = 0; ich < nchan; ich++)
+            string[] gains_arr_rms = rms_gain_str.Split(';');
+            display_rms_gains = new double[gains_arr_rms.Length]; 
+            if (gains_arr_rms.Length != nchan)
             {
-                display_rms_gains[ich] = 1;  
+                throw new System.ArgumentException("Number of elements in `rms_gain_str` needs to match `nchan` to plot"); 
+            }
+            for (int ig = 0; ig < gains_arr_rms.Length; ig++)
+            {
+                double.TryParse(gains_arr_rms[ig], out display_rms_gains[ig]);
             }
 
         }
@@ -377,6 +444,10 @@ namespace WindowsFormsApp4
         public object GetPropValue(string propName)
         {
             return this.GetType().GetRuntimeProperty(propName)?.GetValue(this);
+        }
+        public Type GetPropType(string propName)
+        {
+            return this.GetType().GetRuntimeProperty(propName)?.GetType();
         }
 
         public void SetPropValue(string propName, object newValue)
