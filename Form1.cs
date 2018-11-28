@@ -121,8 +121,7 @@ namespace WindowsFormsApp4
 
         public Form1()
         {
-            MiscellaneousTesting misctest = new MiscellaneousTesting();
-            misctest.Test3(); 
+            //MiscellaneousTesting misctest = new MiscellaneousTesting();
             InitializeComponent();
 
             using (Prompt prompt = new Prompt("ENTER THE INPUT PARAMETERS", "Input parameters"))

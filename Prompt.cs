@@ -26,9 +26,9 @@ namespace WindowsFormsApp4
         {
             fontname = "Arial";
             input_params = new AppInputParameters();
-            Testing(text, caption); 
+            Result = ParameterInputPrompt(text, caption); 
 
-            Result = ShowDialog(text, caption);
+            //Result = ShowDialog(text, caption);
         }
         private AppInputParameters ShowDialog(string title, string caption)
         {
@@ -356,8 +356,8 @@ namespace WindowsFormsApp4
 
             return input_params;
         }
-
-        public string Testing(string title, string caption)
+        
+        private AppInputParameters ParameterInputPrompt(string title, string caption)
         {
             Font lbl_font = new Font(fontname, 10F, FontStyle.Bold, GraphicsUnit.Point);
             Font box_font = new Font(fontname, 10F, FontStyle.Regular, GraphicsUnit.Point);
@@ -400,23 +400,18 @@ namespace WindowsFormsApp4
                 return _form_type.CompareTo(AppInputParameters.PropertypAndFormType.Form_Type.Textbox) == 0;
             }
 
-            Dictionary<string, string> radio_choice_results = new Dictionary<string, string>();
             Dictionary<string, Dictionary<string, object>> radio_choice_dictionaries = new Dictionary<string, Dictionary<string, object>>(); 
-            void Radiobutton_Change_Handler(object sender, EventArgs e, ref Dictionary<string, string> result_dict, string rd_key )
-            {
-                RadioButton rb = sender as RadioButton;
-                if (rb == null) { MessageBox.Show("Sender is not a RadioButton"); return; }
-                if (rb.Checked) { result_dict.Add(rd_key,rb.Text); }
-            }
             
             int number_tabs = input_params.OptionSections.Count;
             TabPage[] tabpages = new TabPage[number_tabs];
+
+            List<Label[]> labels = new List<Label[]>();
+            List<TextBox[]> textboxes = new List<TextBox[]>();
+            List<Panel[]> radio_groups = new List<Panel[]>();
             List<RadioButton[]>[] radios = new List<RadioButton[]>[number_tabs];
-            /*List<Label[]> labels = new List<Label[]>[number_tabs];
-            List<TextBox[]> textboxes = new List<TextBox[]>[number_tabs];
-            List<Panel[]>[] radio_groups = new List<Panel[]>[number_tabs];*/
             for (int i = 0; i < number_tabs; i++)
             {
+                
                 string section_name = input_params.OptionSections.Keys.ElementAt(i);
                 Dictionary<string, AppInputParameters.PropertypAndFormType> section_options = input_params.OptionSections[section_name];
                 
@@ -434,9 +429,9 @@ namespace WindowsFormsApp4
                 int num_radios = number_options - num_boxes;
 
 
-                Label[] labels = new Label[number_options];
-                TextBox[] textboxes = new TextBox[num_boxes];
-                Panel[] radio_groups = new Panel[num_radios];
+                labels.Add(new Label[number_options]);
+                textboxes.Add(new TextBox[num_boxes]);
+                radio_groups.Add(new Panel[num_radios]);
                 radios[i] = new List<RadioButton[]>(); 
                 int cur_box_cnt = 0, cur_rad_cnt = 0;
                 
@@ -451,7 +446,7 @@ namespace WindowsFormsApp4
                     prop_alias = section_options[prop_name].prop_alias;
                     prop_val = input_params.GetPropValue(prop_name).ToString();
 
-                    labels[j] = new Label()
+                    labels[i][j] = new Label()
                     {
                         Left = left_label,
                         Top = top_label,
@@ -460,12 +455,12 @@ namespace WindowsFormsApp4
                         TextAlign = ContentAlignment.MiddleRight,
                         Font = lbl_font
                     };
-                    tabpages[i].Controls.Add(labels[j]);
+                    tabpages[i].Controls.Add(labels[i][j]);
                     top_label += spacing;
 
                     if (IsTextbox(section_options[prop_name].form_type))
                     {
-                        textboxes[cur_box_cnt] = new TextBox()
+                        textboxes[i][cur_box_cnt] = new TextBox()
                         {
                             Left = left_box,
                             Top = top_box,
@@ -474,14 +469,13 @@ namespace WindowsFormsApp4
                             Font = box_font
                         };
 
-                        cntl_list.Add(prop_name, textboxes[cur_box_cnt]); 
-                        tabpages[i].Controls.Add(textboxes[cur_box_cnt]);
+                        cntl_list.Add(prop_name, textboxes[i][cur_box_cnt]); 
+                        tabpages[i].Controls.Add(textboxes[i][cur_box_cnt]);
                         cur_box_cnt++;
                     }
                     else // Radio groups 
                     {
-                        //radio_choice_results.Add(prop_name, ""); 
-                        radio_groups[cur_rad_cnt] = new Panel()
+                        radio_groups[i][cur_rad_cnt] = new Panel()
                         {
                             Location = new Point(left_box, top_box - 10),
                             Size = new Size(width_box, spacing + 5),
@@ -511,9 +505,8 @@ namespace WindowsFormsApp4
                                 Font = rdb_font,
                                 Text = i_key
                             };
-                            radios[i][cur_rad_cnt][i_rdbtr].CheckedChanged += new EventHandler((sender, e) => { Radiobutton_Change_Handler(sender, e, ref radio_choice_results, prop_name); });
 
-                            radio_groups[cur_rad_cnt].Controls.Add(radios[i][cur_rad_cnt][i_rdbtr]);
+                            radio_groups[i][cur_rad_cnt].Controls.Add(radios[i][cur_rad_cnt][i_rdbtr]);
 
                             if (string.Compare(prop_val.ToString(), dict[i_key].ToString()) == 0)
                             {
@@ -522,10 +515,9 @@ namespace WindowsFormsApp4
                         }
                         radios[i][cur_rad_cnt][default_idx].Checked = true;
 
-                        cntl_list.Add(prop_name, radio_groups[cur_rad_cnt]);
-                        tabpages[i].Controls.Add(radio_groups[cur_rad_cnt]);
-                        cur_rad_cnt++;                      
-
+                        cntl_list.Add(prop_name, radio_groups[i][cur_rad_cnt]);
+                        tabpages[i].Controls.Add(radio_groups[i][cur_rad_cnt]);
+                        cur_rad_cnt++;
                     }
 
                     top_box += spacing;
@@ -536,7 +528,36 @@ namespace WindowsFormsApp4
 
             prompt.Controls.Add(tabcntl);
 
-
+            /*
+            int idx_output_folder = name_idx_dict["output_folder"], idx_output_file_name = name_idx_dict["output_file_name"];
+            Button openfolderdialog = new Button()
+            {
+                Text = "Choose folder and \n file name",
+                Height = 58,
+                Left = textBoxes[idx_output_folder].Left + textBoxes[idx_output_folder].Width + 10,
+                Width = 140,
+                Top = textBoxes[idx_output_folder].Top,
+                Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+            };
+            openfolderdialog.Click += (sender, e) => {
+                // https://stackoverflow.com/questions/11624298/how-to-use-openfiledialog-to-select-a-folder by Daniel Ballinger 
+                OpenFileDialog folderBrowser = new OpenFileDialog();
+                folderBrowser.ValidateNames = false;
+                folderBrowser.CheckFileExists = false;
+                folderBrowser.CheckPathExists = true;
+                folderBrowser.InitialDirectory = input_params.output_folder;
+                folderBrowser.FileName = "Choose folder then enter desired file name here";
+                if (folderBrowser.ShowDialog() == DialogResult.OK)
+                {
+                    string fileName = Path.GetFileName(folderBrowser.FileName);
+                    string folderPath = Path.GetDirectoryName(folderBrowser.FileName);
+                    textBoxes[idx_output_folder].Text = folderPath;
+                    textBoxes[idx_output_file_name].Text = fileName;
+                }
+            };
+            
+            prompt.Controls.Add(openfolderdialog);
+            */
             Button confirmation = new Button()
             {
                 Text = "Continue",
@@ -569,11 +590,9 @@ namespace WindowsFormsApp4
             };
             prompt.Controls.Add(exitbutton);
             prompt.CancelButton = exitbutton;
-
-            string success = ""; 
+            
             if (prompt.ShowDialog() == DialogResult.OK)
             {
-                success = "success bro";
                 foreach (var item in cntl_list)
                 {
                     string prop_name = item.Key;
@@ -585,22 +604,25 @@ namespace WindowsFormsApp4
                     } 
                     else if (cntl_obj is Panel)
                     {
-                        string new_key = radio_choice_results[prop_name];
-                        Dictionary<string, object> prop_dict = radio_choice_dictionaries[prop_name]; 
+                        Dictionary<string, object> prop_dict = radio_choice_dictionaries[prop_name];
+                        // a more efficient way to find checked values
+                        // https://stackoverflow.com/questions/1797907/which-radio-button-in-the-group-is-checked by SLaks
+                        var checkedButton = cntl_obj.Controls.OfType<RadioButton>()
+                                      .FirstOrDefault(r => r.Checked);
+                        string new_key = checkedButton.Text;
                         input_params.SetPropValue(prop_name, prop_dict[new_key]);
                     } 
                     else
                     {
-                        throw new System.Exception("The Control object has to be either a `TextBox`" +
+                        throw new Exception("The Control object has to be either a `TextBox`" +
                             "or a `Panel` for radio groups, not" + cntl_obj.GetType().ToString());
                     }
-
-
-                    Console.WriteLine("`{0}` \t -> {1}", prop_name, input_params.GetPropValue(prop_name).ToString());
+                                        
                 }
+                
             }
 
-            return success;
+            return input_params;
         }
         public void Dispose()
         {
