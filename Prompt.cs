@@ -374,7 +374,7 @@ namespace WindowsFormsApp4
                 TopMost = true
             };
           
-           Label promptTitle = new Label()
+            Label promptTitle = new Label()
             {
                 Left = 50,
                 Top = 20,
@@ -392,22 +392,29 @@ namespace WindowsFormsApp4
                 Size = new Size(800, 500),     
                 Font = tab_font
             };
-              
+
+            Dictionary<string, Control> cntl_list = new Dictionary<string, Control>();
+
             bool IsTextbox(AppInputParameters.PropertypAndFormType.Form_Type _form_type)
             {
                 return _form_type.CompareTo(AppInputParameters.PropertypAndFormType.Form_Type.Textbox) == 0;
             }
 
             Dictionary<string, string> radio_choice_results = new Dictionary<string, string>();
-            void Radiobutton_Change_Handler(object sender, EventArgs e, string rd_key)
+            Dictionary<string, Dictionary<string, object>> radio_choice_dictionaries = new Dictionary<string, Dictionary<string, object>>(); 
+            void Radiobutton_Change_Handler(object sender, EventArgs e, ref Dictionary<string, string> result_dict, string rd_key )
             {
                 RadioButton rb = sender as RadioButton;
                 if (rb == null) { MessageBox.Show("Sender is not a RadioButton"); return; }
-                if (rb.Checked) { radio_choice_results[rd_key] = rb.Text; }
+                if (rb.Checked) { result_dict.Add(rd_key,rb.Text); }
             }
             
             int number_tabs = input_params.OptionSections.Count;
             TabPage[] tabpages = new TabPage[number_tabs];
+            List<RadioButton[]>[] radios = new List<RadioButton[]>[number_tabs];
+            /*List<Label[]> labels = new List<Label[]>[number_tabs];
+            List<TextBox[]> textboxes = new List<TextBox[]>[number_tabs];
+            List<Panel[]>[] radio_groups = new List<Panel[]>[number_tabs];*/
             for (int i = 0; i < number_tabs; i++)
             {
                 string section_name = input_params.OptionSections.Keys.ElementAt(i);
@@ -425,13 +432,12 @@ namespace WindowsFormsApp4
                     IsTextbox(x.Value.form_type))
                     .ToArray().Length;
                 int num_radios = number_options - num_boxes;
-                Console.WriteLine("Section {0} has {1} boxes and {2} radios", section_name, num_boxes, num_radios);
 
 
                 Label[] labels = new Label[number_options];
                 TextBox[] textboxes = new TextBox[num_boxes];
                 Panel[] radio_groups = new Panel[num_radios];
-                List<RadioButton[]> radios = new List<RadioButton[]>();
+                radios[i] = new List<RadioButton[]>(); 
                 int cur_box_cnt = 0, cur_rad_cnt = 0;
                 
                 int top_label = 70, left_label = 10, width_label = 300;
@@ -467,11 +473,14 @@ namespace WindowsFormsApp4
                             Text = prop_val,
                             Font = box_font
                         };
+
+                        cntl_list.Add(prop_name, textboxes[cur_box_cnt]); 
                         tabpages[i].Controls.Add(textboxes[cur_box_cnt]);
                         cur_box_cnt++;
-                    } else // Radio groups 
+                    }
+                    else // Radio groups 
                     {
-                        radio_choice_results.Add(prop_name, ""); 
+                        //radio_choice_results.Add(prop_name, ""); 
                         radio_groups[cur_rad_cnt] = new Panel()
                         {
                             Location = new Point(left_box, top_box - 10),
@@ -487,34 +496,35 @@ namespace WindowsFormsApp4
                         Dictionary<string, object> dict =
                             _dict_.Cast<dynamic>()
                             .ToDictionary(entry => (string)entry.Key, entry => entry.Value);
+                        radio_choice_dictionaries.Add(prop_name, dict);
 
-                        
-                        radios.Add(new RadioButton[dict.Count]);
+                        radios[i].Add(new RadioButton[dict.Count]);
 
                         int default_idx = -1;
                         for (int i_rdbtr = 0; i_rdbtr < dict.Count; i_rdbtr++)
                         {
                             var i_key = dict.Keys.ElementAt(i_rdbtr).ToString();
-                            radios[cur_rad_cnt][i_rdbtr] = new RadioButton()
+                            radios[i][cur_rad_cnt][i_rdbtr] = new RadioButton()
                             {
                                 Location = new Point(20 + 100 * i_rdbtr, 5),
                                 Size = new Size(100, spacing),
                                 Font = rdb_font,
                                 Text = i_key
                             };
-                            radios[cur_rad_cnt][i_rdbtr].CheckedChanged += new EventHandler((sender, e) => { Radiobutton_Change_Handler(sender, e, prop_name); });
+                            radios[i][cur_rad_cnt][i_rdbtr].CheckedChanged += new EventHandler((sender, e) => { Radiobutton_Change_Handler(sender, e, ref radio_choice_results, prop_name); });
 
-                            radio_groups[cur_rad_cnt].Controls.Add(radios[cur_rad_cnt][i_rdbtr]);
+                            radio_groups[cur_rad_cnt].Controls.Add(radios[i][cur_rad_cnt][i_rdbtr]);
 
                             if (string.Compare(prop_val.ToString(), dict[i_key].ToString()) == 0)
                             {
                                 default_idx = i_rdbtr;
                             }
                         }
-                        radios[cur_rad_cnt][default_idx].Checked = true;
+                        radios[i][cur_rad_cnt][default_idx].Checked = true;
 
+                        cntl_list.Add(prop_name, radio_groups[cur_rad_cnt]);
                         tabpages[i].Controls.Add(radio_groups[cur_rad_cnt]);
-                        cur_rad_cnt++;
+                        cur_rad_cnt++;                      
 
                     }
 
@@ -564,6 +574,30 @@ namespace WindowsFormsApp4
             if (prompt.ShowDialog() == DialogResult.OK)
             {
                 success = "success bro";
+                foreach (var item in cntl_list)
+                {
+                    string prop_name = item.Key;
+                    Control cntl_obj = item.Value; 
+                    if (cntl_obj is TextBox)
+                    {
+                        string set_new_val = cntl_obj.Text;
+                        input_params.SetPropValue(prop_name, set_new_val);
+                    } 
+                    else if (cntl_obj is Panel)
+                    {
+                        string new_key = radio_choice_results[prop_name];
+                        Dictionary<string, object> prop_dict = radio_choice_dictionaries[prop_name]; 
+                        input_params.SetPropValue(prop_name, prop_dict[new_key]);
+                    } 
+                    else
+                    {
+                        throw new System.Exception("The Control object has to be either a `TextBox`" +
+                            "or a `Panel` for radio groups, not" + cntl_obj.GetType().ToString());
+                    }
+
+
+                    Console.WriteLine("`{0}` \t -> {1}", prop_name, input_params.GetPropValue(prop_name).ToString());
+                }
             }
 
             return success;

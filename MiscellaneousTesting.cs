@@ -71,5 +71,47 @@ namespace WindowsFormsApp4
                 .ToList();
             File.WriteAllLines(filepath, next_col);
         }
+
+        public class TestClass
+        {
+            public int num;
+            public string text; 
+            public TestClass(int _num_, string _text_)
+            {
+                num = _num_;
+                text = _text_;
+            }
+            public string PrintTest()
+            {
+                return string.Format("Num = {0} ;\t Text = {1}", num, text); 
+            }
+        }
+        public void Test3()
+        {
+            List<TestClass> my_list = new List<TestClass>();
+            Dictionary<string, TestClass> my_dict = new Dictionary<string, TestClass>();
+            Dictionary<string, int> param_dict = new Dictionary<string, int>
+            {
+                { "Neuroscience", 2 },
+                { "Batman and Robin", 5 },
+                { "ABC", 3 }
+            };
+            for (int i = 0; i < param_dict.Count; i++)
+            {
+                string key = param_dict.Keys.ElementAt(i);
+                int val = param_dict[key]; 
+                TestClass[] my_tests = new TestClass[val]; 
+                for (int j = 0; j < val; j++)
+                {
+                    string new_key = string.Format("{0} - {1} - {2}", key.ToLower(), val, j);
+                    my_tests[j] = new TestClass(val*2+j, new_key);
+                    my_dict.Add(new_key, my_tests[j]);
+                }
+            }
+            foreach(var item in my_dict)
+            {
+                Console.WriteLine("Key = {0} and Value = {1}", item.Key, item.Value.PrintTest());
+            }
+        }
     }
 }
