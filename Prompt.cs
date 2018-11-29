@@ -393,25 +393,20 @@ namespace WindowsFormsApp4
                 Font = tab_font
             };
 
-            Dictionary<string, Control> cntl_list = new Dictionary<string, Control>();
-
-            bool IsTextbox(AppInputParameters.PropertypAndFormType.Form_Type _form_type)
-            {
-                return _form_type.CompareTo(AppInputParameters.PropertypAndFormType.Form_Type.Textbox) == 0;
-            }
-
             Dictionary<string, Dictionary<string, object>> radio_choice_dictionaries = new Dictionary<string, Dictionary<string, object>>(); 
             
             int number_tabs = input_params.OptionSections.Count;
             TabPage[] tabpages = new TabPage[number_tabs];
 
-            List<Label[]> labels = new List<Label[]>();
-            List<TextBox[]> textboxes = new List<TextBox[]>();
-            List<Panel[]> radio_groups = new List<Panel[]>();
-            List<RadioButton[]>[] radios = new List<RadioButton[]>[number_tabs];
+            Dictionary<string, Control> cntl_list = new Dictionary<string, Control>();
+            List<RadioButton> radios = new List<RadioButton>();
+
+            const int top_label_begin = 70, left_label = 10, width_label = 300;
+            const int top_box_begin = 70, left_box = 320, width_box = 420;
+            const int spacing = 32;
+
             for (int i = 0; i < number_tabs; i++)
-            {
-                
+            {                
                 string section_name = input_params.OptionSections.Keys.ElementAt(i);
                 Dictionary<string, AppInputParameters.PropertypAndFormType> section_options = input_params.OptionSections[section_name];
                 
@@ -423,21 +418,9 @@ namespace WindowsFormsApp4
                 };
 
                 int number_options = section_options.Count;
-                int num_boxes = section_options.Where(x =>
-                    IsTextbox(x.Value.form_type))
-                    .ToArray().Length;
-                int num_radios = number_options - num_boxes;
 
-
-                labels.Add(new Label[number_options]);
-                textboxes.Add(new TextBox[num_boxes]);
-                radio_groups.Add(new Panel[num_radios]);
-                radios[i] = new List<RadioButton[]>(); 
-                int cur_box_cnt = 0, cur_rad_cnt = 0;
-                
-                int top_label = 70, left_label = 10, width_label = 300;
-                int top_box = 70, left_box = 320, width_box = 420;
-                int spacing = 32;
+                int top_label = top_box_begin;
+                int top_box = top_label_begin; 
 
                 string prop_alias, prop_name, prop_val;
                 for (int j = 0; j < number_options; j++)
@@ -446,7 +429,7 @@ namespace WindowsFormsApp4
                     prop_alias = section_options[prop_name].prop_alias;
                     prop_val = input_params.GetPropValue(prop_name).ToString();
 
-                    labels[i][j] = new Label()
+                    cntl_list.Add("label_of_" + prop_name, new Label()
                     {
                         Left = left_label,
                         Top = top_label,
@@ -454,33 +437,30 @@ namespace WindowsFormsApp4
                         Width = width_label,
                         TextAlign = ContentAlignment.MiddleRight,
                         Font = lbl_font
-                    };
-                    tabpages[i].Controls.Add(labels[i][j]);
+                    });
+                    tabpages[i].Controls.Add(cntl_list["label_of_" + prop_name]);
                     top_label += spacing;
 
-                    if (IsTextbox(section_options[prop_name].form_type))
+                    if (section_options[prop_name].IsTextBox())
                     {
-                        textboxes[i][cur_box_cnt] = new TextBox()
+                        cntl_list.Add(prop_name, new TextBox()
                         {
                             Left = left_box,
                             Top = top_box,
                             Width = width_box,
                             Text = prop_val,
                             Font = box_font
-                        };
+                        });
 
-                        cntl_list.Add(prop_name, textboxes[i][cur_box_cnt]); 
-                        tabpages[i].Controls.Add(textboxes[i][cur_box_cnt]);
-                        cur_box_cnt++;
                     }
-                    else // Radio groups 
+                    else if (section_options[prop_name].IsRadiobuttonGroup())
                     {
-                        radio_groups[i][cur_rad_cnt] = new Panel()
+                        cntl_list.Add(prop_name, new Panel()
                         {
                             Location = new Point(left_box, top_box - 10),
                             Size = new Size(width_box, spacing + 5),
                             BorderStyle = BorderStyle.None
-                        };
+                        });
 
                         string dict_name = section_options[prop_name].dict_name;
                         /* Source 
@@ -490,36 +470,31 @@ namespace WindowsFormsApp4
                         Dictionary<string, object> dict =
                             _dict_.Cast<dynamic>()
                             .ToDictionary(entry => (string)entry.Key, entry => entry.Value);
-                        radio_choice_dictionaries.Add(prop_name, dict);
-
-                        radios[i].Add(new RadioButton[dict.Count]);
+                        radio_choice_dictionaries.Add(prop_name, dict);                        
 
                         int default_idx = -1;
                         for (int i_rdbtr = 0; i_rdbtr < dict.Count; i_rdbtr++)
                         {
                             var i_key = dict.Keys.ElementAt(i_rdbtr).ToString();
-                            radios[i][cur_rad_cnt][i_rdbtr] = new RadioButton()
+                            radios.Add(new RadioButton()
                             {
                                 Location = new Point(20 + 100 * i_rdbtr, 5),
                                 Size = new Size(100, spacing),
                                 Font = rdb_font,
                                 Text = i_key
-                            };
+                            });
 
-                            radio_groups[i][cur_rad_cnt].Controls.Add(radios[i][cur_rad_cnt][i_rdbtr]);
+                            cntl_list[prop_name].Controls.Add(radios[radios.Count - 1]);
 
                             if (string.Compare(prop_val.ToString(), dict[i_key].ToString()) == 0)
                             {
-                                default_idx = i_rdbtr;
+                                default_idx = radios.Count - 1;
                             }
                         }
-                        radios[i][cur_rad_cnt][default_idx].Checked = true;
-
-                        cntl_list.Add(prop_name, radio_groups[i][cur_rad_cnt]);
-                        tabpages[i].Controls.Add(radio_groups[i][cur_rad_cnt]);
-                        cur_rad_cnt++;
+                        radios[default_idx].Checked = true;                        
                     }
 
+                    tabpages[i].Controls.Add(cntl_list[prop_name]);
                     top_box += spacing;
 
                 }
@@ -528,16 +503,15 @@ namespace WindowsFormsApp4
 
             prompt.Controls.Add(tabcntl);
 
-            /*
-            int idx_output_folder = name_idx_dict["output_folder"], idx_output_file_name = name_idx_dict["output_file_name"];
+            int folderdialog_horzshift = 200; 
             Button openfolderdialog = new Button()
             {
-                Text = "Choose folder and \n file name",
-                Height = 58,
-                Left = textBoxes[idx_output_folder].Left + textBoxes[idx_output_folder].Width + 10,
-                Width = 140,
-                Top = textBoxes[idx_output_folder].Top,
-                Font = new System.Drawing.Font(fontname, 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+                Text = "Choose folder and file name",
+                Height = cntl_list["output_file_name"].Height + 10,
+                Left = left_box + folderdialog_horzshift,
+                Width = width_box - folderdialog_horzshift,
+                Top = cntl_list["output_file_name"].Top + spacing,
+                Font = box_font
             };
             openfolderdialog.Click += (sender, e) => {
                 // https://stackoverflow.com/questions/11624298/how-to-use-openfiledialog-to-select-a-folder by Daniel Ballinger 
@@ -551,13 +525,13 @@ namespace WindowsFormsApp4
                 {
                     string fileName = Path.GetFileName(folderBrowser.FileName);
                     string folderPath = Path.GetDirectoryName(folderBrowser.FileName);
-                    textBoxes[idx_output_folder].Text = folderPath;
-                    textBoxes[idx_output_file_name].Text = fileName;
+                    cntl_list["output_folder"].Text = folderPath;
+                    cntl_list["output_file_name"].Text = fileName;
                 }
             };
+
+            tabpages[0].Controls.Add(openfolderdialog);
             
-            prompt.Controls.Add(openfolderdialog);
-            */
             Button confirmation = new Button()
             {
                 Text = "Continue",
@@ -614,8 +588,7 @@ namespace WindowsFormsApp4
                     } 
                     else
                     {
-                        throw new Exception("The Control object has to be either a `TextBox`" +
-                            "or a `Panel` for radio groups, not" + cntl_obj.GetType().ToString());
+                        continue; 
                     }
                                         
                 }

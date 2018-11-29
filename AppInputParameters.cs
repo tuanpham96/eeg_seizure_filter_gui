@@ -177,12 +177,20 @@ namespace WindowsFormsApp4
             public string prop_alias;
             public Form_Type form_type;
             public string dict_name; // for radiobutton option of the form type; will refer to the AppInputParameters parameter 
-            public enum Form_Type { Textbox, Radiobutton };
+            public enum Form_Type { Textbox, RadiobuttonGroup };
             public PropertypAndFormType(string _prop_alias_, Form_Type _form_type_ = Form_Type.Textbox, string _dict_name_ = null)
             {
                 prop_alias = _prop_alias_;
                 form_type = _form_type_;
                 dict_name = _dict_name_;
+            }
+            public bool IsTextBox()
+            {
+                return form_type.CompareTo(AppInputParameters.PropertypAndFormType.Form_Type.Textbox) == 0;
+            }
+            public bool IsRadiobuttonGroup()
+            {
+                return form_type.CompareTo(AppInputParameters.PropertypAndFormType.Form_Type.RadiobuttonGroup) == 0;
             }
         }
 
@@ -200,8 +208,8 @@ namespace WindowsFormsApp4
             { "General plot options",   new Dictionary<string, PropertypAndFormType> {
                 { "channels2plt",       new PropertypAndFormType("Channels to display (choose only 2), separated by ;") },
                 { "max_sec_plt",        new PropertypAndFormType("Display duration (seconds) [TimeSeries]") },
-                { "refresh_display",    new PropertypAndFormType("Refresh display?", PropertypAndFormType.Form_Type.Radiobutton, "display_refresh_options") },
-                { "display_quality",    new PropertypAndFormType("Display quality (affect performance)", PropertypAndFormType.Form_Type.Radiobutton, "gear_quality_dict") },
+                { "refresh_display",    new PropertypAndFormType("Refresh display?", PropertypAndFormType.Form_Type.RadiobuttonGroup, "display_refresh_options") },
+                { "display_quality",    new PropertypAndFormType("Display quality (affect performance)", PropertypAndFormType.Form_Type.RadiobuttonGroup, "gear_quality_dict") },
                 { "d_gain",             new PropertypAndFormType("Display GAIN change step") },
                 { "d_sep",              new PropertypAndFormType("Display SEPARATION change step") }
             }},
@@ -219,18 +227,18 @@ namespace WindowsFormsApp4
             { "Spectral Plot",              new Dictionary<string, PropertypAndFormType> {
                 { "nsec_fft",               new PropertypAndFormType("STFT Length (s)") },
                 { "per_overlap",            new PropertypAndFormType("STFT Overlap (%)") },
-                { "window_type",            new PropertypAndFormType("STFT Window", PropertypAndFormType.Form_Type.Radiobutton, "wintype_dict") },
+                { "window_type",            new PropertypAndFormType("STFT Window", PropertypAndFormType.Form_Type.RadiobuttonGroup, "wintype_dict") },
                 { "f_bandpower_lower",      new PropertypAndFormType("Bandpower lower bound (Hz)") },
                 { "f_bandpower_upper",      new PropertypAndFormType("Bandpower upper bound (Hz)") },
-                { "stft_saving_option",     new PropertypAndFormType("STFT saving options", PropertypAndFormType.Form_Type.Radiobutton, "stft_saving_options") },
-                { "scaling_psd",            new PropertypAndFormType("Scale PSD options",  PropertypAndFormType.Form_Type.Radiobutton, "stft_saving_options") },
+                { "stft_saving_option",     new PropertypAndFormType("STFT saving options", PropertypAndFormType.Form_Type.RadiobuttonGroup, "stft_saving_options") },
+                { "scaling_psd",            new PropertypAndFormType("Scale PSD options",  PropertypAndFormType.Form_Type.RadiobuttonGroup, "stft_saving_options") },
                 { "danger_lbp_upperbound",  new PropertypAndFormType("DANGER Band power upper bound") },
                 { "danger_lbp_lowerbound",  new PropertypAndFormType("DANGER Band power lower bound") },
                 { "warning_lbp_upperbound", new PropertypAndFormType("WARNING Band power upper bound") },
                 { "warning_lbp_lowerbound", new PropertypAndFormType("WARNING Band power upper bound") }
             }},
             { "Alarm Tally Plot",           new Dictionary<string, PropertypAndFormType> {
-                { "alarm_rate_plt_stack",   new PropertypAndFormType("Alarm rate plot options",  PropertypAndFormType.Form_Type.Radiobutton, "alarm_plot_options") },
+                { "alarm_rate_plt_stack",   new PropertypAndFormType("Alarm rate plot options",  PropertypAndFormType.Form_Type.RadiobuttonGroup, "alarm_plot_options") },
                 { "rms_lvl_reset_sec",      new PropertypAndFormType("Tally RMS Alarm every (s)") },
                 { "rms_lvl_max_sec",        new PropertypAndFormType("Display length of RMS Alarm tally (s)") },
                 { "lbp_lvl_reset_sec",      new PropertypAndFormType("Tally Spectral Alarm every (s)") },
