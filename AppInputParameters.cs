@@ -177,7 +177,7 @@ namespace WindowsFormsApp4
             public string prop_alias;
             public Form_Type form_type;
             public string dict_name; // for radiobutton option of the form type; will refer to the AppInputParameters parameter 
-            public enum Form_Type { Textbox, RadiobuttonGroup };
+            public enum Form_Type { Textbox, RadiobuttonGroup, ColorButton };
             public PropertypAndFormType(string _prop_alias_, Form_Type _form_type_ = Form_Type.Textbox, string _dict_name_ = null)
             {
                 prop_alias = _prop_alias_;
@@ -191,6 +191,10 @@ namespace WindowsFormsApp4
             public bool IsRadiobuttonGroup()
             {
                 return form_type.CompareTo(AppInputParameters.PropertypAndFormType.Form_Type.RadiobuttonGroup) == 0;
+            }
+            public bool IsColorButton()
+            {
+                return form_type.CompareTo(AppInputParameters.PropertypAndFormType.Form_Type.ColorButton) == 0;
             }
         }
 
@@ -210,8 +214,11 @@ namespace WindowsFormsApp4
                 { "max_sec_plt",        new PropertypAndFormType("Display duration (seconds) [TimeSeries]") },
                 { "refresh_display",    new PropertypAndFormType("Refresh display?", PropertypAndFormType.Form_Type.RadiobuttonGroup, "display_refresh_options") },
                 { "display_quality",    new PropertypAndFormType("Display quality (affect performance)", PropertypAndFormType.Form_Type.RadiobuttonGroup, "gear_quality_dict") },
-                { "d_gain",             new PropertypAndFormType("Display GAIN change step") },
-                { "d_sep",              new PropertypAndFormType("Display SEPARATION change step") }
+                { "d_gain",             new PropertypAndFormType("Display Vertical GAIN change step") },
+                { "d_sep",              new PropertypAndFormType("Display Vertical OFFSET change step") },
+                { "danger_color",       new PropertypAndFormType("Danger color", PropertypAndFormType.Form_Type.ColorButton) },
+                { "warning_color",      new PropertypAndFormType("Warning color", PropertypAndFormType.Form_Type.ColorButton) },
+                { "normal_color",       new PropertypAndFormType("Normal color", PropertypAndFormType.Form_Type.ColorButton) }
             }},
             { "Channel & RMS Plot",         new Dictionary<string, PropertypAndFormType> {
                 { "channel_gain_str",       new PropertypAndFormType("Channel display gains `ch0;ch1;ch0-ch1`") },
@@ -268,12 +275,6 @@ namespace WindowsFormsApp4
             save_every = (int) (30 * 60 * Fs); // 30 mins 
             output_folder = @"C:\Users\Towle\Desktop\Tuan\general_towle\data";
             output_file_name = "testfile_TP.csv";
-
-            /*
-            danger_color = Color.FromArgb(255, 0, 0);
-            warning_color = Color.FromArgb(255, 255, 0);
-            normal_color = Color.FromArgb(0, 255, 0);
-            */
 
             normal_color = BrushToColor(System.Windows.Media.Brushes.Green);
             warning_color = BrushToColor(System.Windows.Media.Brushes.Gold);
@@ -416,7 +417,15 @@ namespace WindowsFormsApp4
 
         public static System.Drawing.Color BrushToColor(System.Windows.Media.SolidColorBrush br)
         {
-            return Color.FromArgb(br.Color.A, br.Color.R, br.Color.G, br.Color.B); 
+            return Color.FromArgb(br.Color.A, br.Color.R, br.Color.G, br.Color.B);
+        }
+
+        public static System.Windows.Media.SolidColorBrush ColorToBrush(System.Drawing.Color color)
+        {
+            return new System.Windows.Media.SolidColorBrush
+            {
+                Color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B)
+            };
         }
         #endregion
         #region Specific Set methods during running application 

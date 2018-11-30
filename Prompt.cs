@@ -399,6 +399,7 @@ namespace WindowsFormsApp4
             TabPage[] tabpages = new TabPage[number_tabs];
 
             Dictionary<string, Control> cntl_list = new Dictionary<string, Control>();
+            Dictionary<string, CommonDialog> dialog_list = new Dictionary<string, CommonDialog>(); 
             List<RadioButton> radios = new List<RadioButton>();
 
             const int top_label_begin = 70, left_label = 10, width_label = 300;
@@ -420,14 +421,14 @@ namespace WindowsFormsApp4
                 int number_options = section_options.Count;
 
                 int top_label = top_box_begin;
-                int top_box = top_label_begin; 
+                int top_box = top_label_begin;
 
-                string prop_alias, prop_name, prop_val;
+                string prop_alias, prop_name; 
                 for (int j = 0; j < number_options; j++)
                 {
                     prop_name = section_options.Keys.ElementAt(j);
                     prop_alias = section_options[prop_name].prop_alias;
-                    prop_val = input_params.GetPropValue(prop_name).ToString();
+                    var prop_val = input_params.GetPropValue(prop_name);
 
                     cntl_list.Add("label_of_" + prop_name, new Label()
                     {
@@ -448,7 +449,7 @@ namespace WindowsFormsApp4
                             Left = left_box,
                             Top = top_box,
                             Width = width_box,
-                            Text = prop_val,
+                            Text = prop_val.ToString(),
                             Font = box_font
                         });
 
@@ -470,7 +471,7 @@ namespace WindowsFormsApp4
                         Dictionary<string, object> dict =
                             _dict_.Cast<dynamic>()
                             .ToDictionary(entry => (string)entry.Key, entry => entry.Value);
-                        radio_choice_dictionaries.Add(prop_name, dict);                        
+                        radio_choice_dictionaries.Add(prop_name, dict);
 
                         int default_idx = -1;
                         for (int i_rdbtr = 0; i_rdbtr < dict.Count; i_rdbtr++)
@@ -491,9 +492,41 @@ namespace WindowsFormsApp4
                                 default_idx = radios.Count - 1;
                             }
                         }
-                        radios[default_idx].Checked = true;                        
+                        radios[default_idx].Checked = true;
                     }
+                    else if (section_options[prop_name].IsColorButton())
+                    {
+                        cntl_list.Add(prop_name, new Button()
+                        {
+                            Left = left_box,
+                            Top = top_box,
+                            Width = width_box / 3,
+                            Font = box_font,
+                            BackColor = (Color)prop_val,
+                            FlatStyle = FlatStyle.Flat,
+                        });
+                        (new ToolTip()).SetToolTip(cntl_list[prop_name], "Click to select " + prop_alias); 
+                        ((Button)cntl_list[prop_name]).FlatAppearance.BorderSize = 0;
+                        cntl_list[prop_name].Click += (sender, e) => 
+                        {
+                            string color_dialog_key = prop_name;
+                            if (!dialog_list.ContainsKey(color_dialog_key))
+                            {
+                                dialog_list.Add(color_dialog_key, new ColorDialog()); 
+                            }
+                            dialog_list[color_dialog_key] = new ColorDialog()
+                            {
+                                AllowFullOpen = true,
+                                ShowHelp = false,
+                                Color = (sender as Button).BackColor
+                            };
 
+                            if (dialog_list[color_dialog_key].ShowDialog() == DialogResult.OK)
+                            {
+                                (sender as Button).BackColor = ((ColorDialog)dialog_list[color_dialog_key]).Color;
+                            }
+                        };
+                    }
                     tabpages[i].Controls.Add(cntl_list[prop_name]);
                     top_box += spacing;
 
@@ -515,11 +548,13 @@ namespace WindowsFormsApp4
             };
             openfolderdialog.Click += (sender, e) => {
                 // https://stackoverflow.com/questions/11624298/how-to-use-openfiledialog-to-select-a-folder by Daniel Ballinger 
-                OpenFileDialog folderBrowser = new OpenFileDialog();
-                folderBrowser.ValidateNames = false;
-                folderBrowser.CheckFileExists = false;
-                folderBrowser.CheckPathExists = true;
-                folderBrowser.InitialDirectory = input_params.output_folder;
+                OpenFileDialog folderBrowser = new OpenFileDialog()
+                {
+                    ValidateNames = false,
+                    CheckFileExists = false,
+                    CheckPathExists = true,
+                    InitialDirectory = input_params.output_folder
+                };
                 folderBrowser.FileName = "Choose folder then enter desired file name here";
                 if (folderBrowser.ShowDialog() == DialogResult.OK)
                 {
@@ -531,7 +566,7 @@ namespace WindowsFormsApp4
             };
 
             tabpages[0].Controls.Add(openfolderdialog);
-            
+
             Button confirmation = new Button()
             {
                 Text = "Continue",
@@ -567,32 +602,51 @@ namespace WindowsFormsApp4
             
             if (prompt.ShowDialog() == DialogResult.OK)
             {
+                string delim = "\t";
+                string current_directorty = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
+                Console.WriteLine(current_directorty); 
+                string config_file = @current_directorty + "/config_file.txt";
+                File.WriteAllText(config_file, string.Format("Configuration, generated on {0:f}\n", DateTime.Now));
+                File.AppendAllText(config_file, 
+                    "Property" + delim + 
+                    "Type" + delim +
+                    "Value" + delim + 
+                    "Description" + "\n");
                 foreach (var item in cntl_list)
                 {
                     string prop_name = item.Key;
-                    Control cntl_obj = item.Value; 
+                    Control cntl_obj = item.Value;
+                    string radio_new = "<NAN>"; 
                     if (cntl_obj is TextBox)
                     {
-                        string set_new_val = cntl_obj.Text;
-                        input_params.SetPropValue(prop_name, set_new_val);
+                        input_params.SetPropValue(prop_name, cntl_obj.Text);
                     } 
                     else if (cntl_obj is Panel)
                     {
                         Dictionary<string, object> prop_dict = radio_choice_dictionaries[prop_name];
                         // a more efficient way to find checked values
                         // https://stackoverflow.com/questions/1797907/which-radio-button-in-the-group-is-checked by SLaks
-                        var checkedButton = cntl_obj.Controls.OfType<RadioButton>()
-                                      .FirstOrDefault(r => r.Checked);
-                        string new_key = checkedButton.Text;
-                        input_params.SetPropValue(prop_name, prop_dict[new_key]);
+                        var checkedButton = cntl_obj.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
+                        input_params.SetPropValue(prop_name, prop_dict[checkedButton.Text]);
+                        radio_new = checkedButton.Text;
                     } 
-                    else
+                    else if (cntl_obj is Button)
+                    {
+                        input_params.SetPropValue(prop_name, cntl_obj.BackColor);
+                    }
+                    else 
                     {
                         continue; 
                     }
-                                        
-                }
-                
+                    if (!prop_name.Contains("label_of"))
+                    {
+                        File.AppendAllText(config_file, 
+                            prop_name + delim + 
+                            input_params.GetPropValue(prop_name).GetType() + delim +
+                            input_params.GetPropValue(prop_name) + delim +
+                            radio_new + "\n");
+                    }             
+                }           
             }
 
             return input_params;
