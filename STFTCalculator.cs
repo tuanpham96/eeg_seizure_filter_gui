@@ -17,7 +17,7 @@ namespace WindowsFormsApp4
         private string savedfile, delim = ";";
         private bool saving_option;
 
-        public double[] freq_vec, mag_freq, psd;
+        public double[] freq_vec, mag_freq, psd, per_mag;
         public double band_power;
         public int n_epoch, n_skip, n_valid;
         public double Rate, fft_maxf, fft_fspacing;
@@ -112,7 +112,7 @@ namespace WindowsFormsApp4
             for (int i = 0; i < n_epoch; i++)
             {
                 window[i] = Convert.ToDouble(method.Invoke(wf, new object[] { i, n_epoch }));
-                psd_scale += window[i] * window[i]; 
+                psd_scale += window[i] * window[i];
             }
 
             psd_scale = 1 / (psd_scale * Rate);
@@ -206,13 +206,25 @@ namespace WindowsFormsApp4
                 }
             }
         }
-
+        public void CalculatePercentMagnitude()
+        {
+            per_mag = new double[n_valid];
+            double sum = 0; 
+            for (int i = 0; i < n_valid; i++)
+            {
+                sum += mag_freq[i]; 
+            }
+            for (int i = 0; i < n_valid; i++)
+            {
+                per_mag[i] = mag_freq[i]/sum;
+            }
+        }
         public void CalculateFFT(double t, double d)
         {
             if (current_count == n_epoch)
             {
                 mag_freq = new double[n_valid];
-                double[] normz_dat_arr = normalize_data(data_array); 
+                double[] normz_dat_arr = NormalizeData(data_array); 
                 mag_freq = FFT(normz_dat_arr);
                 ready2plt = true;
                 if (saving_option) { WriteToFile(string.Format("t = {0:0.00}", t), mag_freq); }
@@ -227,7 +239,7 @@ namespace WindowsFormsApp4
             }
         }
         
-        public double[] normalize_data(double[] data)
+        public double[] NormalizeData(double[] data)
         {
             int len_dat = data.Length;
             double mean = data.Average();
@@ -253,10 +265,14 @@ namespace WindowsFormsApp4
             double[] fft = new double[(int)(data.Length/2)];
             System.Numerics.Complex[] fftComplex = new System.Numerics.Complex[data.Length];
             for (int i = 0; i < data.Length; i++)
+            {
                 fftComplex[i] = new System.Numerics.Complex(data[i] * window[i], 0.0); // multipled by the window functions 
+            }
             Accord.Math.FourierTransform.FFT(fftComplex, Accord.Math.FourierTransform.Direction.Forward);
             for (int i = 0; i < fft.Length; i++)
+            {
                 fft[i] = fftComplex[i].Magnitude;
+            }
             return fft;
         }
 

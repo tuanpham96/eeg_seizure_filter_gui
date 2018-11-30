@@ -1,4 +1,4 @@
-Configuration, generated on Thursday, November 29, 2018 9:07 PM
+Configuration, generated on Friday, November 30, 2018 5:47 PM
 Property	Type	Value	Description
 hostname	System.String	127.0.0.1	<NAN>
 port	System.Int32	1234	<NAN>
@@ -16,10 +16,10 @@ d_sep	System.Double	25	<NAN>
 danger_color	System.Drawing.Color	Color [A=255, R=255, G=0, B=0]	<NAN>
 warning_color	System.Drawing.Color	Color [A=255, R=255, G=215, B=0]	<NAN>
 normal_color	System.Drawing.Color	Color [A=255, R=0, G=128, B=0]	<NAN>
-channel_gain_str	System.String	1;1;1	<NAN>
-display_channel_sep	System.Double	5	<NAN>
-rms_gain_str	System.String	1;1	<NAN>
-display_rms_sep	System.Double	0	<NAN>
+channel_vertgain_str	System.String	1;1;1	<NAN>
+display_channel_vertoffset	System.Double	5	<NAN>
+rms_vertgain_str	System.String	1;1	<NAN>
+display_rms_vertoffset	System.Double	0	<NAN>
 nmax_queue_total	System.Int32	64	<NAN>
 danger_rms_upperbound	System.Double	1.4	<NAN>
 danger_rms_lowerbound	System.Double	0.6	<NAN>

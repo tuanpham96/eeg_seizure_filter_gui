@@ -131,8 +131,9 @@ namespace WindowsFormsApp4
             APP_INP_PRM.CompleteInitialize();
 
             InitializeCalculators();
-            InitializePlot();
+            InitializePlotS();
             this.Load += Form1_Load;
+            //this.Load += Form1_Load;
         }
 
         private void InitializeCalculators()
@@ -150,14 +151,16 @@ namespace WindowsFormsApp4
                     APP_INP_PRM.n_skip,
                     n_lvls,
                     new double[] { APP_INP_PRM.f_bandpower_lower, APP_INP_PRM.f_bandpower_upper },
-                    STFTCalculator.WindowType.Hamming,
+                    APP_INP_PRM.window_type,
                     APP_INP_PRM.scaling_psd,
                     APP_INP_PRM.output_file_name,
                     APP_INP_PRM.stft_saving_option);
             }
         }
-        private void InitializePlot()
+        private void InitializePlotS()
         {
+            int nchan = APP_INP_PRM.nchan;
+
             var mapper = Mappers.Xy<ObservablePoint>()
                             .X(value => value.X)
                             .Y(value => value.Y);
@@ -180,7 +183,7 @@ namespace WindowsFormsApp4
                  System.Windows.Media.Brushes.Gray,
                  System.Windows.Media.Brushes.Red
             };
-            for (int idx_obs = 0; idx_obs < 3; idx_obs++)
+            for (int idx_obs = 0; idx_obs < nchan + 1; idx_obs++)
             {
                 ChannelSeries[idx_obs] = new GearedValues<ObservablePoint>();
                 ChannelSeries[idx_obs].Quality = APP_INP_PRM.display_quality;
@@ -195,8 +198,6 @@ namespace WindowsFormsApp4
                     Title = legends[idx_obs] + " \t"
                 });
             }
-
-            int nchan = APP_INP_PRM.nchan;
 
             RMSSeries = new GearedValues<ObservablePoint>[nchan];
             STFTSeries = new GearedValues<ObservablePoint>[nchan];
@@ -323,7 +324,7 @@ namespace WindowsFormsApp4
             MaximizePlotPerformance(ref rms_plots, new Axes_Label("Time (s)", "RMS (uV)"), null, false, true, LegendLocation.None);
             MaximizePlotPerformance(ref spectral_plots,
                 new Axes_Label("Frequency (Hz)", "FFT"),
-                new Axes_Limit(new double[] { -0.1, 30 }, new double[] { 0, double.PositiveInfinity }));
+                new Axes_Limit(new double[] { -0.1, 40 }, new double[] { 0, double.PositiveInfinity }));
             MaximizePlotPerformance(ref limbandpow_plots, 
                 new Axes_Label("Time (s)", string.Format("Band power {0} - {1} Hz", APP_INP_PRM.f_bandpower_lower, APP_INP_PRM.f_bandpower_upper)), null, false, true);
             MaximizePlotPerformance(ref rms_alarm_plots, new Axes_Label("Time (s)", "# of RMS alarms"));
@@ -522,10 +523,10 @@ namespace WindowsFormsApp4
             UpdateLabel(chan_label1_spectral_alarm, "Channel " + APP_INP_PRM.chan_idx2plt[0]);
             UpdateLabel(chan_label2_spectral_alarm, "Channel " + APP_INP_PRM.chan_idx2plt[1]);
 
-            UpdateLabel(changain_val, string.Join("; ", APP_INP_PRM.display_channel_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
-            UpdateLabel(chansep_val, string.Format("{0:0.00}", APP_INP_PRM.display_channel_sep));
-            UpdateLabel(rmsgain_val, string.Join("; ", APP_INP_PRM.display_rms_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
-            UpdateLabel(rmssep_val, string.Format("{0:0.00}", APP_INP_PRM.display_rms_sep));
+            UpdateLabel(chan_vertgain_val, string.Join("; ", APP_INP_PRM.display_channel_vertgains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
+            UpdateLabel(chan_vertoffset_val, string.Format("{0:0.00}", APP_INP_PRM.display_channel_vertoffset));
+            UpdateLabel(rms_vertgain_val, string.Join("; ", APP_INP_PRM.display_rms_vertgains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
+            UpdateLabel(rms_vertoffset_val, string.Format("{0:0.00}", APP_INP_PRM.display_rms_vertoffset));
 
         }
         #endregion
@@ -598,6 +599,7 @@ namespace WindowsFormsApp4
                 STFTCalcs[ichan].CalculatePSD();
                 ObservablePoint[] stft_new = new ObservablePoint[n_valid];
                 double[] freq = new double[n_valid], mag = new double[n_valid];
+                
                 Array.Copy(STFTCalcs[ichan].freq_vec, 0, freq, 0, n_valid);
                 Array.Copy(STFTCalcs[ichan].mag_freq, 0, mag, 0, n_valid);
                 for (int idat = 0; idat < n_valid; idat++)
@@ -695,8 +697,8 @@ namespace WindowsFormsApp4
                                     ChannelSeries,
                                     t,
                                     viz,
-                                    APP_INP_PRM.display_channel_gains,
-                                    APP_INP_PRM.display_channel_sep,
+                                    APP_INP_PRM.display_channel_vertgains,
+                                    APP_INP_PRM.display_channel_vertoffset,
                                     APP_INP_PRM.max_sec_plt,
                                     APP_INP_PRM.max_pnt_plt);
 
@@ -724,8 +726,8 @@ namespace WindowsFormsApp4
                                     RMSSeries,
                                     t,
                                     current_rms_arr,
-                                    APP_INP_PRM.display_rms_gains,
-                                    APP_INP_PRM.display_rms_sep,
+                                    APP_INP_PRM.display_rms_vertgains,
+                                    APP_INP_PRM.display_rms_vertoffset,
                                     APP_INP_PRM.max_sec_plt,
                                     APP_INP_PRM.max_pnt_plt);
 
@@ -754,9 +756,7 @@ namespace WindowsFormsApp4
 
                                         STFTCalcs[ich].Tally_Levels(lbp_lvls[ich]); 
                                     }
-
                                     spectral_plots.BeginInvoke(new Action(UpdateSTFTPlot));
-                                    
                                     UpdateTimeSeriesPlot(
                                         APP_INP_PRM.refresh_display, 
                                         limbandpow_plots,
@@ -880,72 +880,72 @@ namespace WindowsFormsApp4
         }
 
         #region Events of Control Objects 
+        private void start_button_Click(object sender, EventArgs e)
+        {
+            this.Load += Form1_Load;
+        }
         private void exit_button_Click(object sender, EventArgs e)
         {
             Application.Exit();
             Environment.Exit(1);
         }
 
-        private void refresh_button_Click(object sender, EventArgs e)
-        {
-            this.Load += Form1_Load;
-            return;
-        }
 
         #region Channel gain and separation control for display 
         private void changain_up_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_Channel_Gain(1);
-            UpdateLabel(changain_val, string.Join("; ", APP_INP_PRM.display_channel_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
+            UpdateLabel(chan_vertgain_val, string.Join("; ", APP_INP_PRM.display_channel_vertgains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
         }
 
 
         private void changain_down_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_Channel_Gain(-1);
-            UpdateLabel(changain_val, string.Join("; ", APP_INP_PRM.display_channel_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
+            UpdateLabel(chan_vertgain_val, string.Join("; ", APP_INP_PRM.display_channel_vertgains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
         }
 
 
         private void chansep_up_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_Channel_Separation(1);
-            UpdateLabel(chansep_val, string.Format("{0:0.00}", APP_INP_PRM.display_channel_sep));
+            UpdateLabel(chan_vertoffset_val, string.Format("{0:0.00}", APP_INP_PRM.display_channel_vertoffset));
         }
 
         private void chansep_down_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_Channel_Separation(-1);
-            UpdateLabel(chansep_val, string.Format("{0:0.00}", APP_INP_PRM.display_channel_sep));
+            UpdateLabel(chan_vertoffset_val, string.Format("{0:0.00}", APP_INP_PRM.display_channel_vertoffset));
         }
         #endregion
         #region RMS gain and separation control for display 
         private void rmsgain_up_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_RMS_Gain(1);
-            UpdateLabel(rmsgain_val, string.Join("; ", APP_INP_PRM.display_rms_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
+            UpdateLabel(rms_vertgain_val, string.Join("; ", APP_INP_PRM.display_rms_vertgains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
         }
 
         private void rmsgain_down_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_RMS_Gain(-1);
-            UpdateLabel(rmsgain_val, string.Join("; ", APP_INP_PRM.display_rms_gains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
+            UpdateLabel(rms_vertgain_val, string.Join("; ", APP_INP_PRM.display_rms_vertgains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
         }
 
         private void rmssep_up_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_RMS_Separation(1);
-            UpdateLabel(rmssep_val, string.Format("{0:0.00}", APP_INP_PRM.display_rms_sep));
+            UpdateLabel(rms_vertoffset_val, string.Format("{0:0.00}", APP_INP_PRM.display_rms_vertoffset));
         }
 
         private void rmssep_down_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_RMS_Separation(-1);
-            UpdateLabel(rmssep_val, string.Format("{0:0.00}", APP_INP_PRM.display_rms_sep));
+            UpdateLabel(rms_vertoffset_val, string.Format("{0:0.00}", APP_INP_PRM.display_rms_vertoffset));
         }
         #endregion
 
         #endregion
+
 
     }
 }

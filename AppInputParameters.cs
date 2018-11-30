@@ -37,14 +37,14 @@ namespace WindowsFormsApp4
         public Color warning_color { get; set; }
         public Color normal_color { get; set; }
 
-        public double[] display_channel_gains { get; set; }
-        public string channel_gain_str { get; set; }
-        public double display_channel_sep { get; set; }
+        public double[] display_channel_vertgains { get; set; }
+        public string channel_vertgain_str { get; set; }
+        public double display_channel_vertoffset { get; set; }
 
         public int max_pnt_plt { get; set; }
-        public string rms_gain_str { get; set; }
-        public double[] display_rms_gains { get; set; }
-        public double display_rms_sep { get; set; }
+        public string rms_vertgain_str { get; set; }
+        public double[] display_rms_vertgains { get; set; }
+        public double display_rms_vertoffset { get; set; }
 
         public double danger_rms_upperbound { get; set; }
         public double danger_rms_lowerbound { get; set; }
@@ -144,33 +144,6 @@ namespace WindowsFormsApp4
         #endregion
 
         #region Dictionary for parameters to querry 
-        public Dictionary<string, string> nameAndProp = new Dictionary<string, string>
-        {
-            { "Host name", "hostname" },
-            { "Port", "port" },
-            { "Sample frequency (Hz)", "Fs" },
-            { "Total number of channels", "total_nchan" },
-            { "RMS window (#points)", "nmax_queue_total" },
-            { "Number of samples / channel / epoch", "nsamp_per_block" },
-            { "Channels to display", "channels2plt" },
-            { "Output folder", "output_folder"},
-            { "Output file name",  "output_file_name" },
-            { "DANGER RMS upper bound",  "danger_rms_upperbound" },
-            { "DANGER RMS lower bound",  "danger_rms_lowerbound" },
-            { "WARNING RMS upper bound", "warning_rms_upperbound" },
-            { "WARNING RMS lower bound", "warning_rms_lowerbound" },
-            { "Display duration (seconds)", "max_sec_plt" },
-            { "Display gains", "channel_gain_str" },
-            { "Display separation", "display_channel_sep" },
-            { "Display refreshed", "refresh_display" },
-            { "Display quality", "display_quality" },
-            { "STFT Length (s)", "nsec_fft" },
-            { "STFT Overlap (%)", "per_overlap" },
-            { "STFT Window", "window_type" },
-            { "Bandpower lower bound (Hz)", "f_bandpower_lower" },
-            { "Bandpower upper bound (Hz)", "f_bandpower_upper" },
-            { "STFT saving options", "stft_saving_option" }
-        };
 
         public struct PropertypAndFormType
         {
@@ -186,15 +159,15 @@ namespace WindowsFormsApp4
             }
             public bool IsTextBox()
             {
-                return form_type.CompareTo(AppInputParameters.PropertypAndFormType.Form_Type.Textbox) == 0;
+                return form_type.CompareTo(Form_Type.Textbox) == 0;
             }
             public bool IsRadiobuttonGroup()
             {
-                return form_type.CompareTo(AppInputParameters.PropertypAndFormType.Form_Type.RadiobuttonGroup) == 0;
+                return form_type.CompareTo(Form_Type.RadiobuttonGroup) == 0;
             }
             public bool IsColorButton()
             {
-                return form_type.CompareTo(AppInputParameters.PropertypAndFormType.Form_Type.ColorButton) == 0;
+                return form_type.CompareTo(Form_Type.ColorButton) == 0;
             }
         }
 
@@ -220,16 +193,16 @@ namespace WindowsFormsApp4
                 { "warning_color",      new PropertypAndFormType("Warning color", PropertypAndFormType.Form_Type.ColorButton) },
                 { "normal_color",       new PropertypAndFormType("Normal color", PropertypAndFormType.Form_Type.ColorButton) }
             }},
-            { "Channel & RMS Plot",         new Dictionary<string, PropertypAndFormType> {
-                { "channel_gain_str",       new PropertypAndFormType("Channel display gains `ch0;ch1;ch0-ch1`") },
-                { "display_channel_sep",    new PropertypAndFormType("Channel display separation") },
-                { "rms_gain_str",           new PropertypAndFormType("RMS display gains `ch0;ch1`") },
-                { "display_rms_sep",        new PropertypAndFormType("RMS display separation") },
-                { "nmax_queue_total",       new PropertypAndFormType("RMS window (#points)") },
-                { "danger_rms_upperbound",  new PropertypAndFormType("DANGER RMS upper bound") },
-                { "danger_rms_lowerbound",  new PropertypAndFormType("DANGER RMS lower bound") },
-                { "warning_rms_upperbound", new PropertypAndFormType("WARNING RMS upper bound") },
-                { "warning_rms_lowerbound", new PropertypAndFormType("WARNING RMS lower bound") }
+            { "Channel & RMS Plot",             new Dictionary<string, PropertypAndFormType> {
+                { "channel_vertgain_str",       new PropertypAndFormType("Channel display vertical gains `ch0;ch1;ch0-ch1`") },
+                { "display_channel_vertoffset", new PropertypAndFormType("Channel display vertical offset") },
+                { "rms_vertgain_str",           new PropertypAndFormType("RMS display vertical gains `ch0;ch1`") },
+                { "display_rms_vertoffset",     new PropertypAndFormType("RMS display vertical separation") },
+                { "nmax_queue_total",           new PropertypAndFormType("RMS window (#points)") },
+                { "danger_rms_upperbound",      new PropertypAndFormType("DANGER RMS upper bound") },
+                { "danger_rms_lowerbound",      new PropertypAndFormType("DANGER RMS lower bound") },
+                { "warning_rms_upperbound",     new PropertypAndFormType("WARNING RMS upper bound") },
+                { "warning_rms_lowerbound",     new PropertypAndFormType("WARNING RMS lower bound") }
             }},
             { "Spectral Plot",              new Dictionary<string, PropertypAndFormType> {
                 { "nsec_fft",               new PropertypAndFormType("STFT Length (s)") },
@@ -286,10 +259,10 @@ namespace WindowsFormsApp4
             warning_rms_lowerbound = 0.8;
 
             max_sec_plt = 10; 
-            channel_gain_str = "1;1;1";
-            display_channel_sep = 5;
-            rms_gain_str = "1;1"; 
-            display_rms_sep = 0;
+            channel_vertgain_str = "1;1;1";
+            display_channel_vertoffset = 5;
+            rms_vertgain_str = "1;1"; 
+            display_rms_vertoffset = 0;
 
             d_gain = 0.1;
             d_sep = 25;
@@ -373,22 +346,22 @@ namespace WindowsFormsApp4
 
         public void InitializeDisplayGains()
         {
-            string[] gains_arr_ch = channel_gain_str.Split(';');
-            display_channel_gains = new double[gains_arr_ch.Length];
+            string[] gains_arr_ch = channel_vertgain_str.Split(';');
+            display_channel_vertgains = new double[gains_arr_ch.Length];
             for (int ig = 0; ig < gains_arr_ch.Length; ig++)
             {
-                double.TryParse(gains_arr_ch[ig], out display_channel_gains[ig]);
+                double.TryParse(gains_arr_ch[ig], out display_channel_vertgains[ig]);
             }
 
-            string[] gains_arr_rms = rms_gain_str.Split(';');
-            display_rms_gains = new double[gains_arr_rms.Length]; 
+            string[] gains_arr_rms = rms_vertgain_str.Split(';');
+            display_rms_vertgains = new double[gains_arr_rms.Length]; 
             if (gains_arr_rms.Length != nchan)
             {
-                throw new System.ArgumentException("Number of elements in `rms_gain_str` needs to match `nchan` to plot"); 
+                throw new System.ArgumentException("Number of elements in `rms_vertgain_str` needs to match `nchan` to plot"); 
             }
             for (int ig = 0; ig < gains_arr_rms.Length; ig++)
             {
-                double.TryParse(gains_arr_rms[ig], out display_rms_gains[ig]);
+                double.TryParse(gains_arr_rms[ig], out display_rms_vertgains[ig]);
             }
 
         }
@@ -431,30 +404,30 @@ namespace WindowsFormsApp4
         #region Specific Set methods during running application 
         public void Control_Channel_Gain(double direction)
         {
-            for (int i = 0; i < display_channel_gains.Length; i++)
+            for (int i = 0; i < display_channel_vertgains.Length; i++)
             {
-                display_channel_gains[i] += d_gain * direction;
-                display_channel_gains[i] = Math.Max(display_channel_gains[i], min_gain);
+                display_channel_vertgains[i] += d_gain * direction;
+                display_channel_vertgains[i] = Math.Max(display_channel_vertgains[i], min_gain);
             }
         }
         public void Control_Channel_Separation(double direction)
         {
-            display_channel_sep += d_sep * direction;
-            display_channel_sep = Math.Max(display_channel_sep, min_sep);
+            display_channel_vertoffset += d_sep * direction;
+            display_channel_vertoffset = Math.Max(display_channel_vertoffset, min_sep);
         }
 
         public void Control_RMS_Gain(double direction)
         {
-            for (int i = 0; i < display_rms_gains.Length; i++)
+            for (int i = 0; i < display_rms_vertgains.Length; i++)
             {
-                display_rms_gains[i] += d_gain * direction;
-                display_rms_gains[i] = Math.Max(display_rms_gains[i], min_gain); 
+                display_rms_vertgains[i] += d_gain * direction;
+                display_rms_vertgains[i] = Math.Max(display_rms_vertgains[i], min_gain); 
             }
         }
         public void Control_RMS_Separation(double direction)
         {
-            display_rms_sep += d_sep * direction;
-            display_rms_sep = Math.Max(display_rms_sep, min_sep);
+            display_rms_vertoffset += d_sep * direction;
+            display_rms_vertoffset = Math.Max(display_rms_vertoffset, min_sep);
         }
         #endregion
         #region Get and Set methods via reflection 
