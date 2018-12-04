@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shfbBuild product="Sandcastle Help File Builder and Tools" version="2018.7.8.0" projectFile="C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\documentation.shfbproj" started="12/4/2018 3:28:05 PM">
+<buildStep step="Initializing">
+Finding tools...
+The Sandcastle tools are located in &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\&#39;
+Locating components in the following folder(s):
+    C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui
+    C:\ProgramData\EWSoftware\Sandcastle Help File Builder\Components and Plug-Ins\
+    C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\
+Using framework reflection data for &#39;.NET Framework 4.5&#39; located in &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\Data\.NETFramework&#39;
+Using presentation style &#39;VS2013&#39; located in &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013&#39;
+Loading and initializing plug-ins...
+Lightweight Website Style Version 2018.7.8.0
+Copyright &#169; 2006-2018, Eric Woodruff, All Rights Reserved
+Portions Copyright &#169; 2014, Sam Harwell, All Rights Reserved
+-------------------------------
+Clearing any prior web/markdown output...
+</buildStep>
+<buildStep step="ValidatingDocumentationSources">
+Validating and copying documentation source information
+Source: C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\seizure_filter.xml
+Source: C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\seizure_filter.exe
+    Found assembly &#39;C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\seizure_filter.exe&#39;
+
+Copying XML comments files
+    C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\seizure_filter.xml -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\seizure_filter.xml
+</buildStep>
+<buildStep step="GenerateSharedContent">
+Generating shared content files (en-US, English (United States))...
+<plugIn name="Lightweight Website Style" behavior="After" priority="1000">
+</plugIn>    Last step completed in 00:00:00.0190
+</buildStep>
+<buildStep step="GenerateApiFilter">
+Generating API filter for MRefBuilder...
+    Last step completed in 00:00:00.0060
+</buildStep>
+<buildStep step="GenerateReflectionInfo">
+Generating reflection information...
+[C:\Program Files (x86)\MSBuild\14.0\bin\amd64\MSBuild.exe - GenerateRefInfo.proj]
+Build started 12/4/2018 3:28:07 PM.
+Project &quot;C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\GenerateRefInfo.proj&quot; on node 1 (default targets).
+PrepareForBuild:
+  Creating directory &quot;obj\Debug\&quot;.
+GenerateRefInfo:
+  MRefBuilder (v2018.7.8.0)
+  Copyright c 2006-2018, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright c 2006-2018, Eric Woodruff, All Rights Reserved.
+  No source code context base path specified.  Source context information is unavailable.
+  Loaded 1 assemblies for reflection and 1 dependency assemblies.
+  Wrote information on 1 namespaces, 10 types, and 170 members
+  Copying file from &quot;reflection.org&quot; to &quot;reflection.all&quot;.
+  XslTransform (v2018.7.8.0)
+  Copyright c 2006-2018, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright c 2006-2018, Eric Woodruff, All Rights Reserved.
+  Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\ProductionTransforms\MergeDuplicates.xsl&#39;.
+Done Building Project &quot;C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\GenerateRefInfo.proj&quot; (default targets).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.60
+    Last step completed in 00:00:01.9611
+</buildStep>
+<buildStep step="TransformReflectionInfo">
+Transforming reflection output...
+[C:\Program Files (x86)\MSBuild\14.0\bin\amd64\MSBuild.exe - TransformManifest.proj]
+Build started 12/4/2018 3:28:09 PM.
+Project &quot;C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\TransformManifest.proj&quot; on node 1 (default targets).
+TransformManifest:
+  XslTransform (v2018.7.8.0)
+  Copyright c 2006-2018, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright c 2006-2018, Eric Woodruff, All Rights Reserved.
+  Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\ProductionTransforms\ApplyVSDocModel.xsl&#39;.
+  Copying file from &quot;reflection.xml&quot; to &quot;reflection.nofilenames&quot;.
+  XslTransform (v2018.7.8.0)
+  Copyright c 2006-2018, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright c 2006-2018, Eric Woodruff, All Rights Reserved.
+  Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\ProductionTransforms\AddFilenames.xsl&#39;.
+  XslTransform (v2018.7.8.0)
+  Copyright c 2006-2018, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright c 2006-2018, Eric Woodruff, All Rights Reserved.
+  Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\ProductionTransforms\ReflectionToManifest.xsl&#39;.
+Done Building Project &quot;C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\TransformManifest.proj&quot; (default targets).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.22
+    Last step completed in 00:00:01.5101
+</buildStep>
+<buildStep step="GenerateNamespaceSummaries">
+Generating namespace summary information...
+    Last step completed in 00:00:00.0280
+</buildStep>
+<buildStep step="CopyAdditionalContent">
+Copying additional content files...
+No additional content to copy
+    Last step completed in 00:00:00.0020
+</buildStep>
+<buildStep step="MergeTablesOfContents">
+Merging conceptual and additional tables of contents...
+    Last step completed in 00:00:00.0000
+</buildStep>
+<buildStep step="GenerateIntermediateTableOfContents">
+Generating intermediate table of contents file...
+[C:\Program Files (x86)\MSBuild\14.0\bin\amd64\MSBuild.exe - GenerateIntermediateTOC.proj]
+Build started 12/4/2018 3:28:10 PM.
+Project &quot;C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\GenerateIntermediateTOC.proj&quot; on node 1 (default targets).
+GenerateIntermediateTOC:
+  XslTransform (v2018.7.8.0)
+  Copyright c 2006-2018, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright c 2006-2018, Eric Woodruff, All Rights Reserved.
+  Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\ProductionTransforms\CreateVSToc.xsl&#39;.
+Done Building Project &quot;C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\GenerateIntermediateTOC.proj&quot; (default targets).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.52
+Generating conceptual content intermediate TOC file...
+    Last step completed in 00:00:00.8350
+</buildStep>
+<buildStep step="CreateBuildAssemblerConfigs">
+Creating Sandcastle configuration files...
+    sandcastle.config
+    Last step completed in 00:00:00.1020
+</buildStep>
+<buildStep step="MergeCustomConfigs">
+Merging custom build component configurations
+C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\sandcastle.config
+  Updating reference topic configurations.
+  No conceptual content.  Removing conceptual content components.
+    Last step completed in 00:00:00.0070
+</buildStep>
+<buildStep step="BuildTopics">
+Building help topics...
+[C:\Program Files (x86)\MSBuild\14.0\bin\amd64\MSBuild.exe - BuildTopics.proj]
+Build started 12/4/2018 3:28:11 PM.
+Project &quot;C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj&quot; on node 1 (default targets).
+BuildTopics:
+  BuildAssembler (v2018.7.8.0)
+  Copyright c 2006-2018, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright c 2006-2018, Eric Woodruff, All Rights Reserved.
+  Loading configuration...
+  ResolveReferenceLinksComponent: The MSDN content ID cache &#39;C:\Users\Towle\AppData\Local\EWSoftware\Sandcastle Help File Builder\Cache\MsdnContentId.cache&#39; does not exist yet.  All IDs will be looked up in this build which will slow it down.
+  Processing topics...
+BuildAssembler : warning : ShowMissingComponent: [N:seizure_filter] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [T:seizure_filter.AppInputParameters] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.#ctor(System.Boolean,System.String)] Missing &lt;param name=&quot;create_new_config&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.#ctor(System.Boolean,System.String)] Missing &lt;param name=&quot;_config_path_&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.alarm_plot_options] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.alarm_rate_plt_stack] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.BrushToColor(System.Windows.Media.SolidColorBrush)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.BrushToColor(System.Windows.Media.SolidColorBrush)] Missing &lt;returns&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.BrushToColor(System.Windows.Media.SolidColorBrush)] Missing &lt;param name=&quot;br&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.chan_idx2plt] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.channel_vertgain_str] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.channels2plt] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.chunk_len] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.ColorToBrush(System.Drawing.Color)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.ColorToBrush(System.Drawing.Color)] Missing &lt;returns&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.ColorToBrush(System.Drawing.Color)] Missing &lt;param name=&quot;color&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.AppInputParameters.comment_str] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.CompleteInitialize] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.AppInputParameters.config_delim] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.config_path] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.Control_Channel_Gain(System.Double)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.Control_Channel_Gain(System.Double)] Missing &lt;param name=&quot;direction&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.Control_Channel_Separation(System.Double)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.Control_Channel_Separation(System.Double)] Missing &lt;param name=&quot;direction&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.Control_RMS_Gain(System.Double)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.Control_RMS_Gain(System.Double)] Missing &lt;param name=&quot;direction&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.Control_RMS_Separation(System.Double)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.Control_RMS_Separation(System.Double)] Missing &lt;param name=&quot;direction&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.current_directory] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.current_file_count] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.d_gain] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.d_sep] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.danger_color] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.danger_lbp_lowerbound] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.danger_lbp_upperbound] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.danger_rms_lowerbound] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.danger_rms_upperbound] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.default_config_path] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.display_channel_vertgains] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.display_channel_vertoffset] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.display_quality] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:seizure_filter.AppInputParameters.display_quality] Unknown reference link target &#39;T:LiveCharts.Geared.Quality&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.display_refresh_options] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.display_rms_vertgains] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.display_rms_vertoffset] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.f_bandpower_lower] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.f_bandpower_upper] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.Fs] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.gear_quality_dict] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:seizure_filter.AppInputParameters.gear_quality_dict] Unknown reference link target &#39;T:LiveCharts.Geared.Quality&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.GetPropType(System.String)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.GetPropType(System.String)] Missing &lt;returns&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.GetPropType(System.String)] Missing &lt;param name=&quot;propName&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.GetPropValue(System.String)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.GetPropValue(System.String)] Missing &lt;returns&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.GetPropValue(System.String)] Missing &lt;param name=&quot;propName&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.hostname] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.InitializeChannelIndex] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.InitializeDictionaries] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.InitializeDisplayGains] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.InitializeFFTParameters] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.InitializeRMSMessage] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.InitializeWelcomeMessage] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.lbp_lvl_max_point] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.lbp_lvl_max_sec] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.lbp_lvl_reset_point] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.lbp_lvl_reset_sec] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.max_pnt_plt] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.max_sec_plt] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.n_epoch] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.n_lvls] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.n_skip] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.nchan] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.nmax_queue_total] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.normal_color] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.nsamp_per_block] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.nsec_fft] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.AppInputParameters.OptionSections] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.output_file_name] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.output_folder] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.ParseConfigurationFile(System.String)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.ParseConfigurationFile(System.String)] Missing &lt;param name=&quot;_config_path_&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.per_overlap] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.port] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.refresh_display] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.rms_lvl_max_point] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.rms_lvl_max_sec] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.rms_lvl_reset_point] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.rms_lvl_reset_sec] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.rms_vertgain_str] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.save_every] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.scaling_psd] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.scaling_psd_options] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.SetPropValue(System.String,System.Object)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.SetPropValue(System.String,System.Object)] Missing &lt;param name=&quot;propName&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.SetPropValue(System.String,System.Object)] Missing &lt;param name=&quot;newValue&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.stft_saving_option] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.stft_saving_options] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.total_nchan] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.warning_color] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.warning_lbp_lowerbound] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.warning_lbp_upperbound] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.warning_rms_lowerbound] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.warning_rms_upperbound] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.WelcomeMessage] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.window_type] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.AppInputParameters.wintype_dict] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [T:seizure_filter.AppInputParameters.PropertypAndFormType] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.PropertypAndFormType.#ctor(System.String,seizure_filter.AppInputParameters.PropertypAndFormType.Form_Type,System.String)] Missing &lt;param name=&quot;_prop_alias_&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.PropertypAndFormType.#ctor(System.String,seizure_filter.AppInputParameters.PropertypAndFormType.Form_Type,System.String)] Missing &lt;param name=&quot;_form_type_&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.PropertypAndFormType.#ctor(System.String,seizure_filter.AppInputParameters.PropertypAndFormType.Form_Type,System.String)] Missing &lt;param name=&quot;_dict_name_&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.AppInputParameters.PropertypAndFormType.dict_name] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.AppInputParameters.PropertypAndFormType.form_type] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.PropertypAndFormType.IsColorButton] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.PropertypAndFormType.IsColorButton] Missing &lt;returns&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.PropertypAndFormType.IsRadiobuttonGroup] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.PropertypAndFormType.IsRadiobuttonGroup] Missing &lt;returns&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.PropertypAndFormType.IsTextBox] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.AppInputParameters.PropertypAndFormType.IsTextBox] Missing &lt;returns&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.AppInputParameters.PropertypAndFormType.prop_alias] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [T:seizure_filter.AppInputParameters.PropertypAndFormType.Form_Type] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:seizure_filter.MainForm] Unknown reference link target &#39;F:seizure_filter.MainForm.channel_plots&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:seizure_filter.MainForm] Unknown reference link target &#39;F:seizure_filter.MainForm.channel_plots&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:seizure_filter.MainForm] Unknown reference link target &#39;F:seizure_filter.MainForm.rms_plots&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:seizure_filter.MainForm] Unknown reference link target &#39;F:seizure_filter.MainForm.spectral_plots&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:seizure_filter.MainForm] Unknown reference link target &#39;F:seizure_filter.MainForm.limbandpow_plots&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [T:seizure_filter.MainForm] Unknown reference link target &#39;F:seizure_filter.MainForm.rms_alarm_plots&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:seizure_filter.MainForm.#ctor] Unknown reference link target &#39;F:seizure_filter.MainForm.channel_plots&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:seizure_filter.MainForm.#ctor] Unknown reference link target &#39;F:seizure_filter.MainForm.channel_plots&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:seizure_filter.MainForm.#ctor] Unknown reference link target &#39;F:seizure_filter.MainForm.rms_plots&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:seizure_filter.MainForm.#ctor] Unknown reference link target &#39;F:seizure_filter.MainForm.spectral_plots&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:seizure_filter.MainForm.#ctor] Unknown reference link target &#39;F:seizure_filter.MainForm.limbandpow_plots&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [M:seizure_filter.MainForm.#ctor] Unknown reference link target &#39;F:seizure_filter.MainForm.rms_alarm_plots&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.MainForm.ChannelSeries] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:seizure_filter.MainForm.ChannelSeries] Unknown reference link target &#39;T:LiveCharts.Geared.GearedValues`1&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:seizure_filter.MainForm.ChannelSeries] Unknown reference link target &#39;T:LiveCharts.Defaults.ObservablePoint&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.MainForm.DrawAndReport] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.MainForm.LBPAlarmSeries] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:seizure_filter.MainForm.LBPAlarmSeries] Unknown reference link target &#39;T:LiveCharts.Geared.GearedValues`1&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:seizure_filter.MainForm.LBPAlarmSeries] Unknown reference link target &#39;T:LiveCharts.Defaults.ObservablePoint&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.MainForm.LBPSeries] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:seizure_filter.MainForm.LBPSeries] Unknown reference link target &#39;T:LiveCharts.Geared.GearedValues`1&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:seizure_filter.MainForm.LBPSeries] Unknown reference link target &#39;T:LiveCharts.Defaults.ObservablePoint&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.MainForm.RMSAlarmSeries] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:seizure_filter.MainForm.RMSAlarmSeries] Unknown reference link target &#39;T:LiveCharts.Geared.GearedValues`1&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:seizure_filter.MainForm.RMSAlarmSeries] Unknown reference link target &#39;T:LiveCharts.Defaults.ObservablePoint&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.MainForm.RMSCalcs] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.MainForm.RMSSeries] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:seizure_filter.MainForm.RMSSeries] Unknown reference link target &#39;T:LiveCharts.Geared.GearedValues`1&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:seizure_filter.MainForm.RMSSeries] Unknown reference link target &#39;T:LiveCharts.Defaults.ObservablePoint&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.MainForm.STFTCalcs] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.MainForm.STFTSeries] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:seizure_filter.MainForm.STFTSeries] Unknown reference link target &#39;T:LiveCharts.Geared.GearedValues`1&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ResolveReferenceLinksComponent: [P:seizure_filter.MainForm.STFTSeries] Unknown reference link target &#39;T:LiveCharts.Defaults.ObservablePoint&#39;. [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [T:seizure_filter.MiscellaneousTesting] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.MiscellaneousTesting.Test1] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.MiscellaneousTesting.Test2] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.MiscellaneousTesting.Test3] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [T:seizure_filter.MiscellaneousTesting.TestClass] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.MiscellaneousTesting.TestClass.#ctor(System.Int32,System.String)] Missing &lt;param name=&quot;_num_&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.MiscellaneousTesting.TestClass.#ctor(System.Int32,System.String)] Missing &lt;param name=&quot;_text_&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.MiscellaneousTesting.TestClass.num] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.MiscellaneousTesting.TestClass.PrintTest] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.MiscellaneousTesting.TestClass.PrintTest] Missing &lt;returns&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.MiscellaneousTesting.TestClass.text] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [T:seizure_filter.Prompt] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.Prompt.#ctor(System.String,System.String)] Missing &lt;param name=&quot;title&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.Prompt.#ctor(System.String,System.String)] Missing &lt;param name=&quot;caption&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.Prompt.AppInpPrm] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [P:seizure_filter.Prompt.Result] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [T:seizure_filter.RMSCalculator] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.RMSCalculator.#ctor(System.Int32,System.Int32)] Missing &lt;param name=&quot;nmax_queue_total&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.RMSCalculator.#ctor(System.Int32,System.Int32)] Missing &lt;param name=&quot;n_lvls&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.RMSCalculator.CalculateRMS(System.Int32)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.RMSCalculator.CalculateRMS(System.Int32)] Missing &lt;param name=&quot;count&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.RMSCalculator.Cumulative_From_Lower_Level] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.RMSCalculator.current_mean_sq] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.RMSCalculator.current_rms] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.RMSCalculator.current_val] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.RMSCalculator.data_queue] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.RMSCalculator.n_lvls] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.RMSCalculator.nmax_queue_total] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.RMSCalculator.ParseCurrentValue(System.String)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.RMSCalculator.ParseCurrentValue(System.String)] Missing &lt;returns&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.RMSCalculator.ParseCurrentValue(System.String)] Missing &lt;param name=&quot;s&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.RMSCalculator.Reset_Level_Tally] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.RMSCalculator.rms_levels] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.RMSCalculator.Tally_Levels(System.Int32)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.RMSCalculator.Tally_Levels(System.Int32)] Missing &lt;param name=&quot;lvl&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [T:seizure_filter.STFTCalculator] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.#ctor(System.Double,System.Int32,System.Int32,System.Int32,System.Double[],seizure_filter.STFTCalculator.WindowType,System.Boolean,System.String,System.Boolean)] Missing &lt;param name=&quot;Fs&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.#ctor(System.Double,System.Int32,System.Int32,System.Int32,System.Double[],seizure_filter.STFTCalculator.WindowType,System.Boolean,System.String,System.Boolean)] Missing &lt;param name=&quot;n_epoch&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.#ctor(System.Double,System.Int32,System.Int32,System.Int32,System.Double[],seizure_filter.STFTCalculator.WindowType,System.Boolean,System.String,System.Boolean)] Missing &lt;param name=&quot;n_skip&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.#ctor(System.Double,System.Int32,System.Int32,System.Int32,System.Double[],seizure_filter.STFTCalculator.WindowType,System.Boolean,System.String,System.Boolean)] Missing &lt;param name=&quot;n_lvls&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.#ctor(System.Double,System.Int32,System.Int32,System.Int32,System.Double[],seizure_filter.STFTCalculator.WindowType,System.Boolean,System.String,System.Boolean)] Missing &lt;param name=&quot;BPFR&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.#ctor(System.Double,System.Int32,System.Int32,System.Int32,System.Double[],seizure_filter.STFTCalculator.WindowType,System.Boolean,System.String,System.Boolean)] Missing &lt;param name=&quot;win_type&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.#ctor(System.Double,System.Int32,System.Int32,System.Int32,System.Double[],seizure_filter.STFTCalculator.WindowType,System.Boolean,System.String,System.Boolean)] Missing &lt;param name=&quot;scaling_psd&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.#ctor(System.Double,System.Int32,System.Int32,System.Int32,System.Double[],seizure_filter.STFTCalculator.WindowType,System.Boolean,System.String,System.Boolean)] Missing &lt;param name=&quot;file_prefix&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.#ctor(System.Double,System.Int32,System.Int32,System.Int32,System.Double[],seizure_filter.STFTCalculator.WindowType,System.Boolean,System.String,System.Boolean)] Missing &lt;param name=&quot;saving_option&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.AddData(System.Double)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.AddData(System.Double)] Missing &lt;param name=&quot;d&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.band_power] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.bandpower_freqrange] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.CalculateFFT(System.Double,System.Double)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.CalculateFFT(System.Double,System.Double)] Missing &lt;param name=&quot;t&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.CalculateFFT(System.Double,System.Double)] Missing &lt;param name=&quot;d&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.CalculatePercentMagnitude] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.CalculatePSD] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.Cumulative_From_Lower_Level] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.current_count] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.FFT(System.Double[])] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.FFT(System.Double[])] Missing &lt;returns&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.FFT(System.Double[])] Missing &lt;param name=&quot;data&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.fft_fspacing] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.fft_maxf] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.freq_vec] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.lbp_levels] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.mag_freq] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.n_epoch] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.n_lvls] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.n_skip] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.n_valid] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.NormalizeData(System.Double[])] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.NormalizeData(System.Double[])] Missing &lt;returns&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.NormalizeData(System.Double[])] Missing &lt;param name=&quot;data&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.per_mag] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.psd] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.Rate] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [F:seizure_filter.STFTCalculator.ready2plt] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.Reset_Level_Tally] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.ShiftArray] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.Tally_Levels(System.Int32)] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:seizure_filter.STFTCalculator.Tally_Levels(System.Int32)] Missing &lt;param name=&quot;lvl&quot;/&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [T:seizure_filter.STFTCalculator.WindowType] Missing &lt;summary&gt; documentation [C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj]
+  Processed 188 topic(s)
+  234 warning(s)
+  CopyFromIndexComponent: &quot;reflection&quot; in-memory cache entries used: 5 of 15.
+  CopyFromIndexComponent: &quot;comments&quot; in-memory cache entries used: 4 of 30.
+  ResolveReferenceLinksComponent: 529 entries added to the MSDN content ID cache.  New cache size: 529 entries
+Done Building Project &quot;C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\BuildTopics.proj&quot; (default targets).
+
+Build succeeded.
+
+Time Elapsed 00:01:52.39
+    Last step completed in 00:01:52.7164
+</buildStep>
+<buildStep step="CombiningIntermediateTocFiles">
+Combining conceptual and API intermediate TOC files...
+    Last step completed in 00:00:00.0020
+</buildStep>
+<buildStep step="ExtractingHtmlInfo">
+Extracting HTML info for HTML Help 1 and/or website...
+[C:\Program Files (x86)\MSBuild\14.0\bin\amd64\MSBuild.exe - ExtractHtmlInfo.proj]
+Sandcastle Help File Builder and Tools, version 2018.7.8.0
+Copyright c 2006-2018, Eric Woodruff, All Rights Reserved
+E-Mail: Eric@EWoodruff.us
+
+Using LCID &#39;1033&#39;, code page &#39;65001&#39;, encoding charset &#39;UTF-8&#39;.
+
+Processing website files in C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website
+Processed 188 HTML files
+Sorting keywords and generating See Also indices
+Saving website keyword index to C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\WebKI.xml
+Saving website table of contents to C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\WebTOC.xml
+    Last step completed in 00:00:00.7850
+</buildStep>
+<buildStep step="CopyStandardHelpContent">
+Copying standard help content...
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\AlertCaution.png -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\AlertCaution.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\AlertNote.png -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\AlertNote.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\AlertSecurity.png -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\AlertSecurity.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\CFW.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\CFW.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\CodeExample.png -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\CodeExample.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\favicon.ico -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\favicon.ico
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privclass.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\privclass.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privdelegate.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\privdelegate.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privenumeration.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\privenumeration.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privevent.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\privevent.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privextension.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\privextension.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privfield.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\privfield.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privinterface.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\privinterface.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privmethod.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\privmethod.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privproperty.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\privproperty.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privstructure.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\privstructure.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protclass.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\protclass.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protdelegate.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\protdelegate.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protenumeration.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\protenumeration.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protevent.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\protevent.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protextension.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\protextension.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protfield.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\protfield.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protinterface.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\protinterface.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protmethod.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\protmethod.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protoperator.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\protoperator.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protproperty.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\protproperty.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protstructure.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\protstructure.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubclass.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\pubclass.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubdelegate.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\pubdelegate.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubenumeration.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\pubenumeration.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubevent.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\pubevent.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubextension.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\pubextension.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubfield.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\pubfield.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubinterface.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\pubinterface.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubmethod.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\pubmethod.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\puboperator.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\puboperator.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubproperty.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\pubproperty.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubstructure.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\pubstructure.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\SectionCollapsed.png -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\SectionCollapsed.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\SectionExpanded.png -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\SectionExpanded.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\slMobile.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\slMobile.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\static.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\static.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\xna.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\xna.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\scripts\branding.js -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\scripts\branding.js
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-cs-CZ.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-cs-CZ.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-de-DE.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-de-DE.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-en-US.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-en-US.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-es-ES.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-es-ES.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-fr-FR.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-fr-FR.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-Help1.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-Help1.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-HelpViewer.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-HelpViewer.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-it-IT.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-it-IT.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-ja-JP.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-ja-JP.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-ko-KR.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-ko-KR.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-pl-PL.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-pl-PL.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-pt-BR.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-pt-BR.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-ru-RU.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-ru-RU.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-tr-TR.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-tr-TR.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-Website.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-Website.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-zh-CN.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-zh-CN.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-zh-TW.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding-zh-TW.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding.css -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\styles\branding.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\index.html -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\index.html
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\search.html -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\search.html
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\SearchHelp.aspx -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\SearchHelp.aspx
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\SearchHelp.inc.php -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\SearchHelp.inc.php
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\SearchHelp.php -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\SearchHelp.php
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\Web.Config -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\Web.Config
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\html\GeneralError.htm -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\html\GeneralError.htm
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\html\PageNotFound.htm -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\html\PageNotFound.htm
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\Search.png -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\Search.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\TocClose.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\TocClose.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\TocCollapsed.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\TocCollapsed.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\TocExpanded.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\TocExpanded.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\icons\TocOpen.gif -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\icons\TocOpen.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\branding-Website.js -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\scripts\branding-Website.js
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\clipboard.min.js -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\scripts\clipboard.min.js
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\Web\scripts\jquery-1.11.0.min.js -&gt; C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\Help\Working\Output\Website\scripts\jquery-1.11.0.min.js
+    Last step completed in 00:00:00.1040
+</buildStep>
+<buildStep step="GenerateHelpFormatTableOfContents">
+Generating website table of contents file...
+    Last step completed in 00:00:00.0000
+</buildStep>
+<buildStep step="GenerateFullTextIndex">
+Generating full-text index for the website...
+
+<plugIn name="Lightweight Website Style" behavior="After" priority="1000">
+Adding lightweight search and TOC elements to each topic...
+</plugIn>    Last step completed in 00:00:00.2630
+</buildStep>
+<buildStep step="CopyingWebsiteFiles">
+Copying website files to output folder...
+
+Copied 319 files for the website content
+    Last step completed in 00:00:00.2890
+</buildStep>
+<buildStep step="CleanIntermediates">
+Removing intermediate files...
+    Last step completed in 00:00:00.1540
+</buildStep>
+<buildStep step="Completed">
+
+Build completed successfully at 12/4/2018 3:30:05 PM.  Total time: 00:02:00.6599
+
+</buildStep>
+</shfbBuild>

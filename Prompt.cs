@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-namespace WindowsFormsApp4
+namespace seizure_filter
 {
 
     /** Dialog promp implementation from Gideon Mulder in stakcoverflow
@@ -34,7 +34,7 @@ namespace WindowsFormsApp4
                 TOOLTIP = _tooltip_; 
             }
         }
-        public Prompt(string text, string caption)
+        public Prompt(string title, string caption)
         {
             fontname = "Arial";
             ConfigurationOptionPrompt(out Config_Options config_option, out string config_file_path, out LoadConfig_Warning warning);
@@ -56,7 +56,7 @@ namespace WindowsFormsApp4
             } 
             else
             {
-                Result = ParameterInputPrompt(text, caption);
+                Result = ParameterInputPrompt(title, caption);
             }      
         }
 

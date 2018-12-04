@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO; 
-namespace WindowsFormsApp4
+namespace seizure_filter
 {
     public class MiscellaneousTesting
     {

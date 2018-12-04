@@ -74,7 +74,6 @@ C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\LiveCharts.WinForms
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\LiveCharts.Wpf.pdb
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\LiveCharts.Wpf.xml
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\obj\Debug\seizure_filter.csprojAssemblyReference.cache
-C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\obj\Debug\WindowsFormsApp4.Form1.resources
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\obj\Debug\seizure_filter.Properties.Resources.resources
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\obj\Debug\seizure_filter.csproj.GenerateResource.cache
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\obj\Debug\seizure_filter.csproj.CoreCompileInputs.cache
@@ -89,3 +88,5 @@ C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\Accord.Math.dll
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\Accord.xml
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\Accord.Math.xml
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\Accord.Math.Core.xml
+C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\obj\Debug\seizure_filter.MainForm.resources
+C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\seizure_filter.xml

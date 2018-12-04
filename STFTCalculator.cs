@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
 
-namespace WindowsFormsApp4
+namespace seizure_filter
 {
     public class STFTCalculator
     {
@@ -131,6 +131,7 @@ namespace WindowsFormsApp4
         #endregion
 
         #region Constructor
+
         public STFTCalculator(double Fs, int n_epoch, int n_skip, int n_lvls, double[] BPFR, 
                             WindowType win_type = WindowType.Rectangle, bool scaling_psd = true, 
                             string file_prefix = "", bool saving_option = false)
@@ -183,7 +184,13 @@ namespace WindowsFormsApp4
                 throw new System.IndexOutOfRangeException(err_mess);
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="win_type"></param>
+        /// <param name="scaling_psd"></param>
+        /// <remarks>
+        /// </remarks>
         private void GenerateWindow(WindowType win_type, bool scaling_psd)
         {
             string win_name = win_type.ToString();

@@ -1,6 +1,6 @@
-﻿namespace WindowsFormsApp4
+﻿namespace seizure_filter
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -577,12 +577,13 @@
             this.safety_spectral_lab.TabIndex = 13;
             this.safety_spectral_lab.Text = "Spectral Alarm";
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.ClientSize = new System.Drawing.Size(1053, 1889);
+            this.ClientSize = new System.Drawing.Size(1053, 1889); 
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Controls.Add(this.rms_vertoffset_down_button);
             this.Controls.Add(this.rms_vertoffset_up_button);
             this.Controls.Add(this.rms_vertgain_down_button);
@@ -627,7 +628,7 @@
             this.Controls.Add(this.safety_rms_lab);
             this.Controls.Add(this.log);
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "EEG Seizure Monitoring System";
             this.ResumeLayout(false);
             this.PerformLayout();

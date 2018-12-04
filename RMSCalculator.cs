@@ -4,21 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WindowsFormsApp4
+namespace seizure_filter
 {
     public class RMSCalculator
     {
         public Queue<double> data_queue;
         public double current_val;
         public double current_mean_sq, current_rms;
-        public int[] rms_levels; 
+        public int[] rms_levels;
         public int nmax_queue_total;
         public int n_lvls; 
         public RMSCalculator(int nmax_queue_total, int n_lvls)
         {
-            this.data_queue = new Queue<double>();
-            this.current_mean_sq = 0;
-            this.current_rms = -1;
+            data_queue = new Queue<double>();
+            current_mean_sq = 0;
+            current_rms = -1;
             this.nmax_queue_total = nmax_queue_total;
 
             this.n_lvls = n_lvls;
@@ -27,28 +27,28 @@ namespace WindowsFormsApp4
 
         public bool ParseCurrentValue(string s)
         {
-            bool parse_success = double.TryParse(s, out this.current_val);
+            bool parse_success = double.TryParse(s, out current_val);
             return parse_success;
         }
 
         public void CalculateRMS(int count) {
             double oldest_sq, newest_sq;
-            this.data_queue.Enqueue(this.current_val);
-            if (count < this.nmax_queue_total - 1)
+            data_queue.Enqueue(current_val);
+            if (count < nmax_queue_total - 1)
             {
-                this.current_mean_sq += this.current_val * this.current_val; 
-            } else if (count == this.nmax_queue_total - 1)
+                current_mean_sq += current_val * current_val; 
+            } else if (count == nmax_queue_total - 1)
             {
-                this.current_rms = Math.Sqrt(this.current_mean_sq / this.nmax_queue_total); 
+                current_rms = Math.Sqrt(current_mean_sq / nmax_queue_total); 
             } else
             {
-                oldest_sq = this.data_queue.Dequeue();
-                oldest_sq = oldest_sq * oldest_sq / this.nmax_queue_total;
+                oldest_sq = data_queue.Dequeue();
+                oldest_sq = oldest_sq * oldest_sq / nmax_queue_total;
 
-                newest_sq = current_val * current_val / this.nmax_queue_total;
-                this.current_mean_sq = this.current_rms * this.current_rms;
+                newest_sq = current_val * current_val / nmax_queue_total;
+                current_mean_sq = current_rms * current_rms;
 
-                this.current_rms = Math.Sqrt(this.current_mean_sq - oldest_sq + newest_sq); 
+                current_rms = Math.Sqrt(current_mean_sq - oldest_sq + newest_sq); 
             }
         }
 
@@ -68,7 +68,7 @@ namespace WindowsFormsApp4
         }
         public void Reset_Level_Tally()
         {
-            this.rms_levels = new int[n_lvls];
+            rms_levels = new int[n_lvls];
             for (int i = 0; i < n_lvls; i++) { rms_levels[i] = 0; }
         }
     } 

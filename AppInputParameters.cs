@@ -5,7 +5,7 @@ using System.Reflection;
 using System.IO;
 using LiveCharts.Geared;
 
-namespace WindowsFormsApp4
+namespace seizure_filter
 {
     using static STFTCalculator;
     public class AppInputParameters
@@ -33,6 +33,7 @@ namespace WindowsFormsApp4
         public bool refresh_display { get; set; }
         public Quality display_quality { get; set; }
 
+        public int n_lvls { get; set; }
         public Color danger_color { get; set; }
         public Color warning_color { get; set; }
         public Color normal_color { get; set; }
@@ -259,8 +260,8 @@ namespace WindowsFormsApp4
                 ParseConfigurationFile(config_path);
             }
 
-            
-            /*hostname = "127.0.0.1";
+
+            /**hostname = "127.0.0.1";
             port = 1234;
 
             Fs = 512.0;
@@ -316,6 +317,7 @@ namespace WindowsFormsApp4
             lbp_lvl_max_sec = 60 * 10;            
             */
 
+            n_lvls = 3; 
             chunk_len = nsamp_per_block * total_nchan;
             rms_lvl_reset_point = (int)(Fs * rms_lvl_reset_sec);
             rms_lvl_max_point = (int)(rms_lvl_max_sec / rms_lvl_reset_sec);
@@ -346,7 +348,7 @@ namespace WindowsFormsApp4
                         SetPropValue(prop_name, prop_val);
                     }
                 }
-            } 
+            }             
         }
         #endregion
 
