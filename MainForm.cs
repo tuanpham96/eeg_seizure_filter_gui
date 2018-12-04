@@ -123,7 +123,6 @@ namespace WindowsFormsApp4
         {
             //MiscellaneousTesting misctest = new MiscellaneousTesting();
             InitializeComponent();
-
             using (Prompt prompt = new Prompt("ENTER THE INPUT PARAMETERS", "Input parameters"))
             {
                 APP_INP_PRM = prompt.Result;
@@ -650,8 +649,8 @@ namespace WindowsFormsApp4
                 while ((stream_read = stream.Read(bytes, 0, bytes.Length)) != 0)
                 {
                     string data_with_lines = System.Text.Encoding.ASCII.GetString(bytes, 0, stream_read);
-                    string[] lines = data_with_lines.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                    lines = lines.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                    string[] lines = data_with_lines.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                    //lines = lines.Where(x => !string.IsNullOrEmpty(x)).ToArray();
                     lines = lines.Where(x => !x[0].Equals(',')).ToArray();
                     lines = lines.Where(x => x.Split(',').Length == APP_INP_PRM.chunk_len).ToArray();
                     if (lines.Length == 0) { continue; }

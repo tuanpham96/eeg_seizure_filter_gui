@@ -84,6 +84,12 @@ namespace WindowsFormsApp4
 
         public int current_file_count { get; set; }
         public int save_every { get; set; }
+
+        public string config_delim = "\t";
+        public string comment_str = "#"; 
+        public string config_path { get; set; }
+        public string default_config_path { get; set; }
+        public string current_directory { get; }
         #endregion
 
         #region Dictionaries for categorical options 
@@ -122,7 +128,12 @@ namespace WindowsFormsApp4
                 { "Triangular", WindowType.Triangle },
                 { "No window",  WindowType.Rectangle },
             };
-
+            foreach (WindowType _wintype_ in Enum.GetValues(typeof(WindowType))) {
+                if (!wintype_dict.ContainsValue(_wintype_))
+                {
+                    wintype_dict.Add(_wintype_.ToString().Replace('_', '-'), _wintype_); 
+                }
+            }
             stft_saving_options = new Dictionary<string, bool>
             {
                 { "Yes", true },
@@ -174,6 +185,7 @@ namespace WindowsFormsApp4
         public Dictionary<string, Dictionary<string, PropertypAndFormType>> OptionSections = new Dictionary<string, Dictionary<string, PropertypAndFormType>>
         {
             { "Input and Output",       new Dictionary<string, PropertypAndFormType>{
+                { "config_path",        new PropertypAndFormType("Configuration path") },
                 { "hostname",           new PropertypAndFormType("Host name") },
                 { "port",               new PropertypAndFormType("Port") },
                 { "Fs",                 new PropertypAndFormType("Sample frequency (Hz)") },
@@ -224,25 +236,37 @@ namespace WindowsFormsApp4
                 { "lbp_lvl_reset_sec",      new PropertypAndFormType("Tally Spectral Alarm every (s)") },
                 { "lbp_lvl_max_sec",        new PropertypAndFormType("Display length of Spectral Alarm tally (s)") },
             }}
-                   
-
-    };
+        };
         #endregion 
 
         /* !!! Need to check for conditions of Channel_Idx and Gains_Arr
          */
         #region Constructor with default values 
-        public AppInputParameters()
+        public AppInputParameters(bool create_new_config, string _config_path_)
         {
-            InitializeDictionaries(); 
-            hostname = "127.0.0.1";
+            InitializeDictionaries();
+            current_directory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
+            Console.WriteLine(current_directory);
+            default_config_path = current_directory + "\\_config_file.txt";
+            if (create_new_config)
+            {
+                ParseConfigurationFile(default_config_path);
+                config_path = _config_path_;
+            }
+            else
+            {
+                config_path = _config_path_;
+                ParseConfigurationFile(config_path);
+            }
+
+            
+            /*hostname = "127.0.0.1";
             port = 1234;
 
             Fs = 512.0;
             nmax_queue_total = 64;
             nsamp_per_block = 4;
             total_nchan = 4;
-            chunk_len = nsamp_per_block * total_nchan;
             channels2plt = "0;1";
 
             save_every = (int) (30 * 60 * Fs); // 30 mins 
@@ -265,13 +289,13 @@ namespace WindowsFormsApp4
             display_rms_vertoffset = 0;
 
             d_gain = 0.1;
-            d_sep = 25;
+            d_sep = 5;
 
             refresh_display = true;
             display_quality = Quality.High;
 
-            nsec_fft = 2.0;
-            per_overlap = 90;   
+            nsec_fft = 4.0;
+            per_overlap = 98;   
             window_type = WindowType.Hanning;
             f_bandpower_lower = 2;
             f_bandpower_upper = 8;
@@ -287,15 +311,42 @@ namespace WindowsFormsApp4
 
             rms_lvl_reset_sec = 2;
             rms_lvl_max_sec = 60 * 10;
-            rms_lvl_reset_point = (int) (Fs * rms_lvl_reset_sec);
-            rms_lvl_max_point = (int) (rms_lvl_max_sec / rms_lvl_reset_sec);
-
 
             lbp_lvl_reset_sec = 10;
-            lbp_lvl_max_sec = 60 * 10;
+            lbp_lvl_max_sec = 60 * 10;            
+            */
+
+            chunk_len = nsamp_per_block * total_nchan;
+            rms_lvl_reset_point = (int)(Fs * rms_lvl_reset_sec);
+            rms_lvl_max_point = (int)(rms_lvl_max_sec / rms_lvl_reset_sec);
             lbp_lvl_reset_point = (int)(Fs * lbp_lvl_reset_sec);
             lbp_lvl_max_point = (int)(lbp_lvl_max_sec / lbp_lvl_reset_sec);
 
+        }
+        public void ParseConfigurationFile(string _config_path_)
+        {
+            foreach (var line in File.ReadLines(_config_path_))
+            {
+                if (!line.StartsWith(comment_str))
+                {
+                    var str_arr = line.Split(new string[] { config_delim }, StringSplitOptions.RemoveEmptyEntries);
+                    string prop_name = str_arr[0];
+                    string prop_val = str_arr[2];
+                    Type prop_type = GetPropType(prop_name);
+                    if (prop_type.IsEnum)
+                    {
+                        SetPropValue(prop_name, Enum.Parse(prop_type, prop_val));
+                    } 
+                    else if (prop_type == typeof(Color))
+                    {
+                        SetPropValue(prop_name, ColorTranslator.FromHtml(prop_val));
+                    }
+                    else
+                    {
+                        SetPropValue(prop_name, prop_val);
+                    }
+                }
+            } 
         }
         #endregion
 
@@ -437,7 +488,7 @@ namespace WindowsFormsApp4
         }
         public Type GetPropType(string propName)
         {
-            return this.GetType().GetRuntimeProperty(propName)?.GetType();
+            return this.GetType().GetProperty(propName)?.PropertyType;
         }
 
         public void SetPropValue(string propName, object newValue)

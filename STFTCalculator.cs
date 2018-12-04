@@ -30,15 +30,98 @@ namespace WindowsFormsApp4
         #endregion
 
         #region Window functions
-        public enum WindowType { Hanning, Hamming, Rectangle, Triangle};
+        public enum WindowType {
+            Hanning, Hamming, Rectangle, Triangle,
+            Blackman, Exact_Blackman, FlatTop, Nuttall,
+            Blackman_Nutall, Blackman_Harris
+        };
         private class WindowFunctions
         {
+            /* Many of the equations are from 
+             * https://en.wikipedia.org/wiki/Window_function &
+             * http://zone.ni.com/reference/en-XX/help/371361E-01/lvanlsconcepts/char_smoothing_windows/#Exact_Blackman
+             */ 
             private const double pi = Math.PI; 
             public double Rectangle(int n, int N)   { return 1; }
             public double Triangle(int n, int N)    { return 1 - Math.Abs( (n - (N-1)*0.5) / (N/2) ); }
             public double Hanning(int n, int N)     { return General_Cosine(n, N, 0.5); }
             public double Hamming(int n, int N)     { return General_Cosine(n, N, 25.0 / 46.0); }
-            private double General_Cosine(int n, int N, double a0) { return a0 - (1 - a0) * Math.Cos(2 * pi * n / (N - 1));  }
+
+            public double Blackman(int n, int N)
+            {
+                return Generalized_Cosine_Sum(n, N, 
+                    new double[] {
+                        0.42,
+                        0.50,
+                        0.08
+                    });
+            }
+            public double Exact_Blackman(int n, int N)
+            {
+                return Generalized_Cosine_Sum(n, N,
+                    new double[] {
+                        7938.0 / 18608.0,
+                        9240.0 / 18608.0,
+                        1430.0 / 18608.0
+                    });
+            }
+            public double FlatTop(int n, int N)
+            {
+                return Generalized_Cosine_Sum(n, N,
+                    new double[] {
+                        0.215578948,
+                        0.416631580,
+                        0.277263158,
+                        0.083578947,
+                        0.006947368
+                    });
+            }
+            public double Nuttall(int n, int N)
+            {
+                return Generalized_Cosine_Sum(n, N,
+                    new double[] {
+                        0.355768, 
+                        0.487396, 
+                        0.144232, 
+                        0.012604
+                    });
+            }
+            public double Blackman_Nutall(int n, int N)
+            {
+                return Generalized_Cosine_Sum(n, N,
+                    new double[] {
+                        0.3635819,
+                        0.4891775,
+                        0.1365995,
+                        0.0106411
+                    });
+            }
+            public double Blackman_Harris(int n, int N)
+            {
+                return Generalized_Cosine_Sum(n, N,
+                    new double[] {
+                        0.35875,
+                        0.48829,
+                        0.14128,
+                        0.01168
+                    });
+            }
+
+            private double General_Cosine(int n, int N, double a0)
+            {
+                return a0 - (1 - a0) * Math.Cos(2 * pi * n / (N - 1));
+            }
+            private double Generalized_Cosine_Sum(int n, int N, double[] a)
+            {
+                double w_n = a[0]; 
+                for (int k = 1; k < a.Length; k++)
+                {
+                    double sign = k % 2 == 0 ? 1.0 : -1.0;
+                    w_n += sign * a[k] * Math.Cos(2 * pi * k * n / (N - 1)); 
+                }
+                return w_n;
+            }
+
             public MethodInfo function(string method)
             {
                 return GetType().GetMethod(method); 
@@ -259,8 +342,8 @@ namespace WindowsFormsApp4
         }
         /*  Adapted from: 
          *  https://github.com/swharden/Csharp-Data-Visualization/blob/master/projects/18-09-19_microphone_FFT_revisited/ScottPlotMicrophoneFFT/ScottPlotMicrophoneFFT/Form1.cs
-         */   
-        public double[] FFT(double[] data)
+         */
+            public double[] FFT(double[] data)
         {
             double[] fft = new double[(int)(data.Length/2)];
             System.Numerics.Complex[] fftComplex = new System.Numerics.Complex[data.Length];

@@ -1,5 +1,7 @@
-Configuration, generated on Friday, November 30, 2018 5:47 PM
-Property	Type	Value	Description
+# Configuration, generated on Monday, December 03, 2018 5:51 PM
+# Change the Value column to induce effect
+# Property	Type	Value	Description
+config_path	System.String	C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\_config_file.txt	<NAN>
 hostname	System.String	127.0.0.1	<NAN>
 port	System.Int32	1234	<NAN>
 Fs	System.Double	512	<NAN>
@@ -12,10 +14,10 @@ max_sec_plt	System.Double	10	<NAN>
 refresh_display	System.Boolean	True	Refreshable
 display_quality	LiveCharts.Geared.Quality	High	High
 d_gain	System.Double	0.1	<NAN>
-d_sep	System.Double	25	<NAN>
-danger_color	System.Drawing.Color	Color [A=255, R=255, G=0, B=0]	<NAN>
-warning_color	System.Drawing.Color	Color [A=255, R=255, G=215, B=0]	<NAN>
-normal_color	System.Drawing.Color	Color [A=255, R=0, G=128, B=0]	<NAN>
+d_sep	System.Double	5	<NAN>
+danger_color	System.Drawing.Color	#FF0000	Color [A=255, R=255, G=0, B=0]
+warning_color	System.Drawing.Color	#FFD700	Color [A=255, R=255, G=215, B=0]
+normal_color	System.Drawing.Color	#008000	Color [A=255, R=0, G=128, B=0]
 channel_vertgain_str	System.String	1;1;1	<NAN>
 display_channel_vertoffset	System.Double	5	<NAN>
 rms_vertgain_str	System.String	1;1	<NAN>
@@ -25,8 +27,8 @@ danger_rms_upperbound	System.Double	1.4	<NAN>
 danger_rms_lowerbound	System.Double	0.6	<NAN>
 warning_rms_upperbound	System.Double	1.2	<NAN>
 warning_rms_lowerbound	System.Double	0.8	<NAN>
-nsec_fft	System.Double	2	<NAN>
-per_overlap	System.Double	90	<NAN>
+nsec_fft	System.Double	4	<NAN>
+per_overlap	System.Double	98	<NAN>
 window_type	WindowsFormsApp4.STFTCalculator+WindowType	Hanning	Hanning
 f_bandpower_lower	System.Double	2	<NAN>
 f_bandpower_upper	System.Double	8	<NAN>
