@@ -103,49 +103,121 @@ using System.Collections.Generic;
 
 namespace seizure_filter
 {
-    /// <summary>
-    /// <c>MainForm</c> is where the plotting happens 
-    /// </summary>
+    // MainForm first prompts for input then streamed EEG related data 
     public partial class MainForm : Form
     {
+        #region MainForm attributes/properties 
+        /* Application input parameters - from Prompt ouput or an existing configuration file 
+         * - This is necessary to set up neccessary parameters for 
+         * (a) Reading streaming data from the correct port, 
+         * (b) Data calculations, and
+         * (c) Visualization options 
+         * - There are three options from Prompt:  
+         * (1) Create a completely new configuration file, with parameters loaded from 
+         *      a default configuration file (`_config_file.txt`: please don't modify this regularly),
+         *      then save the configuration file 
+         * (2) Load an existing configuration, and modify the configutation in Prompt.
+         *      Then opt to either save it as a new file or overwrite it. 
+         *      The warning of overwriting is not yet implemented so be careful
+         * (3) Load an existing configutation, then start MainForm to plot, 
+         *      meaning Prompt would not appear to modify parameters.
+         *      The warning for loading an non-existing file is not yet implemented 
+         * The general idea is: when one first starts, option (1) is prefered to create an initial configuration 
+         *                      then later on, option (2) is preferred to start modifying the parameters (for example: alarm thresholds) 
+         *                      once configuration is settled, option (3) is prefered, 
+         *                      and occasional going back to (2) for small modifications
+         */ 
         private AppInputParameters APP_INP_PRM;
+        /* Thread to run DrawAndReport 
+         */
         private Thread logic_thread;
 
+        /* Array of calculators
+         * + STFTCalcs: Array of Short-time Fourier transform calcultors, 
+         *              contains information and calculation on spectral analysis, 
+         *              and spectral alarm rates
+         * + RMSCalcs:  Array of Root-mean-square calculators, and the queue of current data      
+         *               contains information and calculation on current data and RMS, 
+         *               and RMS alarm rates
+         */   
         public STFTCalculator[] STFTCalcs;
         public RMSCalculator[] RMSCalcs;
+        /* Array of series to pass on values to be recognized by the plotting module/library 
+         * Briefly, `ChannelSeries`, `RMSSeries`, `LBPSeries` are Time Series (meaning x_axis is time) 
+         * While `STFTSeries` X axis is Frequency 
+         * The `RMSAlarmSeries` and `LBPAlarmSeries` are also Time Series, but at a slower update rate. 
+         * + ChannelSeries:     Channel values, and their difference; 
+         *                      - For now implemented only 2 channels + their difference 
+         *                      - However, it is possible to generalize, as long as do not include pair difference
+         *                      - Generalization with pairwise difference plotting might mean creating a separate plot pannel 
+         * + RMSSeries:         Root-mean-square values of the channels 
+         *                      - Sliding RMS window, with specified length in the prompt 
+         * + STFTSeries:        Short-time Fourier transform values of the (normalized) channels 
+         *                      - Channel data are normalized by mean and variance before doing STFT 
+         *                      - There's also an option to use single tapers to the normalized data before STFT 
+         * + LBPSeries:         Limited band power of the channels
+         *                      - Sum of squares of the magnitude of STFT, with the option to scale to Fs and applied taper (refer to the implementation )
+         *                      - The frequency band is specified by prompt 
+         * + RMSAlarmSeries:    RMS alarm rate over 3 alarm levels (Normal=0, Warning=1, Danger=2) 
+         *                      - The rate is updated for every particular duration of time (for example, every 2s) then reset 
+         *                      - The duration is specified in prompt 
+         * + LBPAlarmSeries:    LBP alarm rate over 3 alarm levels (Normal=0, Warning=1, Danger=2) 
+         *                      - Similarly set up like RMS alarm rate 
+         *                      - The duration is specified separately from RMSAlarmSeries 
+         */
+        public GearedValues<ObservablePoint>[] ChannelSeries;
+        public GearedValues<ObservablePoint>[] RMSSeries;
+        public GearedValues<ObservablePoint>[] STFTSeries;
+        public GearedValues<ObservablePoint>[] LBPSeries;
+        public GearedValues<ObservablePoint>[] RMSAlarmSeries;
+        public GearedValues<ObservablePoint>[] LBPAlarmSeries;
+        #endregion
 
-        public GearedValues<ObservablePoint>[] RMSSeries { get; set; }
-        public GearedValues<ObservablePoint>[] ChannelSeries { get; set; }
-        public GearedValues<ObservablePoint>[] STFTSeries { get; set; }
-        public GearedValues<ObservablePoint>[] LBPSeries { get; set; }
+        #region Constructor and Initialization 
 
-        public GearedValues<ObservablePoint>[] RMSAlarmSeries { get; set; }
-        public GearedValues<ObservablePoint>[] LBPAlarmSeries { get; set; }
-
-        /// <summary>
-        /// <para>
-        /// INPUT taken from <c>Prompt</c> and/or an existing configuration file 
-        /// </para>
-        /// <para>
-        /// OUTPUT include real time plotting of:
-        /// 
-        /// </para>
-        /// <list type="bullet">
-        /// <item>
-        /// <description> Occipital EEG data (see <see cref="ChannelSeries"/> and <see cref="channel_plots"/>  <seealso cref="RMSCalculator.current_val"/> )</description>
-        /// </item>
-        /// <item> 
-        /// <description> Their difference (see  <see cref="ChannelSeries"/> and <see cref="channel_plots"/>) </description> 
-        /// </item>
-        /// </list>
-        /// (3) Root mean square (RMS) (see <see cref="RMSSeries"/> and <see cref="rms_plots"/> <seealso cref="RMSCalculator.current_rms"/> <seealso cref="RMSCalcs"/>)
-        /// (4) Short-time Fourier transform (STFT) (see <see cref="STFTSeries"/> and <see cref="spectral_plots"/> <seealso cref="STFTCalculator.mag_freq"/> <seealso cref="STFTCalcs"/>), 
-        /// (5) Limited band power (LBP) (see <see cref="LBPSeries"/> and <see cref="limbandpow_plots"/> <seealso cref="STFTCalculator.band_power"/> <seealso cref="STFTCalcs"/>),
-        /// (6) Alarm rates for 3 alarm levels of RMS (see <see cref="RMSAlarmSeries"/> and <see cref="rms_alarm_plots"/> <seealso cref="RMSCalculator.rms_levels"/>), 
-        /// 
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
+        /* MainForm initialization 
+         * + SUMMARY: 
+         *      (1) Initialize the components of the form (the set up of the form),
+         *          - Refer to autogenerated `MainForm.Designer.cs` for more information 
+         *              about the different components in th UI 
+         *      (2) Prompting for parameter input,
+         *          - Refer to `Prompt.cs` and `AppInputParameters.cs` for more information 
+         *      (3) Initialize Calculators, Plotting Series and Plotting Setup, 
+         *          - Refer to `---Calculator.cs` files for more information about Calculators set ups 
+         *          - Refer to online documentation of the plotting module `LIVECHARTS` 
+         *              for set up of Plotting Series and Plotting Setup 
+         *      (4) Load the form to start streaming data once everything is set
+         *          - The main layout is in `DrawAndReport` method
+         * + REQUIREMENTS: 
+         *      - OpenVibe_Designer:    + For designing the communication set up with 
+         *                                  `OpenVibe_Acquisition` (or with sinusoidal simulator) to this program. 
+         *                              + In short, this is the middle man/woman/human/stuff.  
+         *      - OpenVibe_Acquisition: + For connecting with EEG set up with `OpenVibe_Designer` setup.
+         *                              + This would not be necessary when running sinusoidal simulator in `OpenVibe_Designer`.
+         *      - LiveCharts:           + Plotting module/library in this, a lot of the code is 
+         *                                  about setting up configuration to use this module. 
+         *                                  Hence, these details can be ignored during migration to another language 
+         *                              + LiveCharts.Geared is also used here because it is optimized for 
+         *                                  faster plotting of streaming data. It is however commerical. 
+         *                                  However, have not paid for it yet. Not sure why. My guess is 
+         *                                  that just the `LiveCharts.Geared.Wpf` is commerical, and I'm using 
+         *                                  `LiveCharts.Geard` mainly for `WindowsForm`, which might not commerical.
+         *                                  I was able to install it from NuGet, so have been using it still. 
+         *      - Accord.Math:          + For Fourier Transform 
+         * + GENERAL INPUT: 
+         *      - Streaming data from EEG recording channels, supposedly 
+         *      - Requires correct set up from the OpenVibe Designer and Acquisition 
+         *      - Then need an `APP_INP_PRM` object from `Prompt` and/or an existing configuration file to create 
+         *          (APP_INP_PRM: details of configuration for reading data, calculations and plotting)
+         * + GENERAL OUTPUT: 
+         *      (1) Occipital EEG data, see `ChannelSeries` and `channel_plots`
+         *      (2) Their difference, see `ChannelSeries` and `channel_plots`
+         *      (3) Root mean square (RMS), see `RMSSeries` and `rms_plots`
+         *      (4) Short-time Fourier transform (STFT), see `STFTSeries` and `spectral_plots`
+         *      (5) Limited band power (LBP), see `LBPSeries` and `limbandpow_plots`   
+         *      (6) Alarm rates for 3 alarm levels of RMS, see `RMSAlarmSeries` and `rms_alarm_plots`
+         *      (7) Alarm rates for 3 alarm levels of LBP, see `LBPAlarmSeries` and `lbp_alarm_plots`
+         */
         public MainForm()
         {
             InitializeComponent();
@@ -161,6 +233,20 @@ namespace seizure_filter
             Load += MainForm_Load;
         }
 
+        /* MainForm_Load: creating a thread to start `DrawAndReport`
+         * I believe there are many improvements that can be made to this 
+         * for allocating resources to calculating and plotting 
+         * I'm not really familiar with threading, unfortunately. 
+         */ 
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            logic_thread = new Thread(DrawAndReport);
+            logic_thread.Start();
+        }
+
+        /* InitializeCalculators: initialize calculators for storing streaming channel data, RMS and spectral calculations 
+         * Refer to `RMSCalculator.cs` and `STFTCalculator` for more information 
+         */ 
         private void InitializeCalculators()
         {
             int nchan = APP_INP_PRM.nchan;
@@ -185,25 +271,35 @@ namespace seizure_filter
 
             }
         }
+
+        /* InitializePlotSeries: initialize the series (`__Series objects) to "communicate" with the CartesianCharts objects (`__plots` objects in the `MainForm.Designer.cs`) 
+         * Much of this can be ignored when migrating to another language. 
+         * A lot of this is sort of hard-coded sadly so, again, would not make much sense to migrate.
+         * However, this can be improved if the channel difference data are plotted on another CartesianCharts object instead of in the same plot as in `channel_plots`
+         * If that is done, much of the "design" choices can then be set in the configuration set up (saved in `APP_INP_PRM` and prompted by `Prompt`) 
+         */
         private void InitializePlotSeries()
         {
             int nchan = APP_INP_PRM.nchan;
 
-            var mapper = Mappers.Xy<ObservablePoint>()
-                            .X(value => value.X)
-                            .Y(value => value.Y);
+            // Mapper of ObservablePoint for plotting later on 
+            var mapper = Mappers.Xy<ObservablePoint>().X(value => value.X).Y(value => value.Y);
             Charting.For<ObservablePoint>(mapper);
 
-            ChannelSeries = new GearedValues<ObservablePoint>[3];
-
+            // Here is where the limit happens, meaning could only plot 2 channels + 1 line series of their difference 
+            // Plotting the difference in another CartesianChart in a more systematic way would enable this to 
+            //      generalize to many more channels to be plot. However, the problem with labelling the pairwise difference 
+            //      with more than a few channels would be hard, as that would be a combinatoral of 2 over N channels. 
+            // The reason for 2 channels + 1 difference was to observe 2 occipital EEG channels supposedly during stimulation.
+            //      Since stimulation would be on 1 side, the difference data would reflect the asymmetric seizure appearance were there to be any. 
             string[] legends = {"Ch " + APP_INP_PRM.chan_idx2plt[0],
                                 "Ch " + APP_INP_PRM.chan_idx2plt[1],
                                 "Ch " + APP_INP_PRM.chan_idx2plt[0] + " - Ch " + APP_INP_PRM.chan_idx2plt[1]};
             System.Windows.Media.DoubleCollection[] dashed_style =
             {
-                new System.Windows.Media.DoubleCollection(new double[] { 1,0 }),
-                new System.Windows.Media.DoubleCollection(new double[] { 5,2 }),
-                new System.Windows.Media.DoubleCollection(new double[] { 1,0 })
+                new System.Windows.Media.DoubleCollection(new double[] { 1,0 }),  // solid for first incoming channel 
+                new System.Windows.Media.DoubleCollection(new double[] { 5,2 }),  // dashed for second 
+                new System.Windows.Media.DoubleCollection(new double[] { 1,0 })   // solid for their difference 
             };
             System.Windows.Media.SolidColorBrush[] ch_brushes =
             {
@@ -211,11 +307,14 @@ namespace seizure_filter
                  System.Windows.Media.Brushes.Gray,
                  System.Windows.Media.Brushes.Red
             };
+
+            // `ChannelSeries` setup then add to `chanel_plots` 
+            ChannelSeries = new GearedValues<ObservablePoint>[nchan + 1];
             for (int idx_obs = 0; idx_obs < nchan + 1; idx_obs++)
             {
                 ChannelSeries[idx_obs] = new GearedValues<ObservablePoint>
                 {
-                    Quality = APP_INP_PRM.display_quality
+                    Quality = APP_INP_PRM.display_quality // needed for Geared to perform well 
                 };
                 channel_plots.Series.Add(new GLineSeries
                 {
@@ -229,6 +328,9 @@ namespace seizure_filter
                 });
             }
 
+            // `RMSSeries` setup then add to `rms_plots`
+            // `STFTSeries` setup then add to `spectral_plots`
+            // `LBPSeries` setup tthen add to `limbandpow_plots`
             RMSSeries = new GearedValues<ObservablePoint>[nchan];
             STFTSeries = new GearedValues<ObservablePoint>[nchan];
             LBPSeries = new GearedValues<ObservablePoint>[nchan];
@@ -283,6 +385,16 @@ namespace seizure_filter
                 });
             }
 
+            // Alarm levels are set to 3 here, 
+            // + Normal = 0 
+            // + Warning = 1
+            // + Danger = 2
+            // There's a way to generalize this, but I though that 3 levels are 
+            //      probably quite sufficient to look at already since there would be 
+            //      3 colors to look at. More than that, I would argue could be 
+            //      overwhelming and distracting.
+            // Regardless, generalization would mean having these as options back in `AppInputParameters.cs` and 
+            //      prompt for such configurations in `Prompt`. 
             int n_lvls = APP_INP_PRM.n_lvls;
             System.Windows.Media.SolidColorBrush[] brushes =
             {
@@ -291,14 +403,26 @@ namespace seizure_filter
                 AppInputParameters.ColorToBrush(APP_INP_PRM.danger_color)
             };
             string[] alarm_lvl_str = { "Normal", "Warning", "Danger" };
-            RMSAlarmSeries = new GearedValues<ObservablePoint>[n_lvls];
-            LBPAlarmSeries = new GearedValues<ObservablePoint>[n_lvls];
+
+            // There are 2 ways to plot: either 
+            // (1) area-stack them on top of each other, with Normal bottom, Warning middle then Danger on top; or
+            // (2) just plot them as lines for easily inspection of alarm rate trend 
+            //      since stacking might sometimes be hard to tell the trend 
+            // There's an option in LiveCharts to plot StackedArea explicitly but I chose to manually implement it 
+            //      by doing the LineSeries instead by basically adding them up for uniformity of code 
+            //      refer to `RMSCalculator.Cumulative_From_Lower_Level` 
+            //      or `STFTCalculator.Cumulative_From_Lower_Level` for details.
+            // Hence, to maintain that uniformity in the area-stack implementation, 
+            //      the order of the series matters due to overlaying effects of series added later. 
             int i_start, i_bound, i_incr, i_sign_cond;
             double stroke_thickness, alarm_rate_opacity;
             System.Windows.Media.Geometry point_geom = DefaultGeometries.None;
-            if (APP_INP_PRM.alarm_rate_plt_stack)
+            if (APP_INP_PRM.alarm_rate_plt_stack) // stack them up 
             {
                 // equilvalent to `for (int i = n_lvls-1; i >= 0; i--)`   
+                // meaning the Danger one gets added first, hence would be the one way in the back 
+                // hence calling `Cumulative_From_Lower_Level` would be to make it higher but still maintain the right proportion
+                // when taken into account all the levels. 
                 i_start = n_lvls - 1;
                 i_bound = -1;
                 i_sign_cond = 1;
@@ -307,7 +431,7 @@ namespace seizure_filter
                 stroke_thickness = 1.50;
                 alarm_rate_opacity = 0.9;
             }
-            else
+            else // regular line plot - which is the default 
             {
                 // equilvalent to `for (int i = 0; i < n_lvls; i++)`
                 i_start = 0;
@@ -318,6 +442,11 @@ namespace seizure_filter
                 stroke_thickness = 4.5;
                 alarm_rate_opacity = 0.0;
             }
+
+            // `RMSAlarmSeries` setup then add to `rms_alarm_plots`
+            // `LBPAlarmSeries` setup then add to `lbp_alarm_plots`
+            RMSAlarmSeries = new GearedValues<ObservablePoint>[n_lvls];
+            LBPAlarmSeries = new GearedValues<ObservablePoint>[n_lvls];
             for (int i = i_start; i.CompareTo(i_bound) == i_sign_cond; i += i_incr)
             {
                 RMSAlarmSeries[i] = new GearedValues<ObservablePoint>
@@ -361,6 +490,11 @@ namespace seizure_filter
                 });
             }
         }
+
+        /* InitializePlotSetUp: initialize plot axes/legend setup options and maximize plotting performance  
+         * Refer `PlotSetUpAndMaximizePerformance` for further descriptions
+         * Much of this is manual, hence can be ignored while migrating to another language 
+         */ 
         private void InitializePlotSetUp() {  
             PlotSetUpAndMaximizePerformance(
                 cart_chart:     ref channel_plots,
@@ -399,6 +533,8 @@ namespace seizure_filter
 
         }
 
+        /* Axes_Label: struct for x and y axis labels 
+         */ 
         private struct Axes_Label
         {
             public string xlabel, ylabel;
@@ -408,11 +544,19 @@ namespace seizure_filter
                 this.ylabel= ylabel;
             }
         }
+
+        /* Axes_Limit: class for setting limits of axes 
+         * Generally if any element is a DOUBLE.POSITIVE_INFINITY or NEGATIVE_INFINITY then the limit is not set
+         * For example, + if xlim = {0, +INF} then always set the plot x-axis to have lowest bound as 0, 
+         *              but upper bound will be set by LiveCharts automatically 
+         *              + if xlim = {-INF, +INF} then LiveCharts will set the limit automatically,
+         *              according to the plotted streamed data values 
+         *              + and so on for other scenarios for both xlim and ylim. 
+         */
         private class Axes_Limit
         {
             public double xlow, xhigh, ylow, yhigh;
             private readonly double[] xlim, ylim;
-
             public void Check_Limit_Validity(double[] inp)
             {
                 if (inp.Length != 2)
@@ -435,10 +579,38 @@ namespace seizure_filter
                 yhigh = ylim[1];
                 Check_Limit_Validity(this.xlim);
                 Check_Limit_Validity(this.ylim);
-
             }
         }
 
+        /* PlotSetUpAndMaximizePerformance: setting the plot (CartesianChart objects) axes and legend options + maximize plotting performance 
+         * + REFERENCE:
+         *      (1) Axes set up:      https://lvcharts.net/App/examples/v1/wf/Axes
+         *      (2) Performance tips: https://lvcharts.net/App/examples/v1/wf/Performance%20Tips
+         * + INPUT: 
+         *      - cart_chart:       the reference of the CartesianChart object to set these options 
+         *      - axes_label:       Axes_Label object to set labels for x-axis and y-axis 
+         *      - axes_limit:       Axes_Limit object to set limits for x-axis and y-axis 
+         *                          default is "null", meaning not setting the limits manually 
+         *      - x_axis_merged:    merge the x-tick values onto the axis to save space, refer to ref. (1) 
+         *                          default is "false", meaning not merged
+         *                          however, should set to "true" for the 3 middle time series plots
+         *                          because the representation of the values could change the widths of 
+         *                          the main plot, which could be misleading when trying to compare between 
+         *                          the 3 time series plots in the middle. 
+         *      - y_axis_merged:    merge the y-tick values onto the axis to save space, refer to ref. (1) 
+         *                          default is "false", meaning not merged
+         *                          however, should set to "true" for the 3 middle time series plots
+         *                          because the representation of the values could change the widths of 
+         *                          the main plot, which could be misleading when trying to compare between 
+         *                          the 3 time series plots in the middle. 
+         *      - lgnd_loc:         location of the legend in the plot, refer to ref. (1) 
+         *                          only 5 options {"Bottom", "Top", "Right", "Left", "None"}
+         *                          default is "LegendLocation.None"
+         * + OUTPUT: 
+         *      - NONE
+         *      - Set up the options for axes and legend locations 
+         *      - Then maximize plot performacne for streaming data, refer to ref. (2) 
+         */
         private void PlotSetUpAndMaximizePerformance(   ref LiveCharts.WinForms.CartesianChart cart_chart, 
                                                         Axes_Label axes_label, 
                                                         Axes_Limit axes_limit = null,
@@ -446,6 +618,7 @@ namespace seizure_filter
                                                         bool y_axis_merged = false,
                                                         LegendLocation lgnd_loc = LegendLocation.None)
         {
+            // Axes options 
             string font_fam = "Microsoft Sans Serif";
             var axes_color = System.Windows.Media.Brushes.Gray;
             cart_chart.Font = new Font(font_fam, 12F);
@@ -471,7 +644,7 @@ namespace seizure_filter
                 IsMerged = y_axis_merged,  
                 
             });
-
+            // Axes limit 
             if (axes_limit != null)
             {
                 if (!double.IsInfinity(axes_limit.xlow)) { cart_chart.AxisX[0].MinValue = axes_limit.xlow; }
@@ -481,7 +654,8 @@ namespace seizure_filter
                 if (!double.IsInfinity(axes_limit.yhigh)) { cart_chart.AxisY[0].MaxValue = axes_limit.yhigh; }
             }
 
-            // pseudo axes to display the axes more easily 
+            // pseudo axes to display the axes more easily because hiding the axes grids also hides the actual axes edges 
+            // hence needed these pseudo axes, which do not affect performance, as far as I know 
             cart_chart.AxisX.Add(new Axis
             {
                 Separator = new Separator { StrokeThickness = 0.5, Step = 1, Stroke = axes_color },
@@ -499,19 +673,20 @@ namespace seizure_filter
                 Foreground = System.Windows.Media.Brushes.Transparent
             });
 
+            // Legend location 
+            cart_chart.LegendLocation = lgnd_loc;
+
+            // Maximize plot performacne for streaming data, refer to ref. (2) 
             cart_chart.DisableAnimations = true;
             cart_chart.Hoverable = false;
             cart_chart.DataTooltip = null;
-            cart_chart.LegendLocation = lgnd_loc;
             cart_chart.Invalidate();
 
         }
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-            logic_thread = new Thread(DrawAndReport);
-            logic_thread.Start();
-        }
 
+        #endregion
+
+        #region Helper functions 
         private void ReturnRMSLevel(double value, out Color color_res, out int level_res)
         {
             if (value < APP_INP_PRM.danger_rms_lowerbound | value > APP_INP_PRM.danger_rms_upperbound)
@@ -549,6 +724,14 @@ namespace seizure_filter
                 level_res = 0;
             }
         }
+
+        private double[] Full_Deep_Copy(double[] source)
+        {
+            double[] destination = new double[source.Length];
+            Array.Copy(source, destination, source.Length);
+            return destination;
+        }
+        #endregion
 
         #region Update functions for simple WF objects 
         private void UpdateTextBox(TextBox txtbx, string s)
@@ -683,15 +866,10 @@ namespace seizure_filter
             min_bound = (Math.Floor(t / max_sec_plt) * max_sec_plt);
             max_bound = (Math.Floor(t / max_sec_plt) + 1) * max_sec_plt;
         }
-        
+
         #endregion
 
-        private double[] Full_Deep_Copy(double[] source)
-        {
-            double[] destination = new double[source.Length];
-            Array.Copy(source, destination, source.Length);
-            return destination;
-        }
+        #region The main action 
         public void DrawAndReport()
         {
             try
@@ -945,6 +1123,7 @@ namespace seizure_filter
                 DrawAndReport();
             }
         }
+        #endregion
 
         #region Events of Control Objects 
 

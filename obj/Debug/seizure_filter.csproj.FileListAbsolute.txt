@@ -89,4 +89,3 @@ C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\Accord.xml
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\Accord.Math.xml
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\Accord.Math.Core.xml
 C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\obj\Debug\seizure_filter.MainForm.resources
-C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\bin\Debug\seizure_filter.xml

@@ -25,8 +25,9 @@
     <SdkLinkTarget>Blank</SdkLinkTarget>
     <DocumentationSources>
       <DocumentationSource sourceFile="bin\Debug\seizure_filter.xml" />
-<DocumentationSource sourceFile="bin\Debug\seizure_filter.exe" /></DocumentationSources>
-    <HelpFileFormat>Website</HelpFileFormat>
+      <DocumentationSource sourceFile="bin\Debug\seizure_filter.exe" />
+    </DocumentationSources>
+    <HelpFileFormat>HtmlHelp1</HelpFileFormat>
     <SyntaxFilters>Standard</SyntaxFilters>
     <PresentationStyle>VS2013</PresentationStyle>
     <CleanIntermediates>True</CleanIntermediates>
