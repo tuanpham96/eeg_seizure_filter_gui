@@ -52,7 +52,8 @@ namespace seizure_filter
             AppInpPrm = new AppInputParameters(create_new_config, config_file_path); 
             if (config_option == Config_Options.LOAD_AND_PLOT)
             {
-                Result = AppInpPrm; 
+                Result = AppInpPrm;
+                Result.CompleteInitialize(); 
             } 
             else
             {
@@ -473,25 +474,16 @@ namespace seizure_filter
             
             if (MainPrompt.ShowDialog() == DialogResult.OK)
             {
-                string delim = AppInpPrm.config_delim;
-                string cmt = AppInpPrm.comment_str + " "; 
-                string config_file = Cntl_List["config_path"].Text; 
-                File.WriteAllText(config_file, string.Format(cmt + "Configuration, generated on {0:f}\n", DateTime.Now));
-                File.AppendAllText(config_file, cmt + "Change the Value column to induce effect\n"); 
-                File.AppendAllText(config_file, cmt + 
-                    "Property" + delim + 
-                    "Type" + delim +
-                    "Value" + delim + 
-                    "Description" + "\n");
+                Dictionary<string, string> description_dict = new Dictionary<string, string>(); 
                 foreach (var item in Cntl_List)
                 {
                     string prop_name = item.Key;
                     Control cntl_obj = item.Value;
-                    string description = "<NAN>"; 
                     if (cntl_obj is TextBox)
                     {
                         AppInpPrm.SetPropValue(prop_name, cntl_obj.Text);
-                    } 
+                        description_dict[prop_name] = "<NAN>"; 
+                    }
                     else if (cntl_obj is Panel)
                     {
                         Dictionary<string, object> prop_dict = radio_choice_dictionaries[prop_name];
@@ -499,19 +491,37 @@ namespace seizure_filter
                         // https://stackoverflow.com/questions/1797907/which-radio-button-in-the-group-is-checked by SLaks
                         var checkedButton = cntl_obj.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
                         AppInpPrm.SetPropValue(prop_name, prop_dict[checkedButton.Text]);
-                        description = checkedButton.Text;
-                    } 
+                        description_dict[prop_name] = checkedButton.Text;
+                    }
                     else if (cntl_obj is Button)
                     {
                         AppInpPrm.SetPropValue(prop_name, cntl_obj.BackColor);
-                        description = AppInpPrm.GetPropValue(prop_name).ToString(); 
+                        description_dict[prop_name] = AppInpPrm.GetPropValue(prop_name).ToString();
                     }
-                    else 
+                    else
                     {
-                        continue; 
+                        continue;
                     }
+                }
+                AppInpPrm.CompleteInitialize();
+
+                string delim = AppInpPrm.config_delim;
+                string cmt = AppInpPrm.comment_str + " ";
+                string config_file = Cntl_List["config_path"].Text;
+                File.WriteAllText(config_file, string.Format(cmt + "Configuration, generated on {0:f}\n", DateTime.Now));
+                File.AppendAllText(config_file, cmt + "Change the Value column to induce effect\n");
+                File.AppendAllText(config_file, cmt +
+                    "Property" + delim +
+                    "Type" + delim +
+                    "Value" + delim +
+                    "Description" + "\n");
+                foreach (var item in Cntl_List)
+                {
+                    string prop_name = item.Key;
+                    Control cntl_obj = item.Value;
                     if (!prop_name.Contains("label_of"))
                     {
+                        string description = description_dict[prop_name];
                         Type _type_ = AppInpPrm.GetPropType(prop_name);
                         var _val_ = AppInpPrm.GetPropValue(prop_name); 
                         File.AppendAllText(config_file, 

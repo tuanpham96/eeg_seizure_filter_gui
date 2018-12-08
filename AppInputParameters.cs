@@ -80,11 +80,9 @@ namespace seizure_filter
         public bool alarm_rate_plt_stack { get; set; }
 
         public double d_gain { get; set; }
-        public double d_sep { get; set; }
-        private double min_gain = 0.01, min_sep = 0;
+        public double d_offset { get; set; }
+        private double min_gain = 0.01, min_offset = 0;
 
-        public int current_file_count { get; set; }
-        public int save_every { get; set; }
 
         public string config_delim = "\t";
         public string comment_str = "#"; 
@@ -201,7 +199,7 @@ namespace seizure_filter
                 { "refresh_display",    new PropertypAndFormType("Refresh display?", PropertypAndFormType.Form_Type.RadiobuttonGroup, "display_refresh_options") },
                 { "display_quality",    new PropertypAndFormType("Display quality (affect performance)", PropertypAndFormType.Form_Type.RadiobuttonGroup, "gear_quality_dict") },
                 { "d_gain",             new PropertypAndFormType("Display Vertical GAIN change step") },
-                { "d_sep",              new PropertypAndFormType("Display Vertical OFFSET change step") },
+                { "d_offset",           new PropertypAndFormType("Display Vertical OFFSET change step") },
                 { "danger_color",       new PropertypAndFormType("Danger color", PropertypAndFormType.Form_Type.ColorButton) },
                 { "warning_color",      new PropertypAndFormType("Warning color", PropertypAndFormType.Form_Type.ColorButton) },
                 { "normal_color",       new PropertypAndFormType("Normal color", PropertypAndFormType.Form_Type.ColorButton) }
@@ -290,7 +288,7 @@ namespace seizure_filter
             display_rms_vertoffset = 0;
 
             d_gain = 0.1;
-            d_sep = 5;
+            d_offset = 5;
 
             refresh_display = true;
             display_quality = Quality.High;
@@ -359,6 +357,8 @@ namespace seizure_filter
 
             InitializeChannelIndex();
 
+            CheckForAlarmRange();
+
             InitializeRMSMessage(); 
             output_file_name = Path.Combine(output_folder, output_file_name);
 
@@ -367,12 +367,13 @@ namespace seizure_filter
             InitializeDisplayGains();
 
             InitializeFFTParameters();
+            
         }
 
         public void InitializeWelcomeMessage()
         {
             WelcomeMessage = String.Format("+ Connected to HOST@{0} - PORT@{1}\r\n", hostname, port);
-            WelcomeMessage += "\t Sampling frequency: " + Fs + "\r\n";
+            WelcomeMessage += "\t Sampling frequency: " + Fs + " Hz\r\n";
             WelcomeMessage += "\t Number of samples/epoch:" + nsamp_per_block + "\r\n";
         }
 
@@ -388,6 +389,43 @@ namespace seizure_filter
             WelcomeMessage += "+ Channels to plot: Ch" + string.Join("   Ch", chan_idx2plt) + "\r\n";
         }
 
+        // basically the conditions to check are: 
+        // danger_lower < warning_lower < warning_upper < danger_upper
+        // NORMAL: anything within [warning_lower, warning_upper] 
+        // WARNING: anything out of that range, but still within [danger_lower, danger_upper] 
+        // DANGER: otherwise 
+
+        public void CheckForAlarmRange()
+        {
+            Dictionary<string, double[]> ranges = new Dictionary<string, double[]>()
+            {
+                { "RMS", new double[]
+                    { danger_rms_lowerbound, warning_rms_lowerbound, warning_rms_upperbound, danger_rms_upperbound } },
+                { "LBP", new double[]
+                    { danger_lbp_lowerbound, warning_lbp_lowerbound, warning_lbp_upperbound, danger_lbp_upperbound } }, 
+            };
+
+            bool IsStrictlyAscending(double[] d)
+            {
+                bool it_is = true;
+                for (int i = 0; i < d.Length-1; i++)
+                {
+                    if (d[i] >= d[i+1]) { it_is = false; break; }
+                }
+                return it_is; 
+            }
+          
+            foreach (var item in ranges)
+            {
+                string value_type = item.Key;
+                var range_dict = item.Value; 
+                if (!IsStrictlyAscending(range_dict))
+                {
+                    throw new System.ArgumentException(
+                        string.Format("The array of {0} would need to follow a strict ascending order (not equals)", value_type)); 
+                }
+            }
+        }
         public void InitializeRMSMessage()
         {
             WelcomeMessage += "+ RMS calculations: \r\n";
@@ -395,6 +433,8 @@ namespace seizure_filter
                 nmax_queue_total, nmax_queue_total * 1000 / Fs);
             WelcomeMessage += String.Format("\t Warning ({2} < x < {0}, {3} > x > {1}) \r\n\t Danger (x < {2}, x > {3})\r\n",
                         warning_rms_lowerbound, warning_rms_upperbound, danger_rms_lowerbound, danger_rms_upperbound);
+            WelcomeMessage += String.Format("\t The alarm rate plot is updated every {0} seconds (non-overlapping)," +
+                        " with maximum plotting limit of {1} minutes \r\n", rms_lvl_reset_sec, rms_lvl_max_sec / 60.0); 
         }
 
         public void InitializeDisplayGains()
@@ -431,6 +471,8 @@ namespace seizure_filter
             }
             n_skip = (int)(Fs * nsec_fft * (100 - per_overlap) / 100);
             WelcomeMessage += String.Format("\t Overlap {0:0.0}% - hence skip {1} points\r\n", per_overlap, n_skip);
+            WelcomeMessage += String.Format("\t The taper is the {0} windows functions\r\n", window_type.ToString());
+
             if (stft_saving_option)
             {
                 string warning_stft_save = "WARNING: `stft_saving_option` = TRUE is not recommended" +
@@ -439,6 +481,13 @@ namespace seizure_filter
                 Console.WriteLine(warning_stft_save);
                 WelcomeMessage += "\t " + warning_stft_save + "\r\n"; 
             }
+
+            WelcomeMessage += String.Format("\t The bandpower is calculated between {0} - {1} Hz, with{2} scaling\r\n", 
+                    f_bandpower_lower, f_bandpower_upper, scaling_psd ? "" : "out" );
+            WelcomeMessage += String.Format("\t Warning ({2} < x < {0}, {3} > x > {1}) \r\n\t Danger (x < {2}, x > {3})\r\n",
+                    warning_lbp_lowerbound, warning_lbp_upperbound, danger_lbp_lowerbound, danger_lbp_upperbound);
+            WelcomeMessage += String.Format("\t The alarm rate plot is updated every {0} seconds (non-overlapping)," +
+                    " with maximum plotting limit of {1} minutes\r\n", lbp_lvl_reset_sec, lbp_lvl_max_sec / 60.0);
         }
 
         public static System.Drawing.Color BrushToColor(System.Windows.Media.SolidColorBrush br)
@@ -455,7 +504,7 @@ namespace seizure_filter
         }
         #endregion
         #region Specific Set methods during running application 
-        public void Control_Channel_Gain(double direction)
+        public void Control_Channel_Verical_Gain(double direction)
         {
             for (int i = 0; i < display_channel_vertgains.Length; i++)
             {
@@ -463,13 +512,13 @@ namespace seizure_filter
                 display_channel_vertgains[i] = Math.Max(display_channel_vertgains[i], min_gain);
             }
         }
-        public void Control_Channel_Separation(double direction)
+        public void Control_Channel_Vertical_Offset(double direction)
         {
-            display_channel_vertoffset += d_sep * direction;
-            display_channel_vertoffset = Math.Max(display_channel_vertoffset, min_sep);
+            display_channel_vertoffset += d_offset * direction;
+            display_channel_vertoffset = Math.Max(display_channel_vertoffset, min_offset);
         }
 
-        public void Control_RMS_Gain(double direction)
+        public void Control_RMS_Vertical_Gain(double direction)
         {
             for (int i = 0; i < display_rms_vertgains.Length; i++)
             {
@@ -477,10 +526,10 @@ namespace seizure_filter
                 display_rms_vertgains[i] = Math.Max(display_rms_vertgains[i], min_gain); 
             }
         }
-        public void Control_RMS_Separation(double direction)
+        public void Control_RMS_Vertical_Offset(double direction)
         {
-            display_rms_vertoffset += d_sep * direction;
-            display_rms_vertoffset = Math.Max(display_rms_vertoffset, min_sep);
+            display_rms_vertoffset += d_offset * direction;
+            display_rms_vertoffset = Math.Max(display_rms_vertoffset, min_offset);
         }
         #endregion
         #region Get and Set methods via reflection 

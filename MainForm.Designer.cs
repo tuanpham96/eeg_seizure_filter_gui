@@ -269,7 +269,7 @@
             this.chan_vertoffset_down_button.TabIndex = 23;
             this.chan_vertoffset_down_button.Text = "▼";
             this.chan_vertoffset_down_button.UseVisualStyleBackColor = false;
-            this.chan_vertoffset_down_button.Click += new System.EventHandler(this.chansep_down_Click);
+            this.chan_vertoffset_down_button.Click += new System.EventHandler(this.chanoffset_down_Click);
             // 
             // chan_vertoffset_up_button
             // 
@@ -284,7 +284,7 @@
             this.chan_vertoffset_up_button.TabIndex = 22;
             this.chan_vertoffset_up_button.Text = "▲";
             this.chan_vertoffset_up_button.UseVisualStyleBackColor = false;
-            this.chan_vertoffset_up_button.Click += new System.EventHandler(this.chansep_up_Click);
+            this.chan_vertoffset_up_button.Click += new System.EventHandler(this.chanoffset_up_Click);
             // 
             // rms_vertoffset_cntrl_label
             // 
@@ -309,7 +309,7 @@
             this.rms_vertoffset_down_button.TabIndex = 29;
             this.rms_vertoffset_down_button.Text = "▼";
             this.rms_vertoffset_down_button.UseVisualStyleBackColor = false;
-            this.rms_vertoffset_down_button.Click += new System.EventHandler(this.rmssep_down_Click);
+            this.rms_vertoffset_down_button.Click += new System.EventHandler(this.rmsoofset_down_Click);
             // 
             // rms_vertoffset_up_button
             // 
@@ -324,7 +324,7 @@
             this.rms_vertoffset_up_button.TabIndex = 28;
             this.rms_vertoffset_up_button.Text = "▲";
             this.rms_vertoffset_up_button.UseVisualStyleBackColor = false;
-            this.rms_vertoffset_up_button.Click += new System.EventHandler(this.rmssep_up_Click);
+            this.rms_vertoffset_up_button.Click += new System.EventHandler(this.rmsoffset_up_Click);
             // 
             // rms_vertgain_cntrl_label
             // 
@@ -583,7 +583,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonHighlight;
             this.ClientSize = new System.Drawing.Size(1053, 1889); 
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Controls.Add(this.rms_vertoffset_down_button);
             this.Controls.Add(this.rms_vertoffset_up_button);
             this.Controls.Add(this.rms_vertgain_down_button);
