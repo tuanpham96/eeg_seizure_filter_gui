@@ -11,7 +11,7 @@ using System.Windows.Forms;
 namespace seizure_filter
 {
 
-    /** Dialog promp implementation from Gideon Mulder in stakcoverflow
+    /* Dialog promp implementation from Gideon Mulder in stakcoverflow
      * Source: https://stackoverflow.com/questions/5427020/prompt-dialog-in-windows-forms
      */
 
@@ -503,34 +503,11 @@ namespace seizure_filter
                         continue;
                     }
                 }
-                AppInpPrm.CompleteInitialize();
+                AppInpPrm.CompleteInitialize(); // for all the necessary checking and parsing of parameters
 
-                string delim = AppInpPrm.config_delim;
-                string cmt = AppInpPrm.comment_str + " ";
                 string config_file = Cntl_List["config_path"].Text;
-                File.WriteAllText(config_file, string.Format(cmt + "Configuration, generated on {0:f}\n", DateTime.Now));
-                File.AppendAllText(config_file, cmt + "Change the Value column to induce effect\n");
-                File.AppendAllText(config_file, cmt +
-                    "Property" + delim +
-                    "Type" + delim +
-                    "Value" + delim +
-                    "Description" + "\n");
-                foreach (var item in Cntl_List)
-                {
-                    string prop_name = item.Key;
-                    Control cntl_obj = item.Value;
-                    if (!prop_name.Contains("label_of"))
-                    {
-                        string description = description_dict[prop_name];
-                        Type _type_ = AppInpPrm.GetPropType(prop_name);
-                        var _val_ = AppInpPrm.GetPropValue(prop_name); 
-                        File.AppendAllText(config_file, 
-                            prop_name + delim +
-                            _type_ + delim +
-                            (_type_ == typeof(Color) ? ColorTranslator.ToHtml((Color)_val_) : _val_) + delim +
-                            description + "\n");
-                    }             
-                }           
+                AppInpPrm.WriteConfigurationFile(config_file, description_dict);
+    
             }
 
             return AppInpPrm;

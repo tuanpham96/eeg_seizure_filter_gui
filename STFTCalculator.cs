@@ -184,13 +184,7 @@ namespace seizure_filter
                 throw new System.IndexOutOfRangeException(err_mess);
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="win_type"></param>
-        /// <param name="scaling_psd"></param>
-        /// <remarks>
-        /// </remarks>
+
         private void GenerateWindow(WindowType win_type, bool scaling_psd)
         {
             string win_name = win_type.ToString();

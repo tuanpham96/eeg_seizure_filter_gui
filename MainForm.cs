@@ -15,7 +15,8 @@ using System.Linq;
 using System.Collections.Generic;
 
 /** SEIZURE FILTER EEG PROGRAM
- * Started by Dominic DiCarlo September 2018
+ * Started by Dominic DiCarlo September 2018 
+ * Edited by Tuan Pham December 2018 
 
     + REQUIREMENTS: 
 
@@ -103,7 +104,8 @@ using System.Collections.Generic;
 
 namespace seizure_filter
 {
-    // MainForm first prompts for input then streamed EEG related data 
+    /* MainForm first prompts for input then streamed EEG related data 
+     */ 
     public partial class MainForm : Form
     {
         #region MainForm attributes/properties 
@@ -126,7 +128,7 @@ namespace seizure_filter
          *                      then later on, option (2) is preferred to start modifying the parameters (for example: alarm thresholds) 
          *                      once configuration is settled, option (3) is prefered, 
          *                      and occasional going back to (2) for small modifications
-         */ 
+         */
         private AppInputParameters APP_INP_PRM;
         /* Thread to run DrawAndReport 
          */
@@ -139,7 +141,7 @@ namespace seizure_filter
          * + RMSCalcs:  Array of Root-mean-square calculators, and the queue of current data      
          *               contains information and calculation on current data and RMS, 
          *               and RMS alarm rates
-         */   
+         */
         public STFTCalculator[] STFTCalcs;
         public RMSCalculator[] RMSCalcs;
         /* Array of series to pass on values to be recognized by the plotting module/library 
@@ -173,7 +175,7 @@ namespace seizure_filter
         public GearedValues<ObservablePoint>[] LBPSeries;
         public GearedValues<ObservablePoint>[] RMSAlarmSeries;
         public GearedValues<ObservablePoint>[] LBPAlarmSeries;
-        #endregion
+        #endregion MainForm attributes/properties 
 
         #region Constructor and Initialization 
 
@@ -235,13 +237,13 @@ namespace seizure_filter
         public MainForm()
         {
             InitializeComponent();
-            using (Prompt prompt = new Prompt(title:"ENTER THE INPUT PARAMETERS", caption:"Input parameters"))
+            using (Prompt prompt = new Prompt(title: "ENTER THE INPUT PARAMETERS", caption: "Input parameters"))
             {
                 APP_INP_PRM = prompt.Result;
             }
             InitializeCalculators();
             InitializePlotSeries();
-            InitializePlotSetUp(); 
+            InitializePlotSetUp();
             Load += MainForm_Load;
         }
 
@@ -249,7 +251,7 @@ namespace seizure_filter
          * I believe there are many improvements that can be made to this 
          * for allocating resources to calculating and plotting 
          * I'm not really familiar with threading, unfortunately. 
-         */ 
+         */
         private void MainForm_Load(object sender, EventArgs e)
         {
             logic_thread = new Thread(DrawAndReport);
@@ -258,7 +260,7 @@ namespace seizure_filter
 
         /* InitializeCalculators: initialize calculators for storing streaming channel data, RMS and spectral calculations 
          * Refer to `RMSCalculator.cs` and `STFTCalculator` for more information 
-         */ 
+         */
         private void InitializeCalculators()
         {
             int nchan = APP_INP_PRM.nchan;
@@ -267,19 +269,19 @@ namespace seizure_filter
             for (int i = 0; i < nchan; i++)
             {
                 RMSCalcs[i] = new RMSCalculator(
-                    nmax_queue_total:   APP_INP_PRM.nmax_queue_total, 
-                    n_lvls:             APP_INP_PRM.n_lvls);
+                    nmax_queue_total: APP_INP_PRM.nmax_queue_total,
+                    n_lvls: APP_INP_PRM.n_lvls);
 
                 STFTCalcs[i] = new STFTCalculator(
-                    Fs:                 APP_INP_PRM.Fs,
-                    n_epoch:            APP_INP_PRM.n_epoch,
-                    n_skip:             APP_INP_PRM.n_skip,
-                    n_lvls:             APP_INP_PRM.n_lvls,
-                    BPFR:               new double[] { APP_INP_PRM.f_bandpower_lower, APP_INP_PRM.f_bandpower_upper },
-                    win_type:           APP_INP_PRM.window_type,
-                    scaling_psd:        APP_INP_PRM.scaling_psd,
-                    file_prefix:        APP_INP_PRM.output_file_name,
-                    saving_option:      APP_INP_PRM.stft_saving_option);
+                    Fs: APP_INP_PRM.Fs,
+                    n_epoch: APP_INP_PRM.n_epoch,
+                    n_skip: APP_INP_PRM.n_skip,
+                    n_lvls: APP_INP_PRM.n_lvls,
+                    BPFR: new double[] { APP_INP_PRM.f_bandpower_lower, APP_INP_PRM.f_bandpower_upper },
+                    win_type: APP_INP_PRM.window_type,
+                    scaling_psd: APP_INP_PRM.scaling_psd,
+                    file_prefix: APP_INP_PRM.output_file_name,
+                    saving_option: APP_INP_PRM.stft_saving_option);
 
             }
         }
@@ -506,54 +508,55 @@ namespace seizure_filter
         /* InitializePlotSetUp: initialize plot axes/legend setup options and maximize plotting performance  
          * Refer `PlotSetUpAndMaximizePerformance` for further descriptions
          * Much of this is manual, hence can be ignored while migrating to another language 
-         */ 
-        private void InitializePlotSetUp() {  
+         */
+        private void InitializePlotSetUp()
+        {
             PlotSetUpAndMaximizePerformance(
-                cart_chart:     ref channel_plots,
-                axes_label:     new Axes_Label(xlabel: "Time (s)", ylabel:"Voltage (uV)"),
-                axes_limit:     null,
-                x_axis_merged:  false,
-                y_axis_merged:  true,
-                lgnd_loc:       LegendLocation.Top);
+                cart_chart: ref channel_plots,
+                axes_label: new Axes_Label(xlabel: "Time (s)", ylabel: "Voltage (uV)"),
+                axes_limit: null,
+                x_axis_merged: false,
+                y_axis_merged: true,
+                lgnd_loc: LegendLocation.Top);
             PlotSetUpAndMaximizePerformance(
-                cart_chart:     ref rms_plots, 
-                axes_label:     new Axes_Label(xlabel:"Time (s)", ylabel:"RMS (uV)"), 
-                axes_limit:     null, 
-                x_axis_merged:  false, 
-                y_axis_merged:  true,
-                lgnd_loc:       LegendLocation.None);
+                cart_chart: ref rms_plots,
+                axes_label: new Axes_Label(xlabel: "Time (s)", ylabel: "RMS (uV)"),
+                axes_limit: null,
+                x_axis_merged: false,
+                y_axis_merged: true,
+                lgnd_loc: LegendLocation.None);
             PlotSetUpAndMaximizePerformance(
-                cart_chart:     ref spectral_plots,
-                axes_label:     new Axes_Label(xlabel:"Frequency (Hz)", ylabel:"FFT (AU)"),
-                axes_limit:     new Axes_Limit(xlim:new double[] { -0.1, 40 }, ylim:new double[] { 0, double.PositiveInfinity }));
+                cart_chart: ref spectral_plots,
+                axes_label: new Axes_Label(xlabel: "Frequency (Hz)", ylabel: "FFT (AU)"),
+                axes_limit: new Axes_Limit(xlim: new double[] { -0.1, 40 }, ylim: new double[] { 0, double.PositiveInfinity }));
             PlotSetUpAndMaximizePerformance(
-                cart_chart:     ref limbandpow_plots, 
-                axes_label:     new Axes_Label(xlabel:"Time (s)", ylabel:string.Format("Band power {0} - {1} Hz (AU)", APP_INP_PRM.f_bandpower_lower, APP_INP_PRM.f_bandpower_upper)), 
-                axes_limit:     null, 
-                x_axis_merged:  false,
-                y_axis_merged:  true);
+                cart_chart: ref limbandpow_plots,
+                axes_label: new Axes_Label(xlabel: "Time (s)", ylabel: string.Format("Band power {0} - {1} Hz (AU)", APP_INP_PRM.f_bandpower_lower, APP_INP_PRM.f_bandpower_upper)),
+                axes_limit: null,
+                x_axis_merged: false,
+                y_axis_merged: true);
             PlotSetUpAndMaximizePerformance(
-                cart_chart:     ref rms_alarm_plots, 
-                axes_label:     new Axes_Label(xlabel:"Time (s)", ylabel:"# of RMS alarms"));
+                cart_chart: ref rms_alarm_plots,
+                axes_label: new Axes_Label(xlabel: "Time (s)", ylabel: "# of RMS alarms"));
             PlotSetUpAndMaximizePerformance(
-                cart_chart:     ref lbp_alarm_plots, 
-                axes_label:     new Axes_Label(xlabel:"Time (s)", ylabel:"# of Spectral alarms"),
-                axes_limit:     null,
-                x_axis_merged:  false, 
-                y_axis_merged:  false,
-                lgnd_loc:       LegendLocation.Left);
+                cart_chart: ref lbp_alarm_plots,
+                axes_label: new Axes_Label(xlabel: "Time (s)", ylabel: "# of Spectral alarms"),
+                axes_limit: null,
+                x_axis_merged: false,
+                y_axis_merged: false,
+                lgnd_loc: LegendLocation.Left);
 
         }
 
         /* Axes_Label: struct for x and y axis labels 
-         */ 
+         */
         private struct Axes_Label
         {
             public string xlabel, ylabel;
             public Axes_Label(string xlabel, string ylabel)
             {
-                this.xlabel= xlabel;
-                this.ylabel= ylabel;
+                this.xlabel = xlabel;
+                this.ylabel = ylabel;
             }
         }
 
@@ -573,12 +576,12 @@ namespace seizure_filter
             {
                 if (inp.Length != 2)
                 {
-                    throw new System.ArgumentOutOfRangeException("The input limit range needs to be a double array of only 2 elements"); 
+                    throw new System.ArgumentOutOfRangeException("The input limit range needs to be a double array of only 2 elements");
                 }
                 if (inp[0] >= inp[1] && !double.IsInfinity(inp[0]) && !double.IsInfinity(inp[1]))
                 {
                     throw new System.ArgumentException(string.Format("The lower bound (1st element = {0}) needs to be smaller" +
-                        " than the upper bound (2nd element = {1})", inp[0], inp[1])); 
+                        " than the upper bound (2nd element = {1})", inp[0], inp[1]));
                 }
             }
             public Axes_Limit(double[] xlim, double[] ylim)
@@ -628,10 +631,10 @@ namespace seizure_filter
          *      (1) Axes set up:      https://lvcharts.net/App/examples/v1/wf/Axes
          *      (2) Performance tips: https://lvcharts.net/App/examples/v1/wf/Performance%20Tips
          */
-        private void PlotSetUpAndMaximizePerformance(   ref LiveCharts.WinForms.CartesianChart cart_chart, 
-                                                        Axes_Label axes_label, 
+        private void PlotSetUpAndMaximizePerformance(ref LiveCharts.WinForms.CartesianChart cart_chart,
+                                                        Axes_Label axes_label,
                                                         Axes_Limit axes_limit = null,
-                                                        bool x_axis_merged = false, 
+                                                        bool x_axis_merged = false,
                                                         bool y_axis_merged = false,
                                                         LegendLocation lgnd_loc = LegendLocation.None)
         {
@@ -639,15 +642,15 @@ namespace seizure_filter
             string font_fam = "Microsoft Sans Serif";
             var axes_color = System.Windows.Media.Brushes.Gray;
             cart_chart.Font = new Font(font_fam, 12F);
-            cart_chart.ForeColor = AppInputParameters.BrushToColor(axes_color); 
+            cart_chart.ForeColor = AppInputParameters.BrushToColor(axes_color);
 
             cart_chart.AxisX.Add(new Axis
             {
-                Separator = new Separator { StrokeThickness = 1, Stroke = axes_color, IsEnabled = false},
+                Separator = new Separator { StrokeThickness = 1, Stroke = axes_color, IsEnabled = false },
                 FontSize = 20F,
                 FontFamily = new System.Windows.Media.FontFamily(font_fam),
                 Foreground = axes_color,
-                Title = axes_label.xlabel,          
+                Title = axes_label.xlabel,
                 IsMerged = x_axis_merged
             });
 
@@ -658,8 +661,8 @@ namespace seizure_filter
                 FontFamily = new System.Windows.Media.FontFamily(font_fam),
                 Foreground = axes_color,
                 Title = axes_label.ylabel,
-                IsMerged = y_axis_merged,  
-                
+                IsMerged = y_axis_merged,
+
             });
             // Axes limit 
             if (axes_limit != null)
@@ -701,29 +704,29 @@ namespace seizure_filter
 
         }
 
-        #endregion
+        #endregion Constructor and Initialization 
 
         #region Helper functions 
         /* ReturnAlarmLevelAndColor: evaluate the alarm level of a value -> return the corresponding alarm color & level index  
-         * + LAYOUT: 
-         *      - There are 3 levels of alarm (Normal=0, Warning=1, Danger=2) 
-         *      - For each of the range, there's a lower bound (L) and an upper bound (U) 
-         *      - The requirement of the ranges ( refer to `AppInputParameters.CheckForAlarmRange`) 
-         *          danger_lower < warning_lower < warning_upper < danger_upper 
-         *      - Return either of the 3 alarm levels and the corresponding color + index 
-         *          * NORMAL:   anything within [warning_lower, warning_upper] 
-         *          * WARNING:  anything out of that range, but still within [danger_lower, danger_upper] 
-         *          * DANGER:   otherwise 
-         * + INPUT: 
-         *      - value:            the value being passed on to check, either an RMS or LBP value for example 
-         *      - range_danger:     the range out of which would be considered DANGER
-         *      - range_warning:    the range out of which, but still within `range_danger`, would be considered WARNING 
-         * + OUTPUT: 
-         *      - color_res:        color corresponding to the alarm level, e.g: RED (danger), YELLOW (warning), GREEN (normal) 
-         *      - level_res:        level index corresponding to the alarm level, e.g: 2 (danger), 1 (warning), 0 (normal) 
-         *      
-         */
-        private void ReturnAlarmLevelAndColor(  double value, double[] range_danger, double[] range_warning, 
+ * + LAYOUT: 
+ *      - There are 3 levels of alarm (Normal=0, Warning=1, Danger=2) 
+ *      - For each of the range, there's a lower bound (L) and an upper bound (U) 
+ *      - The requirement of the ranges ( refer to `AppInputParameters.CheckForAlarmRange`) 
+ *          danger_lower < warning_lower < warning_upper < danger_upper 
+ *      - Return either of the 3 alarm levels and the corresponding color + index 
+ *          * NORMAL:   anything within [warning_lower, warning_upper] 
+ *          * WARNING:  anything out of that range, but still within [danger_lower, danger_upper] 
+ *          * DANGER:   otherwise 
+ * + INPUT: 
+ *      - value:            the value being passed on to check, either an RMS or LBP value for example 
+ *      - range_danger:     the range out of which would be considered DANGER
+ *      - range_warning:    the range out of which, but still within `range_danger`, would be considered WARNING 
+ * + OUTPUT: 
+ *      - color_res:        color corresponding to the alarm level, e.g: RED (danger), YELLOW (warning), GREEN (normal) 
+ *      - level_res:        level index corresponding to the alarm level, e.g: 2 (danger), 1 (warning), 0 (normal) 
+ *      
+ */
+        private void ReturnAlarmLevelAndColor(double value, double[] range_danger, double[] range_warning,
                                                 out Color color_res, out int level_res)
         {
             if (value < range_danger[0] | value > range_danger[1])
@@ -762,24 +765,25 @@ namespace seizure_filter
         private void ReturnLBPLevel(double value, out Color color_res, out int level_res)
         {
             ReturnAlarmLevelAndColor(
-                value:          value,
-                range_danger:   new double[] { APP_INP_PRM.danger_lbp_lowerbound, APP_INP_PRM.danger_lbp_upperbound },
-                range_warning:  new double[] { APP_INP_PRM.warning_lbp_lowerbound, APP_INP_PRM.warning_lbp_upperbound },
-                color_res:      out color_res,
-                level_res:      out level_res);
+                value: value,
+                range_danger: new double[] { APP_INP_PRM.danger_lbp_lowerbound, APP_INP_PRM.danger_lbp_upperbound },
+                range_warning: new double[] { APP_INP_PRM.warning_lbp_lowerbound, APP_INP_PRM.warning_lbp_upperbound },
+                color_res: out color_res,
+                level_res: out level_res);
         }
 
         /* Full_Deep_Copy: return a deep copy of a double array to avoid referencing just in case, for plotting stuff 
-         */  
+         */
         private double[] Full_Deep_Copy(double[] source)
         {
             double[] destination = new double[source.Length];
             Array.Copy(source, destination, source.Length);
             return destination;
         }
-        #endregion
+        #endregion Helper functions 
 
         #region Update functions for simple WF objects 
+
         /* UpdateTextBox: update the Text property of any TextBox object asynchronously 
          * + LAYOUT: 
          *      - Call BeginInvoke from the object if not yet called 
@@ -870,7 +874,7 @@ namespace seizure_filter
             UpdateLabel(rms_vertoffset_val, string.Format("{0:0.00}", APP_INP_PRM.display_rms_vertoffset));
 
         }
-        #endregion
+        #endregion Update functions for simple WF objects 
 
         #region Update functions for the plots 
         /* UpdateTimeSeriesPlot: update the time series plots asynchronously 
@@ -906,12 +910,12 @@ namespace seizure_filter
          *      - None, the series elements would be updated with the next time point and value pairs
          *          then the plot would be updated as well, with some configurations as described in INPUT section 
          */
-        private void UpdateTimeSeriesPlot(  bool refreshable, 
+        private void UpdateTimeSeriesPlot(bool refreshable,
                                             LiveCharts.WinForms.CartesianChart cart_chart,
                                             GearedValues<ObservablePoint>[] series,
                                             double t,
                                             double[] values,
-                                            double[] display_gains, 
+                                            double[] display_gains,
                                             double display_offset,
                                             double max_sec_plt,
                                             double max_pnt_plt)
@@ -943,7 +947,7 @@ namespace seizure_filter
             }
 
             int n_values = series.Length;
-          
+
             for (int i = 0; i < n_values; i++)
             {
                 // Limiting the size of a series element like `series[i]` to not have so much in memory 
@@ -956,11 +960,11 @@ namespace seizure_filter
                 }
                 // Add to the series element with the updated time point and the data point 
                 // with desired offset and gain for displaying purposes 
-                series[i].Add(new ObservablePoint(t, values[i] * display_gains[i] - display_offset * i)); 
+                series[i].Add(new ObservablePoint(t, values[i] * display_gains[i] - display_offset * i));
             }
 
             if (refreshable)
-            {   
+            {
                 // Update with appropriate x-lim if this is a refreshable plot 
                 RefreshableAxisLimits(t, max_sec_plt, out double min_bound, out double max_bound);
                 cart_chart.AxisX[0].MinValue = min_bound;
@@ -996,7 +1000,7 @@ namespace seizure_filter
                 ObservablePoint[] stft_new = new ObservablePoint[n_valid];
                 double[] freq = Full_Deep_Copy(STFTCalcs[ichan].freq_vec);
                 double[] mag = Full_Deep_Copy(STFTCalcs[ichan].mag_freq);
-                
+
                 for (int idat = 0; idat < n_valid; idat++)
                 {
                     stft_new[idat] = new ObservablePoint(freq[idat], mag[idat]);
@@ -1022,26 +1026,65 @@ namespace seizure_filter
             min_bound = (Math.Floor(t / max_sec_plt) * max_sec_plt);
             max_bound = (Math.Floor(t / max_sec_plt) + 1) * max_sec_plt;
         }
+        #endregion Update functions for the plots 
 
-        #endregion
-
-        #region The main action 
+        #region DrawAndReport function
         /* DrawAndReport: all the connecting and plotting happens here
-         * + LAYOUT: 
-         *      (1) Connect with the OpenVibe port
-         *      (2) While loop to start reading the stream: 
-         *          (3) Reading data from stream as string and select valid data chunks 
-         *          (4) For each sample position in the chunk
-         *              (5) Read and store current data point 
-         *              (6) Visualizing for `channel_plots`:  The current values of both channels and their difference
-         *              (7) Visualizing for `rms_plots` and update the rms alarm panels 
-         *              (8) Visualizing for `spectral_plots` and `limbandpow_plots`
-         *              (9) Visualizing for the rms alarm rate plots
-         *              (10) Visualizing for the lbp alarrm rate plots 
-         *              (11) Update the clock time 
-         *              (12) Saving the current data 
-         *      
-         */
+        * + LAYOUT: 
+        *      (1) Connect with the OpenVibe port
+        *      (2) WHILE loop to start reading the stream: 
+        *          (3) Reading data from stream as string and select valid data chunks 
+        *          (4) FOR each sample position in the chunk
+        *              (5) Read and store current data point 
+        *              (6) Visualizing for `channel_plots`:  The current values of both channels and their difference
+        *              (7) Visualizing for `rms_plots` and update the rms alarm panels 
+        *              (8) Visualizing for `spectral_plots` and `limbandpow_plots`
+        *              (9) Visualizing for the rms alarm rate plots
+        *              (10) Visualizing for the lbp alarrm rate plots 
+        *              (11) Update the clock time 
+        *              (12) Saving the current data 
+        * + COMMENTS:
+        *   - CMT_MatSndr: About the data from Matrix Sender (mostly matters for step 2, 3) 
+        *       * Data from the MatrixSender of OpenVibe are sent in as ASCII format
+        *       * Each valid chunk contains `APP_INP_PRM.chunk_len` data points, separated by commas
+        *         >>    chunk_len = nsamp_per_block * total_nchan
+        *       * For example, nsamp_per_block = 4, total_nchan = 3, the incoming chunk would be like 
+        *         >>    "ch0_data0, ch0_data1, ch0_data2, ch0_data3, ch1_data0,..., ch1_data3, ch2_data0,..., ch2_data3" 
+        *       * However, the issues arise occasionally where, instead of sending the chunk like the above
+        *         the chunks received would be more like either of these options, or a combination of them: 
+        *         >>    "<some weird ridiculously huge number>, <another number>"
+        *         >>    "," (just a comma) 
+        *         >>    (multiple chunks in separatelines, with the ones at the middle are fine, but at the beginning and end are not), below is an example 
+        *                ,-2.29187,-2.49954,-2.65903,-0.442686,-0.338287,-0.100214,0.24069,1.46986,1.73674,1.96931,2.09206
+        *               0.379649,0.251692,0.114043,-0.0312935,-2.75817,-2.78887,-2.74761,-2.63572,0.637258,1.03329,1.37227,1.60612,2.05754,1.85949,1.53473,1.1533
+        *               -0.182173,-0.336351,-0.49152,-0.645352,-2.45932,-2.22882,-1.95829,-1.66439,1.70264,1.65047,1.46087,1.16588,0.799423,0.548676,0.447469,0.500566
+        *               -0.795534,-0.939817,-1.07605,-1.2022,-1.36529,-1.07935,-0.823884,-0.613926,0.813317,0.459312,0.159523,-0.0395465,0.670008,0.885749,1.06508,1.13554
+        *               -1.31644,-1.41711,-1.50281,-1.57237,-0.461207,-0.373336,-0.353272,-0.399128,-0.107806,-0.0362826,0.161474,0.451498,1.05498,0.823341,0.482878,0.106773
+        *               -1.62492,-1.65987,-1.67692,-1.6761,-0.504303,-0.657955,-0.845757,-1.05091,0.784691,1.10448,1.35562,1.49284,-0.220739,-0.427286,-0.472044,-0.356787
+        *               -1.65772,-1.62243,-1.57112,-1.50498,-1.25531,-1.44082,-1.59058,-1.6901,1.48786,1.33388,1.04658,0.661787,-0.125287,0.148778,0.382097,0.50461
+        *               -1.42546,-1.33421,-1.23311,-1.12416,-1.72838,-1.69861,-1.5987    
+        *       * My solution for this is, before parsing the string to a double array, I would have to: 
+        *         (a)   First, filter the lines by only choosing the ones that
+        *               + Did not begin with just a comma 
+        *               + And when split by a comma, the corresponding array would have length = APP_INP_PRM.chunk_len
+        *         (b)   Secondly, if lines.Length == 1, then I would read it as it is, 
+        *               if not, since the ridiculously large values usually appear on the first chunk, 
+        *               I chose not to read it at all. Just read from lines[1] to lines[lines.Length-1]
+        *   - CMT_SavOut: About saving to output file (before step 2; then step 12)
+        *       * Notes: 
+        *         (a)   Although the data are saved at this step, as will be noted later one, these data 
+        *               would not be the most accurate data due to connection with OpenVibe port. 
+        *         (b)   This is good for general streaming data overall and rechecking alarm thresholds 
+        *               later on (if the Level Index data are saved), but strictly, reanalysis of the data 
+        *               should be done in the saved-data of split out from the OpenVibe CSVFileWriter module
+        *       * Recommendations: This part can be improved in multiple ways  
+        *         (a)   Read only the actual data point and have an option to save RMS,STFT data points,
+        *               as well as the corresponding levels in different files
+        *         (b)   Save in multiple indexed files every 30 minutes or so, instead of everything 
+        *               in just one file, re-reading would be very heavy on the overhead 
+
+        *   
+        */
         public void DrawAndReport()
         {
             try
@@ -1051,11 +1094,11 @@ namespace seizure_filter
                 client.Connect(APP_INP_PRM.hostname, APP_INP_PRM.port);
 
                 // Update the initialization log with welcome message from APP_INP_PRM 
-                UpdateInitialization("Connection successful!"); 
+                UpdateInitialization("Connection successful!");
 
                 // To read the streaming data 
                 Byte[] bytes = new Byte[1024];
-                int stream_read; 
+                int stream_read;
                 int count = 0; // to count how many times the data have been read for representing time point (not the most accurate, but does the job well enough) 
                 Stream stream = client.GetStream(); // the stream of incoming data 
 
@@ -1070,67 +1113,33 @@ namespace seizure_filter
                 Panel[] lbp_alarm_panels = { lbp_alarm1, lbp_alarm2 };
 
                 // Writing the data in a file 
-                // This part can be improved in multiple ways  
-                //      (a) Read only the actual data point and have an option to save RMS,STFT data points,
-                //      as well as the corresponding levels in different files
-                //      (b) Save in multiple indexed files every 30 minutes or so, instead of everything 
-                //      in just one file, re-reading would be very heavy on the overhead 
-                // Notes: 
-                //      + Although the data are saved at this step, as will be noted later one, these data 
-                //      would not be the most accurate data due to connection with OpenVibe port. 
-                //      + This is good for general streaming data overall and rechecking alarm thresholds 
-                //      later on (if the Level Index data are saved), but strictly, reanalysis of the data 
-                //      should be done in the saved-data of split out from the OpenVibe CSVFileWriter module
+                // Please refer to "CMT_SavOut" in the COMMENT section for further discussion and recommendations 
                 string csvFilePath = APP_INP_PRM.output_file_name;
                 File.WriteAllText(csvFilePath, "Data_1;RMS_1;RMSLevel_1;Data_2;RMS_2;RMSLevel_2\n");
 
-                #region (2) While loop to start reading the stream: While stream is still being read validly 
+                #region (2) WHILE loop to start reading the stream: While stream is still being read validly 
                 // -------------------------------------------------------------------------------------------------------------                
                 while ((stream_read = stream.Read(bytes, 0, bytes.Length)) != 0)
                 {
-                    // Data from the MatrixSender of OpenVibe are sent in as ASCII format
-                    // Each valid chunk contains `APP_INP_PRM.chunk_len` data points, separated by commas
-                    // >> chunk_len = nsamp_per_block * total_nchan
-                    // For example, nsamp_per_block = 4, total_nchan = 3, the incoming chunk would be like 
-                    // >> "ch0_data0, ch0_data1, ch0_data2, ch0_data3, ch1_data0,..., ch1_data3, ch2_data0,..., ch2_data3" 
-                    // However, the issues arise occasionally where, instead of sending the chunk like the above
-                    // the chunks received would be more like either of these options, or a combination of them: 
-                    // >> "<some weird ridiculously huge number>, <another number>"
-                    // >> "," (just a comma) 
-                    // >> (multiple chunks in separatelines, with the ones at the middle are fine, but at the beginning and end are not), below is an example 
-                    //     ,-2.29187,-2.49954,-2.65903,-0.442686,-0.338287,-0.100214,0.24069,1.46986,1.73674,1.96931,2.09206
-                    //    0.379649,0.251692,0.114043,-0.0312935,-2.75817,-2.78887,-2.74761,-2.63572,0.637258,1.03329,1.37227,1.60612,2.05754,1.85949,1.53473,1.1533
-                    //    -0.182173,-0.336351,-0.49152,-0.645352,-2.45932,-2.22882,-1.95829,-1.66439,1.70264,1.65047,1.46087,1.16588,0.799423,0.548676,0.447469,0.500566
-                    //    -0.795534,-0.939817,-1.07605,-1.2022,-1.36529,-1.07935,-0.823884,-0.613926,0.813317,0.459312,0.159523,-0.0395465,0.670008,0.885749,1.06508,1.13554
-                    //    -1.31644,-1.41711,-1.50281,-1.57237,-0.461207,-0.373336,-0.353272,-0.399128,-0.107806,-0.0362826,0.161474,0.451498,1.05498,0.823341,0.482878,0.106773
-                    //    -1.62492,-1.65987,-1.67692,-1.6761,-0.504303,-0.657955,-0.845757,-1.05091,0.784691,1.10448,1.35562,1.49284,-0.220739,-0.427286,-0.472044,-0.356787
-                    //    -1.65772,-1.62243,-1.57112,-1.50498,-1.25531,-1.44082,-1.59058,-1.6901,1.48786,1.33388,1.04658,0.661787,-0.125287,0.148778,0.382097,0.50461
-                    //    -1.42546,-1.33421,-1.23311,-1.12416,-1.72838,-1.69861,-1.5987    
-                    // My solution for this is, before parsing the string to a double array, I would have to: 
-                    //      (a) First, filter the lines by only choosing the ones that
-                    //              + Did not begin with just a comma 
-                    //              + And when split by a comma, the corresponding array would have length = APP_INP_PRM.chunk_len
-                    //      (b) Secondly, if lines.Length == 1, then I would read it as it is, 
-                    //              if not, since the ridiculously large values usually appear on the first chunk, 
-                    //              I chose not to read it at all. Just read from lines[1] to lines[lines.Length-1] 
-
+                    // Please refer to "CMT_MatSndr" in the COMMENT section for discussion of validity 
                     #region (3) Reading data from stream as string and select valid data chunks 
                     string data_with_lines = System.Text.Encoding.ASCII.GetString(bytes, 0, stream_read);
                     string[] lines = data_with_lines.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
                     lines = lines.Where(x => !x[0].Equals(',')).ToArray();
                     lines = lines.Where(x => x.Split(',').Length == APP_INP_PRM.chunk_len).ToArray();
-                    #endregion
+                    #endregion (3) Reading data from stream as string and select valid data chunks 
+
                     if (lines.Length == 0) { continue; } // no meaningful data, so move on to reading the next chunk 
                     if (lines.Length > 0) // meaningful data 
                     {
-                        int start_iline = (lines.Length == 1)? 0 : 1; // if more than 1 chunk, read from lines[1] 
-                        int end_iline = lines.Length; 
+                        int start_iline = (lines.Length == 1) ? 0 : 1; // if more than 1 chunk, read from lines[1] 
+                        int end_iline = lines.Length;
                         for (int i_line = start_iline; i_line < end_iline; i_line++)
                         {
                             string data = lines[i_line];
                             string[] current_data_chunk = data.Split(','); // separate by comma 
 
-                            #region (4) For each sample position in the chunk
+                            #region (4) FOR each sample position in the chunk
                             // again, since each chunk is organized like 
                             // "ch0_data0, ch0_data1, ch0_data2, ch0_data3, ch1_data0,..., ch1_data3, ch2_data0,..., ch2_data3" 
                             // so we read "data0" first for all the channels we wish to plot, then read "data1", and so on
@@ -1140,7 +1149,7 @@ namespace seizure_filter
                                 #region (5) Read and store current data point 
                                 double t = ((double)count) / APP_INP_PRM.Fs; // convert `count` to a time point 
                                 for (int ich = 0; ich < nchan; ich++) // for all the channel index to plot 
-                                {                                    
+                                {
                                     // Parse in RMSCalcs to save to their `current_val` and `data_queue`
                                     bool parse_success = RMSCalcs[ich].ParseCurrentValue(current_data_chunk[ix + chan_idx[ich] * APP_INP_PRM.nsamp_per_block]);
                                     if (!parse_success) // just in case parse was unsuccessful 
@@ -1150,24 +1159,24 @@ namespace seizure_filter
                                         break;
                                     }
                                 }
-                                #endregion
+                                #endregion (5) Read and store current data point 
 
-                                #region  (6) Visualizing for `channel_plots`
+                                #region (6) Visualizing for `channel_plots`
                                 double[] viz = {    RMSCalcs[0].current_val,
                                                 RMSCalcs[1].current_val,
                                                 RMSCalcs[0].current_val - RMSCalcs[1].current_val };
-                                        
+
                                 UpdateTimeSeriesPlot(
-                                    refreshable:    APP_INP_PRM.refresh_display,
-                                    cart_chart:     channel_plots,
-                                    series:         ChannelSeries,
-                                    t:              t,
-                                    values:         viz,
-                                    display_gains:  APP_INP_PRM.display_channel_vertgains,
+                                    refreshable: APP_INP_PRM.refresh_display,
+                                    cart_chart: channel_plots,
+                                    series: ChannelSeries,
+                                    t: t,
+                                    values: viz,
+                                    display_gains: APP_INP_PRM.display_channel_vertgains,
                                     display_offset: APP_INP_PRM.display_channel_vertoffset,
-                                    max_sec_plt:    APP_INP_PRM.max_sec_plt,
-                                    max_pnt_plt:    APP_INP_PRM.max_pnt_plt);
-                                #endregion
+                                    max_sec_plt: APP_INP_PRM.max_sec_plt,
+                                    max_pnt_plt: APP_INP_PRM.max_pnt_plt);
+                                #endregion (6) Visualizing for `channel_plots`
 
                                 #region (7) Visualizing for `rms_plots` and update the rms alarm panels 
                                 Color[] rms_lvl_colors = new Color[nchan];
@@ -1191,24 +1200,24 @@ namespace seizure_filter
 
                                 // Update the `rms_plots`
                                 UpdateTimeSeriesPlot(
-                                    refreshable:    APP_INP_PRM.refresh_display,
-                                    cart_chart:     rms_plots,
-                                    series:         RMSSeries,
-                                    t:              t,
-                                    values:         current_rms_arr,
-                                    display_gains:  APP_INP_PRM.display_rms_vertgains,
+                                    refreshable: APP_INP_PRM.refresh_display,
+                                    cart_chart: rms_plots,
+                                    series: RMSSeries,
+                                    t: t,
+                                    values: current_rms_arr,
+                                    display_gains: APP_INP_PRM.display_rms_vertgains,
                                     display_offset: APP_INP_PRM.display_rms_vertoffset,
-                                    max_sec_plt:    APP_INP_PRM.max_sec_plt,
-                                    max_pnt_plt:    APP_INP_PRM.max_pnt_plt);
+                                    max_sec_plt: APP_INP_PRM.max_sec_plt,
+                                    max_pnt_plt: APP_INP_PRM.max_pnt_plt);
 
-                                #endregion
+                                #endregion (7) Visualizing for `rms_plots` and update the rms alarm panels 
 
                                 #region (8) Visualizing for `spectral_plots` and `limbandpow_plots`
                                 // Add the current channel data into the array in the STFT calculator
                                 // If the array exceeds number the specifified nfft 
                                 // then calculating the FFT of each channel data -> ready2plt = true 
                                 for (int ich = 0; ich < nchan; ich++)
-                                {                                    
+                                {
                                     STFTCalcs[ich].CalculateFFT(t, RMSCalcs[ich].current_val);
                                 }
 
@@ -1221,7 +1230,8 @@ namespace seizure_filter
                                     Color[] lbp_lvl_colors = new Color[nchan];
                                     int[] lbp_lvls = new int[nchan];
 
-                                    for (int ich = 0; ich < nchan; ich++) {
+                                    for (int ich = 0; ich < nchan; ich++)
+                                    {
                                         // Calculate the power spectrum density 
                                         STFTCalcs[ich].CalculatePSD();
                                         viz_bp[ich] = STFTCalcs[ich].band_power;
@@ -1233,23 +1243,23 @@ namespace seizure_filter
 
                                         // Tally the alarm rates 
                                         STFTCalcs[ich].Tally_Levels(lbp_lvls[ich]);
-                                        
+
                                     }
                                     // Update `spectral_plots` and `limbandpow_plots`
-                                    UpdateSTFTPlot(); 
+                                    UpdateSTFTPlot();
                                     UpdateTimeSeriesPlot(
-                                        refreshable:    APP_INP_PRM.refresh_display, 
-                                        cart_chart:     limbandpow_plots,
-                                        series:         LBPSeries,
-                                        t:              t,
-                                        values:         viz_bp,
-                                        display_gains:  pseudo_gains,
-                                        display_offset: pseudo_offset, 
-                                        max_sec_plt:    APP_INP_PRM.max_sec_plt,
-                                        max_pnt_plt:    APP_INP_PRM.max_pnt_plt);
+                                        refreshable: APP_INP_PRM.refresh_display,
+                                        cart_chart: limbandpow_plots,
+                                        series: LBPSeries,
+                                        t: t,
+                                        values: viz_bp,
+                                        display_gains: pseudo_gains,
+                                        display_offset: pseudo_offset,
+                                        max_sec_plt: APP_INP_PRM.max_sec_plt,
+                                        max_pnt_plt: APP_INP_PRM.max_pnt_plt);
 
                                 }
-                                #endregion
+                                #endregion (8) Visualizing for `spectral_plots` and `limbandpow_plots`
 
                                 #region (9) Visualizing for the rms alarm rate plots
                                 // If nonzero `count` hits the reset point then we can start 
@@ -1278,7 +1288,7 @@ namespace seizure_filter
                                     // instead of just one for simplicity and easier labeling/legending 
                                     for (int ilvl = 0; ilvl < n_lvls; ilvl++)
                                     {
-                                        pseudo_gains[ilvl] = 1.0; 
+                                        pseudo_gains[ilvl] = 1.0;
                                         rms_lvl_arrs[ilvl] = 0;
                                         for (int ich = 0; ich < nchan; ich++)
                                         {
@@ -1294,16 +1304,16 @@ namespace seizure_filter
                                     // The refreshable option is usually good for viewing short amount of time,
                                     // but with higher sampling/updating rate. 
                                     UpdateTimeSeriesPlot(
-                                        refreshable:    false, 
-                                        cart_chart:     rms_alarm_plots,
-                                        series:         RMSAlarmSeries,
-                                        t:              t,
-                                        values:         rms_lvl_arrs,
-                                        display_gains:  pseudo_gains,
+                                        refreshable: false,
+                                        cart_chart: rms_alarm_plots,
+                                        series: RMSAlarmSeries,
+                                        t: t,
+                                        values: rms_lvl_arrs,
+                                        display_gains: pseudo_gains,
                                         display_offset: pseudo_offset,
-                                        max_sec_plt:    APP_INP_PRM.rms_lvl_max_sec,
-                                        max_pnt_plt:    APP_INP_PRM.rms_lvl_max_point);
-                                 
+                                        max_sec_plt: APP_INP_PRM.rms_lvl_max_sec,
+                                        max_pnt_plt: APP_INP_PRM.rms_lvl_max_point);
+
                                     // Need to reset the tally 
                                     for (int ich = 0; ich < nchan; ich++)
                                     {
@@ -1312,7 +1322,7 @@ namespace seizure_filter
 
 
                                 }
-                                #endregion
+                                #endregion (9) Visualizing for the rms alarm rate plots
 
                                 #region (10) Visualizing for the lbp alarrm rate plots 
                                 // If nonzero `count` hits the reset point then we can start 
@@ -1325,7 +1335,7 @@ namespace seizure_filter
                                     double pseudo_offset = 0;
 
                                     if (APP_INP_PRM.alarm_rate_plt_stack)
-                                    {                                        
+                                    {
                                         // If we stack the rate on top of each other
                                         // Normal at bottom, Warning middle, Danger top 
                                         // Then the higher levels would accumulate from lower levels
@@ -1357,15 +1367,15 @@ namespace seizure_filter
                                     // The refreshable option is usually good for viewing short amount of time,
                                     // but with higher sampling/updating rate. 
                                     UpdateTimeSeriesPlot(
-                                        refreshable:    false,
-                                        cart_chart:     lbp_alarm_plots,
-                                        series:         LBPAlarmSeries,
-                                        t:              t,
-                                        values:         lbp_lvl_arrs,
-                                        display_gains:  pseudo_gains,
+                                        refreshable: false,
+                                        cart_chart: lbp_alarm_plots,
+                                        series: LBPAlarmSeries,
+                                        t: t,
+                                        values: lbp_lvl_arrs,
+                                        display_gains: pseudo_gains,
                                         display_offset: pseudo_offset,
-                                        max_sec_plt:    APP_INP_PRM.lbp_lvl_max_sec,
-                                        max_pnt_plt:    APP_INP_PRM.lbp_lvl_max_point);
+                                        max_sec_plt: APP_INP_PRM.lbp_lvl_max_sec,
+                                        max_pnt_plt: APP_INP_PRM.lbp_lvl_max_point);
 
                                     // Need to reset the tally 
                                     for (int ich = 0; ich < nchan; ich++)
@@ -1375,41 +1385,41 @@ namespace seizure_filter
 
 
                                 }
-                                #endregion
+                                #endregion (10) Visualizing for the lbp alarrm rate plots 
 
                                 #region (11) Update the clock time 
                                 TimeSpan tsp = TimeSpan.FromSeconds(t);
                                 UpdateLabel(clock, tsp.ToString(@"hh\:mm\:ss\:fff"));
-                                #endregion
+                                #endregion (11) Update the clock time 
 
                                 #region (12) Saving the current data 
                                 string nextLine = string.Format("{0};{1};{2};{3};{4};{5}\n",
                                     current_val_arr[0], current_rms_arr[0], rms_lvls[0],
                                     current_val_arr[1], current_rms_arr[1], rms_lvls[1]);
                                 File.AppendAllText(csvFilePath, nextLine);
-                                #endregion
+                                #endregion (12) Saving the current data 
+
                                 count++;
                             }
-                            #endregion
+                            #endregion (4) FOR each sample position in the chunk
                         }
                     }
                 }
                 // -------------------------------------------------------------------------------------------------------------  
                 // End of While loop 
-                #endregion
+                #endregion (2) WHILE loop to start reading the stream: While stream is still being read validly 
                 // Close the `client`
                 client.Close();
 
-                #endregion
+                #endregion (1) Connect with the OpenVibe port            
             }
 
-
-            // Usually if there are connections issues
-            // For example, the program is run but no connection is currently established,
-            // like, the OpenVibe side is not initiated 
-            // If so, retry again 
             catch (Exception e)
-            {
+            {   
+                // Usually if there are connections issues
+                // For example, the program is run but no connection is currently established,
+                // like, the OpenVibe side is not initiated 
+                // If so, retry again 
                 log.Invoke(new Action(() =>
                 {
                     log.Text += "Error..... " + e.StackTrace;
@@ -1418,9 +1428,11 @@ namespace seizure_filter
                 DrawAndReport();
             }
         }
-        #endregion
 
-        #region Events of Control Objects 
+        #endregion DrawAndReport function
+
+        #region Events of Buttons 
+
         /* exit_button_Click: Click event to of the `exit_button` to close the program 
          */
         private void exit_button_Click(object sender, EventArgs e)
@@ -1438,59 +1450,56 @@ namespace seizure_filter
          *      appropriate change step = either `APP_INP_PRM.d_gain` or `APP_INP_PRM.d_offset`.
          *      Then also update the label `X_Y_val`, with the newly updated arrays of gain or value of offset. 
          */
-        #region Channel gain and separation control for display 
 
+        #region  Channel gain and separation control for display 
         private void changain_up_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_Channel_Verical_Gain(1);
             UpdateLabel(chan_vertgain_val, string.Join("; ", APP_INP_PRM.display_channel_vertgains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
         }
-
         private void changain_down_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_Channel_Verical_Gain(-1);
             UpdateLabel(chan_vertgain_val, string.Join("; ", APP_INP_PRM.display_channel_vertgains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
         }
-
         private void chanoffset_up_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_Channel_Vertical_Offset(1);
             UpdateLabel(chan_vertoffset_val, string.Format("{0:0.00}", APP_INP_PRM.display_channel_vertoffset));
         }
-
         private void chanoffset_down_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_Channel_Vertical_Offset(-1);
             UpdateLabel(chan_vertoffset_val, string.Format("{0:0.00}", APP_INP_PRM.display_channel_vertoffset));
         }
-        #endregion
-        #region RMS gain and separation control for display 
+        #endregion  Channel gain and separation control for display 
+
+        #region  RMS gain and separation control for display 
         private void rmsgain_up_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_RMS_Vertical_Gain(1);
             UpdateLabel(rms_vertgain_val, string.Join("; ", APP_INP_PRM.display_rms_vertgains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
         }
-
         private void rmsgain_down_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_RMS_Vertical_Gain(-1);
             UpdateLabel(rms_vertgain_val, string.Join("; ", APP_INP_PRM.display_rms_vertgains.Select(p => string.Format("{0:0.00}", p)).ToArray()));
         }
-
         private void rmsoffset_up_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_RMS_Vertical_Offset(1);
             UpdateLabel(rms_vertoffset_val, string.Format("{0:0.00}", APP_INP_PRM.display_rms_vertoffset));
         }
-
         private void rmsoofset_down_Click(object sender, EventArgs e)
         {
             APP_INP_PRM.Control_RMS_Vertical_Offset(-1);
             UpdateLabel(rms_vertoffset_val, string.Format("{0:0.00}", APP_INP_PRM.display_rms_vertoffset));
         }
-        #endregion
+        #endregion  RMS gain and separation control for display 
 
-        #endregion
+        #endregion Events of Buttons 
+
+
 
 
     }
