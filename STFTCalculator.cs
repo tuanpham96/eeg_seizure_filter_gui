@@ -6,8 +6,10 @@ using System.Reflection;
 namespace seizure_filter
 {
     /* STFTCalculator: Short-time Fourier transform and periodically keep tally of spectral alarm levels
+     * 
      * Calculate both the STFT, then the total power of a certain frequency (limited-band power or LBP) 
      * The alarm is from the LBP alarm levels      
+     * 
      * + Recommendations:
      *      - Write a (better) method to write the STFT, LBP data to a file separately and then
      *      save as "data_stft.csv" and "data_lbp_and_level.csv" and "data_lbp_alarmrate.csv" 

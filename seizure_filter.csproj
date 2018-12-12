@@ -94,7 +94,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppInputParameters.cs" />
+    <Compile Include="ApplicationInputParameters.cs" />
     <Compile Include="MiscellaneousTesting.cs" />
     <Compile Include="STFTCalculator.cs" />
     <Compile Include="RMSCalculator.cs" />

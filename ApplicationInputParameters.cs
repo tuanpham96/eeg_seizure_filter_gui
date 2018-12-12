@@ -8,14 +8,16 @@ using LiveCharts.Geared;
 namespace seizure_filter
 {    
     using static STFTCalculator; // To use the `STFTCalculator.WindowType` enum 
-    
-    /* Application Input Parameters: contain configuration parameters to start the program 
+
+    /* ApplicationInputParameters: (application input parameters) contain configuration parameters to start the program 
+     * 
      * In particular, `Prompt` is usually started to load configuration file or to create one.
      * Then `MainForm` would have an `APP_INP_PRM` object containing the current configuration 
      * parameters to start the program.
-     * See `Prompt.AppInpPrm` and `MainForm.APP_INP_PRM` for more information  
-     */ 
-    public class AppInputParameters
+     * 
+     * See `Prompt.AppInpPrm`, `Prompt.Result` and `MainForm.APP_INP_PRM` for more information  
+     */
+    public class ApplicationInputParameters
     {
         #region Application Input Parameters 
         /* Some notes and abbreviations  
@@ -377,7 +379,7 @@ namespace seizure_filter
         {
             public string prop_alias;
             public Form_Type form_type;
-            public string dict_name; // for radiobutton option of the form type; will refer to the AppInputParameters parameter 
+            public string dict_name; // for radiobutton option of the form type; will refer to one of the ApplicationInputParameters option dictionaries  
             public enum Form_Type { Textbox, RadiobuttonGroup, ColorButton };
 
             public PropertypAndFormType(string _prop_alias_, Form_Type _form_type_ = Form_Type.Textbox, string _dict_name_ = null)
@@ -468,7 +470,7 @@ namespace seizure_filter
         #endregion Dictionary for parameters to querry in `Prompt.MainPrompt` 
 
         #region Application Input Parameters: object constructor with configuration file path 
-        /* AppInputParameters constructor: initialize option dictionaries and parse configuration file 
+        /* ApplicationInputParameters constructor: initialize option dictionaries and parse configuration file 
          * + LAYOUT: 
          *      - Initialize option dictionaries 
          *      - Read a the configuration file, and change the identity if needed 
@@ -479,7 +481,7 @@ namespace seizure_filter
          *      - _config_path_:        the configuration path to either save the new configuration to, or modify an 
          *                              existing configuration path 
          */
-        public AppInputParameters(bool create_new_config, string _config_path_)
+        public ApplicationInputParameters(bool create_new_config, string _config_path_)
         {
             InitializeOptionDictionaries();
 
@@ -624,7 +626,7 @@ namespace seizure_filter
         #endregion Configuration file writing and reading 
 
         #region Initialization after prompt results 
-        /* CompleteInitialize: complete the initialization of an AppInputParameters object 
+        /* CompleteInitialize: complete the initialization of an ApplicationInputParameters object 
          * Call this before actually running the application to get all infered parameters 
          * + LAYOUT:
          *      - Initialize welcome message for `MainForm.log`

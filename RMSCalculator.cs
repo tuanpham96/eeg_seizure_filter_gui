@@ -5,8 +5,10 @@ using System.Collections.Generic;
 namespace seizure_filter
 {
     /* RMSCalculator: Root mean squared calculator of streaming data and tally of alarm levels 
+     * 
      * Particularly the RMS calculation is done like a "sliding window" calculation, not of the
      * entire data (because this is streaming data). And the object also keeps tally of alarm levels 
+     *
      * + Recommendations:
      *      - Write a method to write the RMS data to a file separately from the channel data and 
      *      save as "data_rms_and_level.csv" and "data_rms_alarmrate.csv" instead of the current method 
@@ -14,7 +16,6 @@ namespace seizure_filter
      */  
     public class RMSCalculator
     {
-
         #region RMSCalculator attributes
         /* + nmax_queue_total:  max number of queue size, also the size of the window to 
          *                      calculate RMS of the data 

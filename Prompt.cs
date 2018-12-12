@@ -4,40 +4,104 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 namespace seizure_filter
 {
 
-    /* Dialog promp implementation from Gideon Mulder in stakcoverflow
+    /* Prompt: this prompts a dialog to set up the application input parameters, 
+     * necessarily the configuration for the application before plotting the streaming 
+     * data in `MainForm`. 
+     * 
+     * Particularly, the main goal is to create an `ApplicationInputParameters`
+     * object to save into `MainForm.APP_INP_PRM`; by either load an existing configuration 
+     * file (`ConfigPrompt`) then edit in `MainPrompt` or create an entirely new configuration
+     * file by editing the parameter fields in `MainPrompt`. 
+     * 
+     * The dialog prompt implementation is much inspired fron Gideon Mulder in stackoverflow
      * Source: https://stackoverflow.com/questions/5427020/prompt-dialog-in-windows-forms
      */
-
     public class Prompt : IDisposable
     {
+        #region Prompt attributes 
+        /* + ConfigPrompt:      configuration prompt, for prompting whether to load a configuration file and plot, modify one or create one 
+         * + MainPrompt:        main dialog prompt to edit the configuration parameters, or even for double-checking before plotting 
+         * + Result:            resulting `ApplicationInputParameters` instance for `MainForm.APP_INP_PRM` configuration 
+         * + AppInpPrm:         private `ApplicationInputParameters` object to modify within `Prompt` 
+         * + fontname:          name of font to use for the dialogs 
+         */
         private Form ConfigPrompt { get; set; }
         private Form MainPrompt { get; set; }
-        public AppInputParameters Result { get; }
-        public AppInputParameters AppInpPrm;
+        public ApplicationInputParameters Result { get; }
+        private ApplicationInputParameters AppInpPrm;
         private string fontname { get; }
+        #endregion  Prompt attributes 
+
+        #region Configuration options and warnings 
+        /* Config_Options: enum to represent 3 configuration options, currently:
+         * (1) CREATE_NEW:          create a completely new configuration file from the default file
+         *                          named `_config_file.txt` in the folder. Then it would prompt 
+         *                          `MainPrompt` to start editing parameters. The new file would be named
+         *                          `customized_config_file.txt`, or you could edit the name later on 
+         *                          in `MainPrompt`. However, please don't name it `_config_file.txt` 
+         *                          because `CREATE_NEW` would necessarily rely on this file to instantiate 
+         *                          `AppInpPrm` in this object.
+         * (2) LOAD_AND_PLOT:       load an existing configuration file and plot, and without starting `MainPrompt` 
+         *                          to edit any parameters at all. This means that, if the configuration file
+         *                          is loaded successfully, the program will go straight to `MainForm` to plot. 
+         * (3) LOAD_AND_MODIFY:     load an exisiting configuration but modify the parameters in the `MainPrompt` 
+         *                          as one desires before moving on to plotting in `MainForm`. 
+         */
         private enum Config_Options { CREATE_NEW, LOAD_AND_PLOT, LOAD_AND_MODIFY }
+        /* LoadConfig_Warning: enum to represent the warnings about configuration file loading issues 
+         * (1) NO_WARNING:                  no warning 
+         * (2) NO_EXISTING_FILE_TO_PLOT:    would happen with `LOAD_AND_PLOT` but the file does not exist
+         * (3) NO_EXISTING_FILE_TO_MODIFY:  would happen with `LOAD_AND_MODIFY` 
+         * (4) POSSIBLE_OVERWRITE_FILE:     would happen with either `CREATE_NEW` or `LOAD_AND_MODIFY` if 
+         *                                  there's already an existing configuration file 
+         * 
+         * + NOTE:  this was added on almost last and I hadn't put much thought in it so the way this is 
+         *          being used is not quite as though out yet. The initial thought was to throw errors 
+         *          if the file does not exist and stop the program; and print a message if an existing file
+         *          could be overwritten in `MainPrompt` but I just did not have the time to implement this. 
+         *          In short, much can be improved 
+         */
         private enum LoadConfig_Warning { NO_WARNING, NO_EXISTING_FILE_TO_PLOT, NO_EXISTING_FILE_TO_MODIFY, POSSIBLE_OVERWRITE_FILE }
+        /* Config_Description: a struct to store the description of the configuration prompt options
+         * + LABEL:     configuration prompt option, from `Config_Options` enum 
+         * + TOOLTIP:   a more detailed description for the tooltip when the mouse hovers over the option 
+         */
         private struct Config_Description
         {
             public Config_Options LABEL;
-            public string TOOLTIP; 
+            public string TOOLTIP;
             public Config_Description(Config_Options _label_, string _tooltip_)
             {
                 LABEL = _label_;
-                TOOLTIP = _tooltip_; 
+                TOOLTIP = _tooltip_;
             }
         }
+        #endregion Configuration options and warnings 
+
+        #region Prompt constructor 
+        /* Prompt initialization 
+         * + LAYOUT: 
+         *      - Call the configuration option dialog: `ConfigPrompt` 
+         *      - Evaluate the configuration loading options 
+         *      - Initialize `AppInpPrm` for application input parameters
+         *      - Either return the instance of `AppInpPrm` as `Result` from a configuration file 
+         *          OR edit the parameters in `MainPrompt` 
+         * + INPUT: 
+         *      - title:        title for `MainPrompt`
+         *      - caption:      caption for `MainPrompt`
+         */
         public Prompt(string title, string caption)
         {
             fontname = "Arial";
+
+            // Call the configuration option dialog: `ConfigPrompt` 
             ConfigurationOptionPrompt(out Config_Options config_option, out string config_file_path, out LoadConfig_Warning warning);
+
+            // Evaluate the configuration loading options 
             bool create_new_config = false; 
             if (config_option == Config_Options.CREATE_NEW)
             {
@@ -49,18 +113,25 @@ namespace seizure_filter
                 throw new Exception("Cannot start the program because the configuration file does not exist!");
             }
 
-            AppInpPrm = new AppInputParameters(create_new_config, config_file_path); 
+            // Initialize `AppInpPrm` for application input parameters
+            AppInpPrm = new ApplicationInputParameters(create_new_config, config_file_path); 
+
             if (config_option == Config_Options.LOAD_AND_PLOT)
             {
+                // Return the instance of `AppInpPrm` as `Result` from a configuration file 
+                // if choose `LOAD_AND_PLOT` option 
                 Result = AppInpPrm;
                 Result.CompleteInitialize(); 
             } 
             else
             {
+                // Edit the parameters in `MainPrompt` 
                 Result = ParameterInputPrompt(title, caption);
             }      
         }
+        #endregion Prompt Constructor 
 
+        #region Configuration option prompt 
         private void ConfigurationOptionPrompt(out Config_Options config_option, out string config_file_path, out LoadConfig_Warning warning)
         {
             Font font_style = new Font(fontname, 12F, FontStyle.Regular, GraphicsUnit.Point);
@@ -218,9 +289,10 @@ namespace seizure_filter
                 }
             }
         }
+        #endregion Configuration option prompt 
 
-        
-        private AppInputParameters ParameterInputPrompt(string title, string caption)
+        #region Main prompt dialog to edit the parameters 
+        private ApplicationInputParameters ParameterInputPrompt(string title, string caption)
         {
             Size prompt_size = new Size(1000, 700);
             Point title_coord = new Point(50, 20);
@@ -284,7 +356,7 @@ namespace seizure_filter
             for (int i = 0; i < number_tabs; i++)
             {                
                 string section_name = AppInpPrm.OptionSections.Keys.ElementAt(i);
-                Dictionary<string, AppInputParameters.PropertypAndFormType> section_options = AppInpPrm.OptionSections[section_name];
+                Dictionary<string, ApplicationInputParameters.PropertypAndFormType> section_options = AppInpPrm.OptionSections[section_name];
                 
                 TabPages[i] = new TabPage()
                 {
@@ -331,7 +403,7 @@ namespace seizure_filter
                         /* Source 
                          * https://stackoverflow.com/questions/10206557/c-sharp-cast-dictionarystring-anytype-to-dictionarystring-object-involvin
                          */
-                        IDictionary _dict_ = (IDictionary)AppInpPrm.GetPropValue(dict_name);
+        IDictionary _dict_ = (IDictionary)AppInpPrm.GetPropValue(dict_name);
                         Dictionary<string, object> dict = _dict_.Cast<dynamic>().ToDictionary(entry => (string)entry.Key, entry => entry.Value);
                         radio_choice_dictionaries.Add(prop_name, dict);
 
@@ -512,6 +584,9 @@ namespace seizure_filter
 
             return AppInpPrm;
         }
+        #endregion Main prompt dialog to edit the parameters 
+
+        /* Dispose method for this object after being used */
         public void Dispose()
         {
             if (MainPrompt != null)

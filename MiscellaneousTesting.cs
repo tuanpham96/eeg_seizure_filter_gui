@@ -8,6 +8,8 @@ namespace seizure_filter
 {
     public class MiscellaneousTesting
     {
+        // Not unit testing, these were just practice cuz I don't know C#. 
+        // Will delete before release 
         public MiscellaneousTesting()
         {            
         }
