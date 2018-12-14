@@ -1,0 +1,45 @@
+# Configuration, generated on Friday, December 14, 2018 1:25 PM
+# Change the Value column to induce effect
+# Property	Type	Value	Description
+config_path	System.String	C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\demo_config_file.txt	<NAN>
+hostname	System.String	127.0.0.1	<NAN>
+port	System.Int32	1234	<NAN>
+Fs	System.Double	512	<NAN>
+total_nchan	System.Int32	4	<NAN>
+nsamp_per_block	System.Int32	4	<NAN>
+output_folder	System.String	C:\Users\Towle\Desktop\Tuan\general_towle\data	<NAN>
+output_file_name	System.String	C:\Users\Towle\Desktop\Tuan\general_towle\data\test_dat.csv	<NAN>
+channels2plt	System.String	0;1	<NAN>
+max_sec_plt	System.Double	10	<NAN>
+refresh_display	System.Boolean	True	Refreshable
+display_quality	LiveCharts.Geared.Quality	High	High
+d_gain	System.Double	0.1	<NAN>
+d_offset	System.Double	5	<NAN>
+danger_color	System.Drawing.Color	Red	Color [Red]
+warning_color	System.Drawing.Color	Gold	Color [Gold]
+normal_color	System.Drawing.Color	Green	Color [Green]
+channel_vertgain_str	System.String	1;1;1	<NAN>
+display_channel_vertoffset	System.Double	5	<NAN>
+rms_vertgain_str	System.String	1;1	<NAN>
+display_rms_vertoffset	System.Double	0	<NAN>
+nmax_queue_total	System.Int32	64	<NAN>
+danger_rms_upperbound	System.Double	1.4	<NAN>
+danger_rms_lowerbound	System.Double	0.6	<NAN>
+warning_rms_upperbound	System.Double	1.2	<NAN>
+warning_rms_lowerbound	System.Double	0.8	<NAN>
+nsec_fft	System.Double	4	<NAN>
+per_overlap	System.Double	95	<NAN>
+window_type	seizure_filter.STFTCalculator+WindowType	Hamming	Hamming
+f_bandpower_lower	System.Double	2	<NAN>
+f_bandpower_upper	System.Double	8	<NAN>
+stft_saving_option	System.Boolean	False	No
+scaling_psd	System.Boolean	True	Yes
+danger_lbp_upperbound	System.Double	6E-07	<NAN>
+danger_lbp_lowerbound	System.Double	-1	<NAN>
+warning_lbp_upperbound	System.Double	4.5E-07	<NAN>
+warning_lbp_lowerbound	System.Double	0	<NAN>
+alarm_rate_plt_stack	System.Boolean	False	Line Series
+rms_lvl_reset_sec	System.Double	2	<NAN>
+rms_lvl_max_sec	System.Double	600	<NAN>
+lbp_lvl_reset_sec	System.Double	10	<NAN>
+lbp_lvl_max_sec	System.Double	600	<NAN>
