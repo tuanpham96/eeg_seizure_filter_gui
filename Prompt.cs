@@ -132,6 +132,7 @@ namespace seizure_filter
         #endregion Prompt Constructor 
 
         #region Configuration option prompt 
+        
         private void ConfigurationOptionPrompt(out Config_Options config_option, out string config_file_path, out LoadConfig_Warning warning)
         {
             Font font_style = new Font(fontname, 12F, FontStyle.Regular, GraphicsUnit.Point);
