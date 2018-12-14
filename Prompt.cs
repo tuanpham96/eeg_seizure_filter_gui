@@ -132,9 +132,25 @@ namespace seizure_filter
         #endregion Prompt Constructor 
 
         #region Configuration option prompt 
-        
+        /* ConfigurationOptionPrompt: ask for configuration options, refer to description of enum `Config_Options` for details 
+         * This is called before `MainPrompt` to decide where to load the configuration file from first and 
+         * whether to start `MainPrompt` at all. 
+         * + LAYOUT: 
+         *      - Initialize the dialog and title 
+         *      - Create RadioButton object for each option 
+         *      - Create components for choosing the directory of configuration file 
+         *      - Create buttons to either continue or exit 
+         *      - Return configuration option, file location and warning 
+         * + INPUT: None
+         * + OUTPUT: 
+         *      - config_option:            configuration option, refer to `Config_Options` enum 
+         *      - config_file_path:         path to look for or configuration file 
+         *      - warning:                  configuration file loading warnings, refer to `LoadConfig_Warning` enum 
+         * 
+         */
         private void ConfigurationOptionPrompt(out Config_Options config_option, out string config_file_path, out LoadConfig_Warning warning)
         {
+            // (1) Initialize the dialog
             Font font_style = new Font(fontname, 12F, FontStyle.Regular, GraphicsUnit.Point);
             ConfigPrompt = new Form()
             {
@@ -144,6 +160,7 @@ namespace seizure_filter
                 StartPosition = FormStartPosition.CenterParent,
                 TopMost = true
             };
+            // Dialog title 
             ConfigPrompt.Controls.Add(new Label {
                 Location = new Point(20, 20), 
                 Size = new Size(400, 50), 
@@ -152,6 +169,7 @@ namespace seizure_filter
                 Font = font_style
             });
 
+            // Radiobutton options and tooltip description (for mouse hovering) 
             Dictionary<string, Config_Description> radio_options = new Dictionary<string, Config_Description>
             {
                 {  "Create a new configuration file", new Config_Description() {
@@ -174,8 +192,12 @@ namespace seizure_filter
             };
 
             RadioButton[] Radio_List = new RadioButton[radio_options.Count];
+
+            // Position and size parameters 
             int cur_radio = 0; 
             int left_radio = 20, width_radio = 350, top_radio = 65, height_radio = 30, spacing = 10; 
+
+            // (2) Create RadioButton object for each option 
             foreach (var item in radio_options) 
             {
                 string option = item.Key;
@@ -188,13 +210,15 @@ namespace seizure_filter
                     Text = option 
                 };
                 ConfigPrompt.Controls.Add(Radio_List[cur_radio]);
-                top_radio += height_radio + spacing;
+                top_radio += height_radio + spacing; // for the next one 
 
-                (new ToolTip()).SetToolTip(Radio_List[cur_radio], description);
+                (new ToolTip()).SetToolTip(Radio_List[cur_radio], description); 
             }
             Radio_List[0].Checked = true;
 
+            // (3) Create components for choosing the directory of configuration file 
             string current_directory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
+            // FolderDialogButton 
             Button FolderDialogButton = new Button()
             {
                 Text = "Choose configuration file",
@@ -204,6 +228,7 @@ namespace seizure_filter
                 BackColor = Color.WhiteSmoke,
                 FlatStyle = FlatStyle.Flat
             };
+            // TextBox to report the name 
             TextBox ConfigFileText = new TextBox()
             {
                 Text = current_directory + "\\customized_config_file.txt", 
@@ -211,7 +236,8 @@ namespace seizure_filter
                 Size = new Size(width_radio, 30),
                 Font = font_style,
                 BackColor = Color.WhiteSmoke
-            }; 
+            };
+            // Report which file it is in ConfigFileText after action on FolderDialogButton
             FolderDialogButton.FlatAppearance.MouseOverBackColor = Color.Silver;
             FolderDialogButton.Click += (sender, e) => {
                 OpenFileDialog folderBrowser = new OpenFileDialog()
@@ -230,6 +256,9 @@ namespace seizure_filter
             ConfigPrompt.Controls.Add(FolderDialogButton);
             ConfigPrompt.Controls.Add(ConfigFileText);
 
+            // (4) Create buttons to either continue or exit 
+            // ConfirmationButton to continue with either MainPrompt (then MainForm) or 
+            // MainForm directly 
             Button ConfirmationButton = new Button()
             {
                 Text = "Continue",
@@ -242,13 +271,13 @@ namespace seizure_filter
             };
             ConfirmationButton.FlatAppearance.BorderSize = 1;
             ConfirmationButton.FlatAppearance.MouseOverBackColor = Color.Silver;
-
             ConfirmationButton.Click += (sender, e) => {
                 ConfigPrompt.Close();
             };
             ConfigPrompt.Controls.Add(ConfirmationButton);
             ConfigPrompt.AcceptButton = ConfirmationButton;
 
+            // ExitButton to exit the program before starting either MainPrompt nor MainForm 
             Button ExitButton = new Button()
             {
                 Text = "Exit",
@@ -271,9 +300,13 @@ namespace seizure_filter
             config_option = Config_Options.CREATE_NEW;
             config_file_path = ConfigFileText.Text;
             warning = LoadConfig_Warning.NO_WARNING; 
-            if (ConfigPrompt.ShowDialog() == DialogResult.OK)
+            // (5) Return configuration option, file location and warning 
+            if (ConfigPrompt.ShowDialog() == DialogResult.OK) 
             {
+                // an efficient way to find checked RadioButton of a given group 
+                // https://stackoverflow.com/questions/1797907/which-radio-button-in-the-group-is-checked by SLaks
                 var checkedButton = ConfigPrompt.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
+                
                 config_option = radio_options[checkedButton.Text].LABEL;
                 config_file_path = ConfigFileText.Text; 
                 if ( (config_option == Config_Options.CREATE_NEW || config_option == Config_Options.LOAD_AND_MODIFY) && File.Exists(config_file_path))
@@ -293,16 +326,45 @@ namespace seizure_filter
         #endregion Configuration option prompt 
 
         #region Main prompt dialog to edit the parameters 
+        /* ParameterInputPrompt: edit parametrs to start and run the application in `MainForm`  
+         * This is called after `ConfigurationOptionPrompt` to modify parameters in `AppInpPrm.OptionSections`
+         * + LAYOUT:
+         *      - Initialize general variables related to dialog's component's size, position and font 
+         *      - Initialize the dialog and its title + tab components: 
+         *              * Each tab represents a section in `AppInpPrm.OptionSections`
+         *              * Within each tab are the parameters in the corresponding section to edit 
+         *      - Initialize TabPage for each section
+         *      - For each element in each section, add a label and proccess the element according to the type: 
+         *              * Textbox: just add the TextBox
+         *              * RadiobuttonGroup:
+         *                  (a) Obtain the corresponding option dictionary  
+         *                  (b) Add a panel to group the radio buttons
+         *                  (c) For each option, add a `RadioButton` button object showing the description
+         *                  (d) Check the button representing the value loaded from the configuration file
+         *              * ColorButton: create a `Button` that can prompt a `ColorDialog`
+         *      - Add a button to prompt a folder dialog for choosing the output file directory 
+         *      - Process the changes made after the prompt is closed (to continue) and save configuration set up to a file
+         * + INPUT:
+         *      - title:                    the tile of the dialog 
+         *      - caption:                  the caption of the dialog 
+         * + OUTPUT: 
+         *      - a modified `AppInpPrm` 
+         * 
+         */
         private ApplicationInputParameters ParameterInputPrompt(string title, string caption)
         {
+            // (1) Initialize general variables related to dialog's component's size, position and font 
+            // General dialog variables
             Size prompt_size = new Size(1000, 700);
             Point title_coord = new Point(50, 20);
             Size title_size = new Size(600, 50); 
-
+            // General tab variables 
             Point tabcntl_coord = new Point(50, 80);
             Size tabcntl_size = new Size(900, 500); 
             Point tabpage_coord = new Point(50, 20);
             Size tabpage_size = new Size(800, 500);
+
+            // Variables for subcomponents in the tab
             const int max_radio_col = 4;
             const int top_label_begin = 30, left_label = 10, width_label = 300;
             const int top_box_begin = top_label_begin, left_box = 320, width_box = 500;
@@ -311,21 +373,33 @@ namespace seizure_filter
             const int top_offset_radiogroup = 10, top_offset_radiobutton = 5, left_offset_radiobutton = 20, width_radio = 120;
             const int radio_spacing = 25;
 
+            // Folder dialog 
             const int horz_offset_folderdialog = 200, vert_offset_folderdialog = 10;
 
+            // Confirmation and Exit buttons 
             Size end_button_size = new Size(120, 30);
             const int top_offset_endbutton = 20;
             const int horz_spacing_endbutton = 10;
 
+            // Fonts 
             Font lbl_font = new Font(fontname, 10F, FontStyle.Bold, GraphicsUnit.Point);
             Font box_font = new Font(fontname, 10F, FontStyle.Regular, GraphicsUnit.Point);
             Font rdb_font = new Font(fontname, 8F, FontStyle.Regular, GraphicsUnit.Point);
             Font tab_font = new Font(fontname, 11F, FontStyle.Regular, GraphicsUnit.Point);
             Font ttl_font = new Font(fontname, 20F, FontStyle.Bold, GraphicsUnit.Point);
 
+            // radio_choice_dictionaries:   nested dictionary to save the the dictionary objects (representing the option dictionary in `ApplicationInputParameters`
+            //                              the first key refers to the name of the parameter of interest (only parameters with `ApplicationInputParameters.PropertypAndFormType.FormType` = `RadiobuttonGroup`) 
+            //                              the second key refers to the alias/description (`prop_alias` in `ApplicationInputParameters.PropertypAndFormType`), which would appear on the text of each RadioButton 
+            //                              the final value refers to the actual value to be assigned to the parameter. 
+            // for example, if the parameter is `window_type` then: 
+            //      >> radio_choice_dictionaries["window_type"] = AppInpPrm.wintype_dict
             Dictionary<string, Dictionary<string, object>> radio_choice_dictionaries = new Dictionary<string, Dictionary<string, object>>();
+
+            // Number of sections like "Input and Output", "General plot options", ... 
             int number_tabs = AppInpPrm.OptionSections.Count;
 
+            // (2) Initialize the dialog and its title + tab components 
             MainPrompt = new Form()
             {
                 Size = prompt_size,
@@ -351,14 +425,20 @@ namespace seizure_filter
                 // Appearance = TabAppearance.FlatButtons               
             };
             TabPage[] TabPages = new TabPage[number_tabs];
+
+            // Control list (dictionary) to add the components corresponding to each parameter  
             Dictionary<string, Control> Cntl_List = new Dictionary<string, Control>();
+
+            // RadioButton list to contain all the RadioButton objectes 
             List<RadioButton> Radio_List = new List<RadioButton>();
 
+            // For each section 
             for (int i = 0; i < number_tabs; i++)
             {                
                 string section_name = AppInpPrm.OptionSections.Keys.ElementAt(i);
                 Dictionary<string, ApplicationInputParameters.PropertypAndFormType> section_options = AppInpPrm.OptionSections[section_name];
                 
+                // (3) Initialize TabPage for each section 
                 TabPages[i] = new TabPage()
                 {
                     Location = tabpage_coord, 
@@ -366,16 +446,19 @@ namespace seizure_filter
                     Text = section_name
                 };
                 
-                int number_options = section_options.Count;
+                int number_elements = section_options.Count;
                 int top_label = top_box_begin;
                 int top_box = top_label_begin;
                 string prop_alias, prop_name; 
-                for (int j = 0; j < number_options; j++)
-                {
-                    prop_name = section_options.Keys.ElementAt(j);
-                    prop_alias = section_options[prop_name].prop_alias;
-                    var prop_val = AppInpPrm.GetPropValue(prop_name);
 
+                // (4) For each element in each section 
+                for (int j = 0; j < number_elements; j++)
+                {
+                    prop_name = section_options.Keys.ElementAt(j);          // like "hostname"
+                    prop_alias = section_options[prop_name].prop_alias;     // like "Host name"
+                    var prop_val = AppInpPrm.GetPropValue(prop_name);       // the value from the loaded config file 
+
+                    // Add a desciptor label for each parameter 
                     Cntl_List.Add("label_of_" + prop_name, new Label()
                     {
                         Location = new Point(left_label, top_label), 
@@ -387,8 +470,11 @@ namespace seizure_filter
                     TabPages[i].Controls.Add(Cntl_List["label_of_" + prop_name]);
                     top_label += general_spacing;
 
+                    // Process the element according to the type (`ApplicationInputParameters.PropertypAndFormType.FormType`)
                     if (section_options[prop_name].IsTextBox())
                     {
+                        // Simplest case: Textbox, just add a `TextBox` object 
+                        // the value to be changed would be whatever the text in `TextBox.Text`
                         Cntl_List.Add(prop_name, new TextBox()
                         {
                             Location = new Point(left_box, top_box),
@@ -400,14 +486,21 @@ namespace seizure_filter
                     }
                     else if (section_options[prop_name].IsRadiobuttonGroup())
                     {
+                        // RadiobuttonGroup:
+                        // (a) Obtain the corresponding option dictionary  
+                        // (b) Add a panel to group the radio buttons
+                        // (c) For each option, add a `RadioButton` button object showing the description
+                        // (d)Check the button representing the value loaded from the configuration file
+
+                        // (a) Casting a dicionary object to add to `radio_choice_dictionaries`; source: 
+                        // https://stackoverflow.com/questions/10206557/c-sharp-cast-dictionarystring-anytype-to-dictionarystring-object-involvin
                         string dict_name = section_options[prop_name].dict_name;
-                        /* Source 
-                         * https://stackoverflow.com/questions/10206557/c-sharp-cast-dictionarystring-anytype-to-dictionarystring-object-involvin
-                         */
-        IDictionary _dict_ = (IDictionary)AppInpPrm.GetPropValue(dict_name);
+                        IDictionary _dict_ = (IDictionary)AppInpPrm.GetPropValue(dict_name);
                         Dictionary<string, object> dict = _dict_.Cast<dynamic>().ToDictionary(entry => (string)entry.Key, entry => entry.Value);
                         radio_choice_dictionaries.Add(prop_name, dict);
 
+                        // (b) Add a `Panel` object to group the `RadioButton` objects 
+                        // because each group of `RadioButton` objects can only have 1 checked button 
                         int radio_group_height = (int)Math.Ceiling(((double)dict.Count) / ((double)max_radio_col)) * radio_spacing + top_offset_radiogroup;
                         Cntl_List.Add(prop_name, new Panel()
                         {
@@ -419,10 +512,11 @@ namespace seizure_filter
                         top_box += radio_group_height - top_offset_radiogroup - radio_spacing;
                         top_label += radio_group_height - top_offset_radiogroup - radio_spacing; 
 
-                        int default_idx = -1;
+                        int default_idx = -1; // the index of the one that records the initial value loaded from the configuration file 
                         int cur_radio_row = 0, cur_radio_col = 0; 
                         for (int i_rdbtr = 0; i_rdbtr < dict.Count; i_rdbtr++)
                         {
+                            // (c) For each option, add a `RadioButton` button object showing the description
                             cur_radio_row = (int)Math.Floor(((double)i_rdbtr) / ((double) max_radio_col));
                             cur_radio_col = i_rdbtr % max_radio_col; 
                             var i_key = dict.Keys.ElementAt(i_rdbtr).ToString();
@@ -440,10 +534,14 @@ namespace seizure_filter
                                 default_idx = Radio_List.Count - 1;
                             }
                         }
+                        // (d) Check the button representing the value loaded from the configuration file 
                         Radio_List[default_idx].Checked = true;
                     }
                     else if (section_options[prop_name].IsColorButton())
                     {
+                        // ColorButton: create a `Button` that can prompt a `ColorDialog`
+                        // the initial color would be the same as the color loaded from the 
+                        // configuration file 
                         Cntl_List.Add(prop_name, new Button()
                         {
                             Location = new Point(left_box, top_box),       
@@ -452,16 +550,21 @@ namespace seizure_filter
                             BackColor = (Color)prop_val,
                             FlatStyle = FlatStyle.Flat,
                         });
+                        // Add tooltip 
                         (new ToolTip()).SetToolTip(Cntl_List[prop_name], "Click to select " + prop_alias); 
                         ((Button)Cntl_List[prop_name]).FlatAppearance.BorderSize = 0;
                         Cntl_List[prop_name].Click += (sender, e) =>
                         {
+                            // Prompt the color dialog to select a color 
+                            // sadly this does not include the transparency factor 
+                            // it'd be nice to be able to include that though 
                             ColorDialog colorDialog = new ColorDialog()
                             {
                                 AllowFullOpen = true,
                                 ShowHelp = false,
                                 Color = (sender as Button).BackColor
                             };
+                            // Then change the color of the button after choice of color is finalized in the color dialog 
                             if (colorDialog.ShowDialog() == DialogResult.OK)
                             {
                                 (sender as Button).BackColor = colorDialog.Color;
@@ -472,11 +575,14 @@ namespace seizure_filter
                     top_box += general_spacing;
 
                 }
+                // Add the `TabPage` to `TabControl` 
                 TabCntl.Controls.Add(TabPages[i]);
             }
 
+            // Add the `TabControl` to the main dialog `MainPrompt`  
             MainPrompt.Controls.Add(TabCntl);
 
+            // (4) Add a button to prompt a folder dialog for choosing the output file directory 
             Button FolderDialogButton = new Button()
             {
                 Text = "Choose folder and file name",
@@ -506,7 +612,8 @@ namespace seizure_filter
                 }
             };
             TabPages[0].Controls.Add(FolderDialogButton);
-
+            
+            // (5) Add confirmation and exit button 
             Button ConfirmationButton = new Button()
             {
                 Text = "Continue",
@@ -519,7 +626,6 @@ namespace seizure_filter
                 FlatStyle = FlatStyle.Flat
             };
             ConfirmationButton.FlatAppearance.MouseOverBackColor = Color.Silver;
-
             ConfirmationButton.Click += (sender, e) => {
                 MainPrompt.Close();
             };
@@ -545,8 +651,18 @@ namespace seizure_filter
             MainPrompt.Controls.Add(ExitButton);
             MainPrompt.CancelButton = ExitButton;
             
+            // (6) Process the changes made after the prompt is closed (to continue) and save configuration set up to a file
             if (MainPrompt.ShowDialog() == DialogResult.OK)
             {
+                // Description dictionary for addional descripton of values
+                // (also refer to the discussion of configuration file template in the "ApplicationInputParameters.cs" 
+                // Key: the name of the parameter
+                // Value: 
+                //      + [default] <NAN>: meaning there's no additional description here
+                //      + if the parameter's value is from an option dictionary, this is one of the 
+                //          KEYS (descriptor) in the dictionary (not the VALUES)  
+                //      + if this is a color, the method is `Color.ToString()` to get either
+                //          the name of the color, or an ARGB array of it   
                 Dictionary<string, string> description_dict = new Dictionary<string, string>(); 
                 foreach (var item in Cntl_List)
                 {
@@ -554,35 +670,40 @@ namespace seizure_filter
                     Control cntl_obj = item.Value;
                     if (cntl_obj is TextBox)
                     {
+                        // set new value by `TextBox.Text` 
+                        // the parsing is done by reflection in `ApplicationInputParameters`
                         AppInpPrm.SetPropValue(prop_name, cntl_obj.Text);
                         description_dict[prop_name] = "<NAN>"; 
                     }
                     else if (cntl_obj is Panel)
                     {
-                        Dictionary<string, object> prop_dict = radio_choice_dictionaries[prop_name];
-                        // an efficient way to find checked values
-                        // https://stackoverflow.com/questions/1797907/which-radio-button-in-the-group-is-checked by SLaks
+                        // obtain the checked button and the corresponding option/choice dictionary 
+                        // in order to set the parameter's value properly 
+                        Dictionary<string, object> prop_dict = radio_choice_dictionaries[prop_name]; 
                         var checkedButton = cntl_obj.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
+
                         AppInpPrm.SetPropValue(prop_name, prop_dict[checkedButton.Text]);
                         description_dict[prop_name] = checkedButton.Text;
                     }
                     else if (cntl_obj is Button)
                     {
+                        // set new color value 
                         AppInpPrm.SetPropValue(prop_name, cntl_obj.BackColor);
                         description_dict[prop_name] = AppInpPrm.GetPropValue(prop_name).ToString();
                     }
-                    else
+                    else // some of these are just labels, hence ignore
                     {
                         continue;
                     }
                 }
                 AppInpPrm.CompleteInitialize(); // for all the necessary checking and parsing of parameters
 
+                // saving the configuration changes to a file 
                 string config_file = Cntl_List["config_path"].Text;
                 AppInpPrm.WriteConfigurationFile(config_file, description_dict);
     
             }
-
+            // The modified `AppInpPrm` is returned then assigned to `Result` of `Prompt`
             return AppInpPrm;
         }
         #endregion Main prompt dialog to edit the parameters 

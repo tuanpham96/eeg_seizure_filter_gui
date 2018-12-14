@@ -345,7 +345,7 @@ namespace seizure_filter
          * data array is not of specified length, then calculate if it is
          * + LAYOUT:
          *      - Add data if the data array does not have sufficient number of data points for FFT calculation
-         *      - If it does, then NORMALIZE the data then perform FFT to obtain the magnitude of each frequency; 
+         *      - If it does, then NORMALIZE the tapered data then perform FFT to obtain the magnitude of each frequency; 
          *                      also set `ready2plt` = true and save the data if `saving_option` = true;
          *                      then shift the data array before adding the new data point 
          *      - If neither, throw an error
@@ -358,7 +358,15 @@ namespace seizure_filter
             if (current_count == n_epoch)
             {
                 mag_freq = new double[n_valid];
-                double[] normz_dat_arr = NormalizeData(data_array);
+                // Multiply with the taper window 
+                double[] tapered_data = new double[data_array.Length]; 
+                for (int i = 0; i < data_array.Length; i++)
+                {
+                    tapered_data[i] = data_array[i] * window[i]; 
+                }
+                double[] normz_dat_arr = NormalizeData(tapered_data);
+
+                // Calculate FFT 
                 mag_freq = FFT(normz_dat_arr);
                 ready2plt = true;
 
@@ -416,7 +424,7 @@ namespace seizure_filter
             System.Numerics.Complex[] fftComplex = new System.Numerics.Complex[data.Length];
             for (int i = 0; i < data.Length; i++)
             {
-                fftComplex[i] = new System.Numerics.Complex(data[i] * window[i], 0.0); // multipled by the window functions 
+                fftComplex[i] = new System.Numerics.Complex(data[i], 0.0);
             }
             Accord.Math.FourierTransform.FFT(fftComplex, Accord.Math.FourierTransform.Direction.Forward);
             for (int i = 0; i < fft.Length; i++)

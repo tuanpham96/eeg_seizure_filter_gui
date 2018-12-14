@@ -384,7 +384,6 @@ namespace seizure_filter
 
             public PropertypAndFormType(string _prop_alias_, Form_Type _form_type_ = Form_Type.Textbox, string _dict_name_ = null)
             {
-
                 prop_alias = _prop_alias_;
                 form_type = _form_type_;
                 dict_name = _dict_name_;
@@ -548,7 +547,7 @@ namespace seizure_filter
          *      - description_dict:     a dictionary, whose keys are the names of the querried parameters,
          *                              and values are the additional description (see discussion of "Description"
          *                              column in the File Template), refer also to `Prompt.ParameterInputPrompt` 
-         *                              for how this is constructed 
+         *                              for how this is constructed/implemented 
          */
         public void WriteConfigurationFile(string _config_path_, Dictionary<string, string> description_dict)
         {

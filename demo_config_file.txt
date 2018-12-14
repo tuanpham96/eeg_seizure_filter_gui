@@ -1,4 +1,4 @@
-# Configuration, generated on Wednesday, December 12, 2018 4:26 PM
+# Configuration, generated on Friday, December 14, 2018 1:25 PM
 # Change the Value column to induce effect
 # Property	Type	Value	Description
 config_path	System.String	C:\Users\Towle\Desktop\Tuan\eeg_seizure_filter_gui\demo_config_file.txt	<NAN>
@@ -30,8 +30,8 @@ warning_rms_lowerbound	System.Double	0.8	<NAN>
 nsec_fft	System.Double	4	<NAN>
 per_overlap	System.Double	95	<NAN>
 window_type	seizure_filter.STFTCalculator+WindowType	Hamming	Hamming
-f_bandpower_lower	System.Double	3	<NAN>
-f_bandpower_upper	System.Double	7	<NAN>
+f_bandpower_lower	System.Double	2	<NAN>
+f_bandpower_upper	System.Double	8	<NAN>
 stft_saving_option	System.Boolean	False	No
 scaling_psd	System.Boolean	True	Yes
 danger_lbp_upperbound	System.Double	6E-07	<NAN>
