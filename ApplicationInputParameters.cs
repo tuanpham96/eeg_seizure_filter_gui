@@ -487,6 +487,7 @@ namespace seizure_filter
             current_directory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
             default_config_path = current_directory + "\\_config_file.txt";
 
+            // StartComment_if[Parse issues]
             if (create_new_config)
             {
                 ParseConfigurationFile(default_config_path);
@@ -497,10 +498,83 @@ namespace seizure_filter
                 config_path = _config_path_;
                 ParseConfigurationFile(config_path);
             }
+            // EndComment_if[Parse issues]
+
             // To avoid overwriting default configuration file 
             if (string.Compare(config_path, default_config_path) == 0)
             {
                 config_path = current_directory + "\\customized_config_file.txt";
+            }
+
+            // In case there are continued problems of parsing configuration files 
+            // like configuration files are deleted or way outdated 
+            // (1) Comment out the section between "StartComment_if[Parse issues]" and "EndComment_if[Parse issues]"
+            // (2) Change input of `ManualSetup` to "true" -> `ManualSetup(true)`
+            ManualSetup(false); 
+        }
+        /* ManualSetup: edit this and input "true" if the configuration parsing cannot be achieved 
+         * + INPUT:
+         *       - setupornot:          whether to use manual set up or not 
+         *                              "false" by default to prioritize configuration parsing instead
+         *                              "true" if there are issues with parsing like the configuration files are deleted by accident 
+         */
+        private void ManualSetup(bool setupornot)
+        {
+            if (setupornot)
+            {
+                hostname = "127.0.0.1";
+                port = 1234;
+
+                Fs = 512.0;
+                nmax_queue_total = 64;
+                nsamp_per_block = 4;
+                total_nchan = 4;
+                channels2plt = "0;1";
+
+                output_folder = @"C:\Users\Towle\Desktop\Tuan\general_towle\data";
+                output_file_name = "testfile_TP.csv";
+
+                normal_color = BrushToColor(System.Windows.Media.Brushes.Green);
+                warning_color = BrushToColor(System.Windows.Media.Brushes.Gold);
+                danger_color = BrushToColor(System.Windows.Media.Brushes.Red);
+
+                danger_rms_upperbound = 1.4;
+                danger_rms_lowerbound = 0.6;
+                warning_rms_upperbound = 1.2;
+                warning_rms_lowerbound = 0.8;
+
+                max_sec_plt = 10;
+                channel_vertgain_str = "1;1;1";
+                display_channel_vertoffset = 5;
+                rms_vertgain_str = "1;1";
+                display_rms_vertoffset = 0;
+
+                d_gain = 0.1;
+                d_offset = 5;
+
+                refresh_display = true;
+                display_quality = Quality.High;
+
+                nsec_fft = 4.0;
+                per_overlap = 98;
+                window_type = WindowType.Hanning;
+                f_bandpower_lower = 2;
+                f_bandpower_upper = 8;
+                stft_saving_option = false;
+                scaling_psd = true;
+
+                danger_lbp_upperbound = 6E-7;
+                danger_lbp_lowerbound = -1.0;
+                warning_lbp_upperbound = 4.5E-7;
+                warning_lbp_lowerbound = 0.0;
+
+                alarm_rate_plt_stack = false;
+
+                rms_lvl_reset_sec = 2;
+                rms_lvl_max_sec = 60 * 10;
+
+                lbp_lvl_reset_sec = 10;
+                lbp_lvl_max_sec = 60 * 10;
             }
         }
         #endregion Application Input Parameters: object constructor with configuration file path 
