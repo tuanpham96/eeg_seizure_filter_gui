@@ -8,4 +8,4 @@
   
 + The program also evaluates the alarm level of both RMS and LBP. If the RMS (or LBP) approaches certain upper or lower bounds, the graphical interface of the program will change the color of a bar to signify this, the default choice is from green (normal) to  yellow/gold (warning), to red (danger). Right now, the upper and lower bounds of these ranges has been arbitrarily decided. To use this program for the visual prosthesis, these values will either have to be pre-determined or determined after experimentation has begun.We must decide whether to err on the side of safety or risk.     
             
-![alt text](media/demo.png?raw=true "Demo")
+![alt text](docs/demo.png?raw=true "Demo")
