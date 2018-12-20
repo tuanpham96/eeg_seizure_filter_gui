@@ -15,6 +15,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 /** SEIZURE FILTER EEG PROGRAM 
+ * Leo Towle's Lab 
  * Started by Dominic DiCarlo September 2018 
  * Edited by Tuan Pham December 2018 
     + REQUIREMENTS: 
@@ -43,64 +44,7 @@ using System.Collections.Generic;
                                                                                                                     DANGER   
                                                                                                                       ▼  
 
-    + CONNECTION AND SETUP WITH THE OPENVIBE SOFTWARE: 
-
-        1)  Connect the V-Amplifier to the computer and install any drivers
-            you may be prompted to. The Brain Products usb will also install some drivers
-            to your PC; these are needed for the V-Amp (supposedly)
-
-        2)  Open OpenViBE Acquisition Server. Select V-Amp/Fast Amp from the Driver drop
-            down menu. Adjust drift tolerance to 2.00 ms or lower from the Preferences button.
-            Set "Sample count per sent block" to 4.
-
-        3)  Open OpenViBE Designer. If this is your first time, select
-            an "Acquisition Client" box from the folder "Acquisition and network IO".
-            connect this to a "Temporal filter" box from '"Signal Processing"->"Temporal Filtering"'.
-            Connect the "Temporal filter" box to a "Signal display" box and a "Matrix sender" box.
-
-            NOTE #1 : Assure the "Matrix sender" box has TCP port "1234". You can check this by
-            double clicking it, and seeing the TCP port. 
-
-            NOTE #2: Assure the "Acquisition client" box has the same acquisition server
-            port as the Connection port number on OpenViBE Acquisition Server. You can check the box
-            by double clicking it, and the actual Acquisition Server right on the front of the program
-
-            All the program really needs from designer is the "Matrix Sender", as this is what it reads.
-            Feel free to adjust the Temporal Filter to your exact frequency needs,
-            as well as adjust the signal display parameters for your needs. 
-
-            You can save your settings in OpenViBE Designer as a config file. Simply
-            click Save As at the top or Save. 
-
-        4)  Hit Start at the top of Visual Studio, or run this program in the packaged way
-            you have decided. Then, hit the play arrow on top of OpenViBE designer. 
-            Voila! The program should be running. If not, run through these steps again
-            and ensure you have done everything right.
-
-
-    + FUTURE CONSIDERTIONS:
-
-        1)  It would be nice to be able to change the upper and lower bounds of the RMS
-            safety window from the GUI. This change could be easily made
-
-        2)  Adding more channels and the ability to manage multiple samples from the stream at once.
-            - There is room in the logic to do this, and it would just look like more of the same code. 
-            We would need to decide how many channels we want to look at in the first place.
-
-        3)  Adding in EEG visualization
-            - OpenViBE supplies this in the mean time, but creating our own EEG viewer
-            would be optimal as we can modify it to suit our needs.
-    
-        4)  Writing the CSV of values from the experiment in a path that will work for all systems
-            - Right now, the CSV path has to be edited in the code
-            so that it works on other systems.What would be more ideal
-            would be the user selecting a path before the program begins.
-            This would be easy to program.
-
-    The logic of everything is simplified right now to only work with one
-    channel and one sample at a time.This is then a skeleton for more work
-    depending on how much data you want to use.                                                                             
-                                                                                                    
+                                         
 */
 
 namespace seizure_filter
@@ -716,24 +660,24 @@ namespace seizure_filter
 
         #region Helper functions 
         /* ReturnAlarmLevelAndColor: evaluate the alarm level of a value -> return the corresponding alarm color & level index  
- * + LAYOUT: 
- *      - There are 3 levels of alarm (Normal=0, Warning=1, Danger=2) 
- *      - For each of the range, there's a lower bound (L) and an upper bound (U) 
- *      - The requirement of the ranges ( refer to `ApplicationInputParameters.CheckForAlarmRange`) 
- *          danger_lower < warning_lower < warning_upper < danger_upper 
- *      - Return either of the 3 alarm levels and the corresponding color + index 
- *          * NORMAL:   anything within [warning_lower, warning_upper] 
- *          * WARNING:  anything out of that range, but still within [danger_lower, danger_upper] 
- *          * DANGER:   otherwise 
- * + INPUT: 
- *      - value:            the value being passed on to check, either an RMS or LBP value for example 
- *      - range_danger:     the range out of which would be considered DANGER
- *      - range_warning:    the range out of which, but still within `range_danger`, would be considered WARNING 
- * + OUTPUT: 
- *      - color_res:        color corresponding to the alarm level, e.g: RED (danger), YELLOW (warning), GREEN (normal) 
- *      - level_res:        level index corresponding to the alarm level, e.g: 2 (danger), 1 (warning), 0 (normal) 
- *      
- */
+         * + LAYOUT: 
+         *      - There are 3 levels of alarm (Normal=0, Warning=1, Danger=2) 
+         *      - For each of the range, there's a lower bound (L) and an upper bound (U) 
+         *      - The requirement of the ranges ( refer to `ApplicationInputParameters.CheckForAlarmRange`) 
+         *          danger_lower < warning_lower < warning_upper < danger_upper 
+         *      - Return either of the 3 alarm levels and the corresponding color + index 
+         *          * NORMAL:   anything within [warning_lower, warning_upper] 
+         *          * WARNING:  anything out of that range, but still within [danger_lower, danger_upper] 
+         *          * DANGER:   otherwise 
+         * + INPUT: 
+         *      - value:            the value being passed on to check, either an RMS or LBP value for example 
+         *      - range_danger:     the range out of which would be considered DANGER
+         *      - range_warning:    the range out of which, but still within `range_danger`, would be considered WARNING 
+         * + OUTPUT: 
+         *      - color_res:        color corresponding to the alarm level, e.g: RED (danger), YELLOW (warning), GREEN (normal) 
+         *      - level_res:        level index corresponding to the alarm level, e.g: 2 (danger), 1 (warning), 0 (normal) 
+         *      
+         */
         private void ReturnAlarmLevelAndColor(double value, double[] range_danger, double[] range_warning,
                                                 out Color color_res, out int level_res)
         {
