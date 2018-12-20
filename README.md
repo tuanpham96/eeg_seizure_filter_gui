@@ -11,5 +11,5 @@
 Below is a demo of the GUI 
 ![alt text](docs/gui_demo.png?raw=true "Gui demo")
 
-And this is the diagram showing the communication between the program and the *OpenViBE software*
+And this is the diagram showing the communication between the program and the *OpenViBE* software
 ![alt text](docs/diagram.PNG?raw=true "Diagram")
